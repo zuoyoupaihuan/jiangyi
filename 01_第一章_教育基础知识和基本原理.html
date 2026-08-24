@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教育基础知识和基本原理 - 中学科二讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 教育的产生与发展</a><a class="lv2" href="#sec1">一、教育的概念</a><a class="lv2" href="#sec2">二、教育的属性</a><a class="lv2" href="#sec3">三、 教育的基本功能</a><a class="lv2" href="#sec4">四、 教育的起源</a><a class="lv2" href="#sec5">五、 教育的历史发展</a><a class="lv1" href="#sec6">第二节 教育学的产生与发展</a><a class="lv2" href="#sec7">一、教育学的概念</a><a class="lv2" href="#sec8">二、教育学的发展阶段</a><a class="lv2" href="#sec9">三、教育学的独立及多样化发展阶段</a><a class="lv1" href="#sec10">第三节 教育与社会的发展</a><a class="lv2" href="#sec11">一、教育与社会生产力的关系</a><a class="lv2" href="#sec12">二、教育与社会政治经济制度的关系</a><a class="lv2" href="#sec13">三、教育与文化的关系</a><a class="lv1" href="#sec14">第四节 教育与人的发展</a><a class="lv2" href="#sec15">一、个人身心发展的一般规律</a><a class="lv2" href="#sec16">二、影响人发展因素的理论</a><a class="lv2" href="#sec17">三、影响人身心发展的因素及作用</a><a class="lv1" href="#sec18">第五节 教育制度</a><a class="lv2" href="#sec19">一、教育制度的概念</a><a class="lv2" href="#sec20">二、建立学制的依据（☆☆☆☆☆）【单选/简答】【口诀：社会+人+学制本身】</a><a class="lv2" href="#sec21">三、学校教育制度的发展</a><a class="lv2" href="#sec22">四、现代学校教育制度的类型</a><a class="lv2" href="#sec23">五、我国学制的沿革</a><a class="lv2" href="#sec24">六、现代教育制度的改革与发展</a><a class="lv1" href="#sec25">第六节 教育目的</a><a class="lv2" href="#sec26">一、教育目的的概念</a><a class="lv2" href="#sec27">二、教育目的的理论</a><a class="lv2" href="#sec28">三、我国教育目的的基本精神（☆☆☆☆☆）【单选/简答】【口诀：全面发展社会人才素质】</a><a class="lv2" href="#sec29">四、全面发展的教育（☆☆☆☆☆）【单选/26 上简答（体育的意义）/2025 上辨析已考】 德育、智育、体育、美育和劳动技术教育是全面发展教育的基本组成部分。</a><a class="lv1" href="#sec30">第七节 教育研究的基本方法 （☆）【单选，有印象即可】</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>教育基础知识和基本原理</h1>
+      <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
+      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 教育的产生与发展</a><a class="lv2" href="#sec1">一、教育的概念</a><a class="lv2" href="#sec2">二、教育的属性</a><a class="lv2" href="#sec3">三、 教育的基本功能</a><a class="lv2" href="#sec4">四、 教育的起源</a><a class="lv2" href="#sec5">五、 教育的历史发展</a><a class="lv1" href="#sec6">第二节 教育学的产生与发展</a><a class="lv2" href="#sec7">一、教育学的概念</a><a class="lv2" href="#sec8">二、教育学的发展阶段</a><a class="lv2" href="#sec9">三、教育学的独立及多样化发展阶段</a><a class="lv1" href="#sec10">第三节 教育与社会的发展</a><a class="lv2" href="#sec11">一、教育与社会生产力的关系</a><a class="lv2" href="#sec12">二、教育与社会政治经济制度的关系</a><a class="lv2" href="#sec13">三、教育与文化的关系</a><a class="lv1" href="#sec14">第四节 教育与人的发展</a><a class="lv2" href="#sec15">一、个人身心发展的一般规律</a><a class="lv2" href="#sec16">二、影响人发展因素的理论</a><a class="lv2" href="#sec17">三、影响人身心发展的因素及作用</a><a class="lv1" href="#sec18">第五节 教育制度</a><a class="lv2" href="#sec19">一、教育制度的概念</a><a class="lv2" href="#sec20">二、建立学制的依据（☆☆☆☆☆）【单选/简答】【口诀：社会+人+学制本身】</a><a class="lv2" href="#sec21">三、学校教育制度的发展</a><a class="lv2" href="#sec22">四、现代学校教育制度的类型</a><a class="lv2" href="#sec23">五、我国学制的沿革</a><a class="lv2" href="#sec24">六、现代教育制度的改革与发展</a><a class="lv1" href="#sec25">第六节 教育目的</a><a class="lv2" href="#sec26">一、教育目的的概念</a><a class="lv2" href="#sec27">二、教育目的的理论</a><a class="lv2" href="#sec28">三、我国教育目的的基本精神（☆☆☆☆☆）【单选/简答】【口诀：全面发展社会人才素质】</a><a class="lv2" href="#sec29">四、全面发展的教育（☆☆☆☆☆）【单选/26 上简答（体育的意义）/2025 上辨析已考】 德育、智育、体育、美育和劳动技术教育是全面发展教育的基本组成部分。</a><a class="lv1" href="#sec30">第七节 教育研究的基本方法 （☆）【单选，有印象即可】</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 教育的产生与发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec1"><span class="h3t">一、教育的概念</span><span class="badge-star">☆☆☆☆☆</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>“教育”一词的由来 <span class="anno">【单选题，注意关键词的记忆与理解】</span><span class="anno">【口诀：1 人（孟子）1 书（孟子·尽心上）1 教育（首次提出教育）】</span></h4><p>“教育”一词最早出现于《孟子·尽心上》。 “得天下英才而教育之。”</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>首次将教与育连用的人也是孟子，首次将教与育连用的著作为《孟子·尽心上》。</div><p class="anno-line"><span class="anno">【只是表述方式不同而已】</span></p><h4><span class="h4num">2</span>教育的定义<span class="anno">【单选/辨析题，注意关键词的记忆与理解，及广义与狭义之分】</span></h4><p class="subitem"><span class="slabel">广义的教育：</span>一切有目的地增进人的知识和技能、发展人的智力和体力、影响人的思想观念的活动，包括①家庭教育是指以家庭为单位的教育。</p><p class="item"><span class="ilabel">②</span>社会教育是指在广泛的社会生活和生产过程中所进行的教育活动。</p><p class="item"><span class="ilabel">③</span>学校教育是指以学校为单位进行的教育。<span class="anno">【可以是无组织、零散的，也可以是有组织的、系统的】</span></p><p class="subitem"><span class="slabel">狭义的教育：</span>主要指学校教育，是指①教育者根据一定的社会要求，有目的、有计划、有组织地对②受教育者的身心③施加影响，促使他们朝着期望的方向变化发展的活动。</p><div class="note"><span class="callout-label">注意</span></div><p class="item"><span class="ilabel">1）</span>辨析题中，若将教育的概念仅仅定义为广义的描述或狭义的描述，皆为错误。必须说明教育有广义与狭义之分，广义的教育是….狭义的教育是…</p><h6>2） 教育活动的基本要素为狭义定义中标注的</h6><p class="item"><span class="ilabel">①</span>教育者<span class="anno">【教师—最直接的教育者，在教育活动中起主导作用】</span></p><p class="item"><span class="ilabel">②</span>受教育者<span class="anno">【学习者—学习的主体】</span></p><p class="item"><span class="ilabel">③</span>教育影响<span class="anno">【教育的内容+教育手段】</span></p><div class="tip"><span class="anno">【CocoPolaris 补充】</span>家庭作为一种基本的社会单元，承担了大量的教育任务。对青少年一代进行教育，也是传统意义上家庭的一种重要功能。特别是在培养青少年健全人格方面，家庭的作用更是学校无法取代的。由于现在学校面临着越来越多的问题，因此家庭教育的重要性也越来越被重视。（24 下小学简答题考到了家庭教育，故中学科二也需重视这个知识点，也可出现在中学科二简答中） 简述家庭对学生发展的影响。（24 下 小学科二简答，中学科二简答备考） 答：为促进学生的健康成长和发展，家长应努力营造一个和谐稳定、积极向上的家庭氛围，为孩子充分提供情感支持、教育指导、经济保障和心理支持。同时，家长还需要意识到自身言行对于孩子的影响，父母之间应相互尊重、支持，为孩子树立榜样。</div><p class="item"><span class="ilabel">①</span>情感支持与安全感：家庭为孩子提供稳定、安全的情感环境，满足其情感需求，能够增强其自信心和安全感。</p><p class="item"><span class="ilabel">②</span>经济条件和生活环境：家庭经济条件决定了孩子接受教育资源的质量与机会，能够促进或阻碍孩子的发展。</p><p class="item"><span class="ilabel">③</span>家庭教育与价值观：父母是孩子的第一任老师，父母的教育方式和价值观直接影响孩子的认知发展和道德品德的形成。</p><p class="item"><span class="ilabel">④</span>榜样作用：父母的言行、行为习惯、道德品质都会直接影响孩子的发展，孩子会通过观察和模仿父母的行为学习和发展自己的行为习惯。</p><p class="item"><span class="ilabel">⑤</span>家庭结构：单亲家庭、重组家庭以及亲子关系等也会对孩子的身心发展造成影响。</p><p class="item"><span class="ilabel">⑥</span>家长的受教育程度：孩子的认知发展受父母或家庭内主要的教育承担人的知识水平和类型的制约。</p><p class="anno-line"><span class="anno">【以上回答仅作参考，大家也可从其它角度进行论述。】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec2"><span class="h3t">二、教育的属性</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析题，注意关键词的记忆与理解</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>本质属性<span class="anno">【关键词：有目的+人+社会活动，三者缺一不可，尤其辨析题的时候特别注意】</span> 教育是一种有目的地培养人的社会活动，这是教育区别于其他事物现象的根本特征。</h4><p class="item"><span class="ilabel">①</span>教育是人类所特有的一种有意识的社会活动。</p><p class="item"><span class="ilabel">②</span>教育是人类有意识地传递社会经验的活动。</p><p class="item"><span class="ilabel">③</span>教育是以人的培养为直接目标的社会实践活动。</p><div class="note"><span class="callout-label">注意</span>动物界不存在教育。动物间看似“教育的活动”其实是生存本能的自发行为。所以社会性和意识性是区别于动物的本质区别。</div><h4><span class="h4num">2</span>社会属性<span class="anno">【口诀：社会永历立】</span></h4><p class="item"><span class="ilabel">①</span>教育具有永恒性</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>人类在，教育就在，教育与人类社会共始终。</div><p class="item"><span class="ilabel">②</span>教育具有历史性</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>古今不同，每个时期的教育都有自己的特点，历史性集中体现在时代性和阶级性两方面。</div><p class="item"><span class="ilabel">③</span>教育具有相对独立性 <span class="anno">【重点：概念】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>教育的相对独立性是指教育具有自身的规律，对社会的经济、政治、文化等方面具有能动作用。</div><div class="tip"><span class="callout-label">CocoPolaris 说</span><span class="anno">【此部分可单独考辨析题】</span> 教育独立性下的两个表现：①教育具有历史继承性<span class="anno">【古今相同】</span>：指的是每个时代的教育都与以往的教育有着传承与接续的关系。</div><p class="item"><span class="ilabel">②</span>教育与生产力和政治经济制度的发展具有不平衡性<span class="anno">【可前可后】</span>：两种情况---一是教育思想和教育内容落后于政治经济制度的发展，特别是当旧的政治经济制度消亡后，旧的教育思想和教育内容仍然存在；<span class="anno">【例如：大清亡了之后，五四新文化运动前依然学习旧时封建教育内容】</span>二是由于人们认识到了社会发展的规律，根据社会发展的趋势，预见到教育发展的方向，在旧的政治经济制度下也可能出现新的教育思想。<span class="anno">【例如：清末，张之洞提出的中学为体，西学为用】</span></p><p class="item"><span class="ilabel">④</span>教育具有生产性</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>科学知识可以转换为生产力，例如一些科研成果投入生产使用等。</div><p class="item"><span class="ilabel">⑤</span>教育具有民族性</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>教育具有民族特征，比如传授本民族的文化知识等，运用民族语言教学。</div><p class="item"><span class="ilabel">⑥</span>教育具有长期性</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>培养人才的周期比较长。十年树木，百年树人。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec3"><span class="h3t">三、 教育的基本功能</span><span class="badge-star">☆☆☆☆</span><span class="badge-type">单选/辨析题，注意关键词的记忆与理解</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>按教育功能作用的对象划分</h4><p class="item"><span class="ilabel">①</span>个体功能（本体功能）：指对个体发展的影响和作用。</p><p class="subitem"><span class="slabel">具体表现为：</span>促进个体社会化、促进个体 个性化、促进个体谋生和享用功能等。<span class="anno">【培养人】</span></p><p class="item"><span class="ilabel">②</span>社会功能（派生功能）：主要体现在教育能推动社会发展的变迁和促进社会流动两个方面。</p><p class="anno-line"><span class="anno">【人→社会】</span></p><h4><span class="h4num">2</span>按教育作用的性质划分<span class="anno">【2022 上辨析题：教育必然促进社会发展。×】</span></h4><p class="item"><span class="ilabel">①</span>正向功能：指教育有助于社会进步和个体发展的积极影响和作用。<span class="anno">【好的、积极的】</span></p><p class="item"><span class="ilabel">②</span>负向功能：指教育阻碍社会进步和个体发展的消极影响和作用。<span class="anno">【坏的、消极的】</span></p><h4><span class="h4num">3</span>按教育功能呈现的形式划分</h4><p class="item"><span class="ilabel">①</span>显性功能：指按照教育目的，在实际运行中所出现的与之相吻合的结果。<span class="anno">【计划内的】</span></p><p class="item"><span class="ilabel">②</span>隐性功能：指伴随显性教育功能所出现的非预期性的功能。<span class="anno">【计划外的】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec4"><span class="h3t">四、 教育的起源</span><span class="badge-star">☆☆☆☆</span><span class="badge-type">单选题，通过口诀理解记忆</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>神话起源论：（不考，教材上的文字有印象即可）</h4><h4><span class="h4num">2</span>生物起源论：<span class="anno">【口诀：本能生利息】</span></h4><p class="item"><span class="ilabel">①</span>人类教育起源于动物界中的各类动物的生存本能活动，认为动物界存在教育活动。</p><p class="item"><span class="ilabel">②</span>代表人物：法国的利托尔诺；英国的沛西·能；美国的桑代克</p><h4><span class="h4num">3</span>心理起源论：<span class="anno">【口诀：心理仿梦露】</span></h4><p class="item"><span class="ilabel">①</span>教育起源于儿童对成人的无意识的模仿。</p><p class="item"><span class="ilabel">②</span>代表人物：美国教育学家孟禄。</p><div class="note"><span class="callout-label">注意</span>生物起源说和心理起源说都被认为是错误的，它们的共同点都是否认了教育的社会属性。<span class="anno">【时刻记住：教育的本质属性是有目的地培养人的社会活动】</span></div><h4><span class="h4num">4</span>劳动起源论：<span class="anno">【口诀：米凯爱劳动】</span></h4><p class="item"><span class="ilabel">①</span>教育起源于劳动，起源于劳动过程中社会生产需要和人的发展需要的辩证统一。</p><p class="item"><span class="ilabel">②</span>代表人物：米丁斯基、凯洛夫</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>目前被广泛认可的起源学说。</div><h4><span class="h4num">5</span>交往起源论：<span class="anno">【口诀：叶澜爱交往】</span><span class="badge-type">有印象即可</span></h4><p class="item"><span class="ilabel">①</span>教育起源于人类的交往活动。</p><p class="item"><span class="ilabel">②</span>代表人物：中国叶澜《教育原理》，华东师范终身教授</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec5"><span class="h3t">五、 教育的历史发展</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>原始社会：① 教育产生的根本原因是人类对自身生存和发展的需要；</h4><p class="item"><span class="ilabel">②</span>产生的条件是人类的生产劳动以及语言的形成；</p><p class="item"><span class="ilabel">③</span>原始社会教育的主要特征是：教育是在生产劳动中进行的；教育没有阶级性；教育水平低下，教育内容简单，教育方法单一。<span class="anno">【口诀：简单劳动无阶级】</span></p><h4><span class="h4num">2</span>古代社会（☆☆☆☆☆）：一般认为学校产生于奴隶社会时期。古代社会主要分为奴隶社会时期和封建社会时期。</h4><p class="subitem"><span class="slabel">中国：</span>（1）奴隶社会：</p><p class="item"><span class="ilabel">①</span>夏：我国最早的学校教育形态出现在夏朝；</p><p class="subitem"><span class="slabel">教育机构：</span>庠、序、校；我国最早的学校教育机构是庠。</p><p class="item"><span class="ilabel">②</span>商：有文字记载同时又有考古出土的实物证实的学校出现在商代。</p><p class="item"><span class="ilabel">③</span>西周：形成了“学在官府”“政教一体”“官师合一”的官学体系，形成了以“礼乐”为中心的文武兼备的六艺教育（礼、乐、射、御、书、数）；</p><p class="subitem"><span class="slabel">教育机构：</span>国学、乡学。</p><p class="item"><span class="ilabel">④</span>春秋和战国：官学衰微、私学兴起于春秋时期；私学繁荣于战国时期；私学的发展是我国教 育史、文化史上的一个重要的里程碑，直接促成了百家争鸣的社会盛况。</p><h5>（2）封建社会：</h5><p class="item"><span class="ilabel">①</span>两汉时期：教育机构：太学、郡国学；太学是当时最高教育机构；地方官学的发展始于“文翁兴学”；鸿都门学是研究文学艺术的专门学校；董仲舒“罢黜百家，独尊儒术”。</p><p class="item"><span class="ilabel">②</span>隋唐时期：教育机构：国子监、六学二馆；隋朝建立了科举制度。</p><p class="item"><span class="ilabel">③</span>宋：教育内容：“四书”"五经"--四书：《大学》《</p><p class="subitem"><span class="slabel">中庸》《论语》《孟子》+五经：</span>《诗》《书》《礼》《易》《春秋》；国学是程朱理学。</p><div class="note"><span class="callout-label">注意</span>宋元明清主要的教育内容都是四书五经，考试时一般只考每个时期代表的教育事件。</div><p class="item"><span class="ilabel">④</span>清：1905 年废除科举制度。</p><p class="subitem"><span class="slabel">国外：</span>（1）奴隶社会：</p><p class="item"><span class="ilabel">①</span>古埃及：“以僧为师”“以吏为师”。</p><p class="subitem"><span class="slabel">文士学校 —</span>最初级的，培养熟练运用文字从事书写及计算能力的人； 职官学校（书吏学校） —以吏为师，以法为教；招收贵族和官员子弟。</p><p class="item"><span class="ilabel">②</span>古希腊：</p><p class="subitem"><span class="slabel">雅典教育 —</span>培养有文化修养和多种才能的政治家和商人；在西方最早形成体育、德育、智 育和美育和谐发展的教育，教育内容丰富，教育方法灵活。</p><p class="anno-line"><span class="anno">【崇文、强调理性--联想记忆：雅典娜-知性、智慧】</span></p><p class="subitem"><span class="slabel">斯巴达教育 —</span>培养军人和武士；强调军事体育训练和政治道德灌输，教育内容单一，教育方 法严厉。<span class="anno">【尚武、军事主义教育--联想记忆：斯巴达--撕吧撕吧打起来】</span></p><h5>（2）封建社会（中世纪的欧洲（14-17C））</h5><p class="subitem"><span class="slabel">教会教育 —</span>培养教士和僧侣；</p><p class="subitem"><span class="slabel">教育内容：</span>七艺 — 三科：文法、修辞、辩证法也被称为三艺；</p><p class="subitem"><span class="slabel">四学：</span>算数、几何、天文、音乐。</p><p class="subitem"><span class="slabel">骑士教育 —</span>培养封建骑士；</p><p class="subitem"><span class="slabel">教育内容：</span>骑士七技 <span class="anno">【古代社会教育小总结】</span><span class="anno">【口诀：劳教分离有阶级】</span></p><h4><span class="h4num">1</span>学校产生；</h4><h4><span class="h4num">2</span>古代学校教育与生产劳动相脱离，具有非生产性；</h4><h4><span class="h4num">3</span>阶级性和等级性；</h4><h4><span class="h4num">4</span>道统性、专制性、刻板性和象征性。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>“君子忧道不忧贫”出自《论语》，孔子所说的这句话反映了古代学校教育与生产劳动相脱离的特点。 大意是： 孔子说：“君子用心求道而不费心思去求衣食。即使你亲自去耕田种地，难保不饿肚子；努力学道，却可以得到俸禄。所以，君 子只担忧学不到道，不担忧贫穷。”考试也可以直接问这句话反映出了古代教育的什么特点，需要理解哦~</div><h4><span class="h4num">3</span>近代社会：</h4><p class="item"><span class="ilabel">①</span>国家加强了对教育的重视和干预，公立教育崛起；</p><p class="item"><span class="ilabel">②</span>初等义务教育的普遍实施；（最早实施义务教育的国家是德国）</p><p class="item"><span class="ilabel">③</span>教育的世俗化（摆脱宗教）；</p><p class="item"><span class="ilabel">④</span>重视立法，依法治教。</p><h4><span class="h4num">4</span>现代社会：20 世纪以后的教育新特点：（☆☆☆☆☆）【单选/简答题，</h4><p class="subitem"><span class="slabel">口诀：</span>全民多现身】</p><p class="item"><span class="ilabel">①</span>教育的终身化；<span class="anno">【活到老，学到老，最早系统论述了终身教育的是法国的保罗·朗格朗】</span></p><p class="item"><span class="ilabel">②</span>教育的全民化；<span class="anno">【教育面向所有人】</span></p><p class="item"><span class="ilabel">③</span>教育的民主化；</p><p class="anno-line"><span class="anno">【教育起点的机会均等；教育过程中享受教育资源的机会均等；教育结果的均等】</span></p><p class="item"><span class="ilabel">④</span>教育的多元化；<span class="anno">【培养目标、办学形式、管理模式、教学内容、评价标准多元化】</span></p><p class="item"><span class="ilabel">⑤</span>教育技术的现代化。</p><p class="anno-line"><span class="anno">【科学技术（如网络教学技术等）、教育思想、观念的现代化、教师队伍的现代化】</span></p></div></div></section>
+<section class="sec"><h2 id="sec6">第二节 教育学的产生与发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec7"><span class="h3t">一、教育学的概念</span><span class="badge-star">☆☆</span><span class="badge-type">单选题，了解即可</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教育学是以</h4><p class="item"><span class="ilabel">①</span>教育现象、②教育问题为研究对象，不断探索并揭示</p><p class="item"><span class="ilabel">③</span>教育规律的一门社会科学。教育问题是推动教育学发展的内在动力。</p><div class="note"><span class="callout-label">注意</span>研究对象：教育现象和教育问题；</div><p class="subitem"><span class="slabel">研究任务：</span>揭示教育规律，指导教育工作。<span class="anno">【理解即可】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec8"><span class="h3t">二、教育学的发展阶段</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选题，识记，特别注意代表人物、理念及作品之间的对应关系，不要混淆哦~</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>萌芽阶段 -</h4><p class="item"><span class="ilabel">①</span>中国： 一个人   主要教育思想</p><p class="item"><span class="ilabel">①</span>《论语》：“仁”“礼”<span class="anno">【以“仁”为核心】</span></p><p class="item"><span class="ilabel">②</span>教育主张：有教无类；学而优则仕；<span class="anno">【教育的目的为了培养君子及政治家】</span></p><h6>③ 教学原则和方法（☆☆☆☆☆）：</h6><p class="subitem"><span class="slabel">孔子  学思行并重—</span>学而不思则罔，思而不学则殆。</p><p class="subitem"><span class="slabel">启发教学—</span>不愤不启，不悱不发。<span class="anno">【孔子是世界上第一个提出启发式教学的人】</span> 因材施教—“求也退，故进之；由也兼人，故退之。”</p><p class="item"><span class="ilabel">④</span>教学内容：《诗》《书》《礼》《易》《乐》《春秋》</p><p class="item"><span class="ilabel">①</span>教育的功能：君子如欲化民成俗，其必由学乎；建国君民，教学为先。--教育与政治的关系</p><p class="item"><span class="ilabel">②</span>豫时孙摩：禁于未发之谓豫；当其可之谓时<span class="anno">【表明了教育的关键期】</span>；不陵节而施之谓孙；<span class="anno">【表明了教育要符合人身心发展的规律，遵循循序渐进的教学原则】</span>相观而善之谓摩。</p><div class="tbl-wrap"><table><thead><tr><th>《学记》</th><th>地位</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>《学记》</td><td>中国古代、世界上最早的一篇专门论述教育、教学问题的论著，成文约战国末期。</td><td>③ 启发式教学：君子之教，喻也；道而弗牵，强而弗抑，开而弗达。【CocoPolaris 说：引导学生,而不是牵着学生走; 鼓励学生,而不强迫学生走;启发学生,而不代替学生走。】</td></tr><tr><td></td><td></td><td>④ 长善救失：教也者，长善而救其失者也。--与长善救失的德育原则一致【CocoPolaris 说：教师,就是发扬学生的优点,并且纠正他们各自缺点的人。】</td></tr></tbody></table></div><div class="tip">⑤ 学不躐等：幼者听而弗问，学不躐等也。--与循序渐进的教学原则一致【CocoPolaris 说：教学要遵循学生的心理发展特点,不能超越次第,要循序渐进。】</div><p class="item"><span class="ilabel">⑥</span>教学相长：学然后知不足，教然后知困…故曰：教学相长也。</p><p class="subitem"><span class="slabel">以下补充仅作了解：</span>其他代表  主要教育思想</p><p class="item"><span class="ilabel">①</span>孟子：提出了性善论，认为教育的目的是培养君子，即“明人伦”。</p><p class="item"><span class="ilabel">②</span>荀子：提出了性恶论，认为“人之性恶，其善者伪也”，强调尊师。</p><p class="item"><span class="ilabel">③</span>墨子：以“兼爱”“非攻”为教，同时注重文史知识的掌握和逻辑思维能力的培养。获取知识的途径为“亲知”、“闻知”、“说知”三种。</p><p class="item"><span class="ilabel">④</span>朱熹：“朱子读书法”。</p><p class="item"><span class="ilabel">⑤</span>韩愈：《师说》-“古之学者必有师；师者，所以传道受业解惑也。”</p><p class="item"><span class="ilabel">②</span>西方： 三师徒（古希腊）   教育思想</p><p class="subitem"><span class="slabel">苏格拉底  雄辩和问答法—</span>“产婆术”<span class="anno">【找茬式，西方最早的启发式教育】</span>    柏拉图</p><p class="item"><span class="ilabel">①</span>代表作：《理想国》；</p><p class="item"><span class="ilabel">②</span>教育的目的：最高目标是培养哲学家兼政治家；最终目的是促使“灵魂转     向”。</p><p class="item"><span class="ilabel">③</span>认为女子和男子享受同样的教育，从事同样的职业。</p><p class="item"><span class="ilabel">④</span>重视早期教育，是“寓学习于游戏”的最早提倡者。<span class="anno">【寓教于乐】</span> 亚里士多德  被称为古希腊百科全书式的哲学家，继承并发展了柏拉图的理性说，认为追 求理性就是追求美德，就是教育的最高目的。</p><p class="item"><span class="ilabel">①</span>代表作：《政治学》</p><p class="item"><span class="ilabel">②</span>历史上首次提出了“教育遵循自然”的原则，注意到了儿童心理发展的自然特点。</p><p class="item"><span class="ilabel">③</span>最早提出自由教育（文雅教育）。 古罗马   教育思想 昆体良  西方教育史上第一个专门论述教育问题的教育家。</p><p class="subitem"><span class="slabel">代表作：</span>《雄辩术原理》又译作《论演说家的教育》或《论演说家的培养》是西方第一本教育专著，也是世界上第一部研究教学方法的著作。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec9"><span class="h3t">三、教育学的独立及多样化发展阶段</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选题，识记，特别注意代表人物、理念及作品之间的对应关系，不要混淆哦~</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>独立阶段代表人物、著作及思想 <span class="anno">【人物下红色字体为记忆口诀。名言部分均可用到综合素质的作文中哦】</span></h4><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>培根（培根首提出）</td><td>“近代实验科学鼻祖”</td><td>《论科学的价值和发展》</td><td>提出的归纳法为教育学的发展奠定了方法论基础【科学归纳法第一人】首次提出把教育学作为一门独立的学科</td></tr></tbody></table></div><p class="subitem"><span class="slabel">口诀：</span>级智夸大独立</p><p class="item"><span class="ilabel">②</span>教学组织：班级授课制（最早提 出） 做选择题的时候注意关</p><p class="item"><span class="ilabel">③</span>教学原则：直观性原则（第一次键词是“开始”还是 从理论上进行了论证）</p><p class="subitem"><span class="slabel">“正式” 补充：</span>最早使用“班级”一词的是文 艺复兴时期的埃拉斯莫斯 <span class="anno">【注意和 班级授课制的区分】</span></p><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>康德（康德首开课）</td><td>最早将教育学作为一门课程在大学里讲授（CocoPolaris 说：第一位大学教育学老师）</td><td>/</td><td>/</td></tr><tr><td>赫尔巴特（巴特来规范）</td><td>“现代教育学之父”“科学教育学奠基人”传统教育学的代表</td><td>《普通教育学》- 标志着规范教育学的建立，正式成为独立学科的标志【正式，规范】做选择题的时候注意关键词是“开始”还是“正式”</td><td>一原则：教育性教学原则【西方教学史上第一次提出了“教育性教学”的概念】名言：“我想不到有任何无教学的教育。正如反过来，我不承认有任何无教育的教学。”【教学过程是知情意统一的过程，既要传授知识，又要进行品德教育】</td></tr></tbody></table></div><p class="subitem"><span class="slabel">二基础：</span>将教育学建立在心理学和 伦理学的基础之上，奠定了科学教育 学的基础。</p><p class="subitem"><span class="slabel">三中心（旧三中心）：</span>“课堂中 心”、“教材中心”“教师中心”</p><p class="anno-line"><span class="anno">【口诀：教师在课堂教教材】</span></p><p class="subitem"><span class="slabel">四阶段：</span>将教学过程分为“明了”、 “联想”、“系统”和“方法”<span class="anno">【口诀：小明联系小方】</span></p><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>杜威（杜威去改变）</td><td>“实用主义教育学代表人物”</td><td>《民主主义与教育》新三中心论：儿童中心（学生中心）、活动中心、经验中心</td><td>实用主义哲学创始人，现代教育理论的代表</td></tr></tbody></table></div><h4><span class="h4num">2</span>其他派代表人物</h4><p class="subitem"><span class="slabel">教育观：</span>①教育即生活，教育即生长、教育即经验的改组或改造，学校即社会；</p><p class="item"><span class="ilabel">②</span>教育无目的论</p><p class="item"><span class="ilabel">③</span>“从做中学”</p><p class="item"><span class="ilabel">④</span>“五步教学法”：困难、问题、假设、验证、结论</p><p class="anno-line"><span class="anno">【口诀：三中心四即五步法】</span></p><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>洛克（洛克在白板上画绅士漫画）</td><td>英国哲学家、形式教育论代表人物</td><td>《教育漫话》</td><td>①提出“白板说”；②主张“绅士教育”</td></tr></tbody></table></div><p class="item"><span class="ilabel">②</span>“教育史上小学各科教 学法奠基人”</p><p class="item"><span class="ilabel">③</span>慈爱的儿童之父</p><p class="item"><span class="ilabel">④</span>形式教育论代表人物</p><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>斯宾塞（斯宾塞准备学知识）</td><td>英国思想家、社会学家、实质教育代表人物</td><td>《教育论》最早将“课程”作为专业术语提出，出自《什么知识最有价值》</td><td>①反对形式教育，重视实科教育；②教育预备生活说：为完满生活做准备。知识点补充：博比特《课程》一书标志着课程作为专门研究领域</td></tr></tbody></table></div><h4><span class="h4num">3</span>马克思主义教育学</h4><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>马卡连柯</td><td>苏联教育家</td><td>《教育诗》《父母必读》</td><td>集体主义教育思想：用集体的力量影响个人 + 用个人的力量影响集体</td></tr><tr><td>凯洛夫</td><td>苏联教育家</td><td>《论共产主义教育》《教育学》- 世界第一部马克思主义的教育学著作</td><td>/</td></tr></tbody></table></div><p class="subitem"><span class="slabel">知识点补充：</span>新中国成立初期全国上下形成学习苏联的热潮，高等师范院校将其作为教材。 杨贤江 中国教育学家 《新教育大纲》- 我国第一部马克思主义的教育学著作 克鲁普斯卡娅 《国民教育与民主主义》- 列宁老婆，最早以马克思主义为基础，探讨教育问题的教育家<span class="anno">【了解即可】</span></p><h4><span class="h4num">4</span>深化发展阶段（当代）【口诀：姆有掌握目标，纳来发现结构，瓦根找范例，高度赞发展，巴班最优化，全面和谐好斯基】</h4><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>布卢姆</td><td>美国教育学家</td><td>《教育目标分类学》</td><td>将教育目标分为：认知、情感和动作技能三大领域，提出了掌握学习理论。</td></tr></tbody></table></div><p class="subitem"><span class="slabel">5 条教学原则：</span>高难度、高速度、理 论知识起主导作用、理解学习过程、 使所有学生包括差生都得到一般发展 的原则</p><div class="tbl-wrap"><table><thead><tr><th>人物</th><th>称号</th><th>著作</th><th>教育思想</th></tr></thead><tbody><tr class="first"><td>瓦根舍因</td><td>德国科学教育家</td><td>《范例教学原理》</td><td>创立了范例教学理论</td></tr><tr><td>苏霍姆林斯基</td><td>苏联教育家</td><td>《给教师的100条建议》《把整个心灵献给孩子》</td><td>①全面和谐的教育思想；②他的著作被称为“活的教育学”</td></tr><tr><td>巴班斯基</td><td>苏联教育家</td><td>《教学过程最优化》</td><td>提出教学最优化理论，以最小的代价得到最令人满意的教学效益。应把教学看作一个系统，从系统的整体与部分之间、部分与部分之间，以及系统与外部环境之间相互联系、相互作用中综合地考察</td></tr></tbody></table></div></div></div></section>
+<section class="sec"><h2 id="sec10">第三节 教育与社会的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec11"><span class="h3t">一、教育与社会生产力的关系</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>生产力对教育的制约作用 <span class="anno">【口诀：规（龟）速构防（方法）守（手段）】</span></h4><p class="item"><span class="ilabel">①</span>生产力的发展水平制约教育发展的规模和速度；</p><p class="item"><span class="ilabel">②</span>生产力的发展水平制约教育发展的教育结构和人才培养规格；</p><p class="item"><span class="ilabel">③</span>生产力的发展水平制约教学内容、方法、组织形式、手段。</p><h4><span class="h4num">2</span>教育对生产力的促进作用（教育的经济功能）<span class="anno">【口诀：两再一新促生产】</span>（2023 上简答）</h4><p class="item"><span class="ilabel">①</span>教育再生产劳动力；</p><p class="item"><span class="ilabel">②</span>教育再生产科学知识；</p><p class="item"><span class="ilabel">③</span>教育是技术创新的重要手段。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec12"><span class="h3t">二、教育与社会政治经济制度的关系</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>政治经济制度对教育的制约作用</h4><p class="anno-line">【口诀：体内（教育内容+管理体制）性质两权（领导权+受教育权）一目的 / 5 个决定】</p><p class="item"><span class="ilabel">①</span>政治经济制度决定教育的性质；</p><p class="item"><span class="ilabel">②</span>政治经济制度决定教育的宗旨与目的；</p><p class="item"><span class="ilabel">③</span>政治经济制度决定教育的体制和教育的内容；</p><p class="item"><span class="ilabel">④</span>政治经济制度决定教育领导权；</p><p class="item"><span class="ilabel">⑤</span>政治经济制度决定受教育权。</p><h4><span class="h4num">2</span>教育对政治经济制度的影响作用（教育的政治功能）<span class="anno">【口诀：人鱼（舆论）公主（民主）促政治】</span></h4><p class="item"><span class="ilabel">①</span>教育为政治经济制度培养所需要的人才；（是教育作用于政治经济制度的主要途径）</p><p class="item"><span class="ilabel">②</span>教育促进政治民主化；</p><p class="item"><span class="ilabel">③</span>教育是一种影响政治经济制度的舆论力量；</p><p class="item"><span class="ilabel">④</span>教育能够完成年轻一代的政治社会化。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec13"><span class="h3t">三、教育与文化的关系</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>文化对教育发展的制约作用 （了解，可忽略）</h4><p class="item"><span class="ilabel">①</span>文化影响教育的价值取向；</p><p class="item"><span class="ilabel">②</span>文化影响教育目的的确立；</p><p class="item"><span class="ilabel">③</span>文化影响教育内容的选择；</p><p class="item"><span class="ilabel">④</span>文化影响教育教学方法的使用。</p><h4><span class="h4num">2</span>教育对文化发展的促进作用 （教育的文化功能）<span class="anno">【口诀：两传选新促文化】</span></h4><p class="item"><span class="ilabel">①</span>教育具有传递和保存文化的作用；</p><p class="item"><span class="ilabel">②</span>教育具有传播和交流文化的作用；</p><p class="item"><span class="ilabel">③</span>教育具有选择和提升文化的作用；</p><p class="item"><span class="ilabel">④</span>教育具有更新和创造文化的作用。</p></div></div></section>
+<section class="sec"><h2 id="sec14">第四节 教育与人的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec15"><span class="h3t">一、个人身心发展的一般规律</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答（综合素质中也有，可以结合看）</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>顺序性：</h4><p class="item"><span class="ilabel">①</span>具体表现：身心发展是一个由低级到高级、由量变到质变的连续不断的发展过程。</p><p class="anno-line"><span class="anno">【关键词：从…到，先…后】</span></p><p class="item"><span class="ilabel">②</span>教育启示：教育时，必须遵循由具体到抽象、由浅入深、由简到繁、由低级到高级的顺序、循序渐进，不能“揠苗助长”或“陵节而施”。<span class="anno">【关键词：循序渐进，同时记住反例的成语】</span></p><h4><span class="h4num">2</span>阶段性：</h4><p class="item"><span class="ilabel">①</span>具体表现：不同年龄阶段表现出不同的特点，面临着不同的任务。</p><p class="anno-line"><span class="anno">【强调某个阶段的特征，关键词：不同阶段/时期】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>① 童年期学生的思维特点：具有较大的具体性和形象性，抽象思维能力比较弱； 少年期的学生思维特点：抽象思维已经有了很大发展，但经常需要具体的感性经验做支持。</div><p class="item"><span class="ilabel">②</span>心理学家将少年期称（11-14 岁）为“危险期”或“心理断乳期”。</p><p class="item"><span class="ilabel">②</span>教育启示：根据不同年龄阶段的学生，采取不同的教育内容和方法，分阶段教学，不能搞“一刀 切”。</p><h4><span class="h4num">3</span>不平衡性：</h4><p class="item"><span class="ilabel">①</span>具体表现：一方面是指身心发展的同一方面的发展速度，在不同的年龄阶段是不平衡的。<span class="anno">【关键词：同一方面，不同速，比如身高和体重】</span>另一方面是指身心发展的不同方面的发展速度不平衡。</p><p class="anno-line"><span class="anno">【关键词：不同方面，不同步】</span></p><p class="item"><span class="ilabel">②</span>教育启示：抓关键期 （劳伦兹提出的）</p><h4><span class="h4num">4</span>互补性：</h4><p class="item"><span class="ilabel">①</span>具体表现：一方面是指机体某一方面的技能受损甚至缺失后，可通过其他方面的超常发展得到部分补偿。<span class="anno">【关键词：身身互补】</span>另一方面互补性也存在心理机能与生理机能之间。人的精神力量、意志和情绪状态对整体机能起到的调节作用。<span class="anno">【关键词：身心互补，比如身残志坚】</span></p><p class="item"><span class="ilabel">②</span>教育启示：应结合学生实际，扬长避短，长善救失，注意发现学生的自身优势，促进学生个性的发展。</p><h4><span class="h4num">5</span>个别差异性：</h4><p class="item"><span class="ilabel">①</span>具体表现：个体与个体之间在身心方面发展方面不同；<span class="anno">【关键词：个体与个体不同，比如有的人“聪明早慧”，有的人“大器晚成”】</span>群体与群体之间在身心方面发展也不同，主要表现在男女性别差异，还包括由社会地位、角色和交往群体的差异。<span class="anno">【关键词：群体与群体不同】</span></p><p class="item"><span class="ilabel">②</span>教育启示：因材施教，引导学生扬长避短、发展个性。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec16"><span class="h3t">二、影响人发展因素的理论</span><span class="badge-star">☆☆☆☆</span><span class="badge-type">单选，借助人物的名言或实验考察，不会直接考察定义，所以理解为主</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>内发论（遗传决定论）</h4><p>内发论强调遗传在人的发展中的决定作用。影响人的身心发展的力量主要源自于人自身的内在需要，身心发展的顺序是由身心成熟机制决定的。<span class="anno">【关键词：遗传、人自身的内在需要】</span></p><p class="subitem"><span class="slabel">代表人物：</span>孟子、弗洛伊德、威尔逊、格赛尔、霍尔、高尔顿 <span class="anno">【口诀：孟子弗（复）霍（活）迅高格（歌）】</span></p><p class="item"><span class="ilabel">①</span>孟子：性善论，提出“仁义礼智，非由外铄我也，我固有之也”。</p><p class="item"><span class="ilabel">②</span>弗洛伊德：认为性本能是最基本的自然本能，是推动人发展的根本动因。</p><p class="item"><span class="ilabel">③</span>威尔逊：把“基因复制”看作是决定人的一切行为的本质力量。</p><p class="item"><span class="ilabel">④</span>格赛尔：“成熟势力说”+“双生子爬梯实验”<span class="anno">【重点：双生子实验】</span></p><p class="item"><span class="ilabel">⑤</span>霍尔：“一两的遗传胜过一吨的教育”</p><p class="item"><span class="ilabel">⑥</span>高尔顿：“优生学”的代表人物，《天才的遗传》</p><h4><span class="h4num">2</span>外铄论（环境决定论）</h4><p>外铄论认为人的发展主要是依靠外在的力量，诸如环境的刺激和要求、他人的影响和学校的教育等。</p><p class="subitem"><span class="slabel">代表人物：</span>荀子、洛克 、华生、斯金纳<span class="anno">【口诀：哪（纳）寻（荀）落（洛）花（华）生】</span></p><p class="item"><span class="ilabel">①</span>荀子：“人之性恶，其善者伪也”，“化性而起伪”。<span class="anno">【和孟子相对】</span></p><p class="item"><span class="ilabel">②</span>洛克：“白板说”</p><p class="item"><span class="ilabel">③</span>华生：“给我一打健康的婴儿，不管他们的祖先的状况如何，我可以任意把他们培养成从领袖到小偷等各种类型的人”</p><p class="item"><span class="ilabel">④</span>斯金纳：认为人的行为乃至复杂的人格都可以通过外在的强化或惩罚手段加以塑造或改变。</p><h4><span class="h4num">3</span>多因素相互作用论（了解即可）</h4><p>辩证唯物主义认为，人的发展是个体的内在因素和外部环境在个体活动中相互作用的结果。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec17"><span class="h3t">三、影响人身心发展的因素及作用</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答-25 上已考简答/26 上已考辨析/24上以考材料题</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>遗传</h4><h6>① 遗传素质为人的身心发展提供了生理前提，使人的发展成为可能。（☆☆☆☆☆）</h6><div class="tip"><span class="callout-label">CocoPolaris 说</span>遗传的前提性和可能性。</div><p class="item"><span class="ilabel">②</span>遗传素质的成熟程度制约着人的发展过程及其阶段。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>比如让6 个月的婴儿学走路，不但徒劳还无益。只有当个体的身心发展达到了一定的水平，才具有学习一定知识与技能的条件与可能。</div><p class="item"><span class="ilabel">③</span>遗传素质的差异性对人的发展有一定的影响。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>一个神经活动灵敏、智力超群的儿童比较容易被教育成才；一个天生智力低下的儿童，对其教育具有很大的困难。（智力超群的儿童v.s. 智力低下的儿童）</div><h6>④ 遗传素质具有可塑性。（☆☆☆☆☆）<span class="anno">【这一小点可以单独考一道大题，以下需要理解后记忆】</span> 随着环境、教育和实践活动的作用或训练，人的遗传素质会逐渐地发展变化，说明人的遗传素质具有可塑性。就遗传基因来说,它决定了个体在生理上的结构上的,甚至行为上的潜在性能,但并非所有的潜在性能都必定可以在那个正在发育着的个体中获得实现。人的生活经验证明,人们由于长期进行某一方面的训练,可以使脑的某一方面反应能力提高。人的遗传素质的发展,也会因人的生活条件的不同,或提前或推迟。所有这些,都说明遗传素质是具有可塑性的。</h6><div class="tip"><span class="callout-label">CocoPolaris 说</span>可塑性：会随着环境的变化而变化，遗传只是提供了潜在可能性，是否能够实现还需考虑各种因素。伤仲永就是典型的例子。</div><h4><span class="h4num">2</span>环境</h4><p>环境为人的发展提供了现实性。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>“孟母三迁”、墨子“染于苍则苍，染于黄则黄”；荀子劝学中“蓬生麻中，不扶而直；白沙在涅，与之俱黑”</div><h4><span class="h4num">3</span>学校教育（☆☆☆☆☆）<span class="anno">【这一小点可以单独考简答题，以下文字需要理解后记忆】</span></h4><h5>（1）学校教育在人的发展中起主导作用的原因</h5><p><span class="anno">【口诀：三有一训练，控制影响全面】</span></p><p class="item"><span class="ilabel">①</span>学校教育是有目的、有计划、有组织地培养人的活动，它规定着人的发展方向。</p><p class="item"><span class="ilabel">②</span>学校教育是由受过专门训练的教师进行的，相对其他教育而言效果更好。</p><p class="item"><span class="ilabel">③</span>学校教育能有效地控制和协调影响学生发展的各种因素。</p><p class="item"><span class="ilabel">④</span>学校教育给人的影响比较全面、系统和深刻。</p><h5>（2）学校教育在人的发展中起主导作用的表现</h5><p><span class="anno">【口诀：延（严）规范，速（塑）个性】</span></p><p class="item"><span class="ilabel">①</span>学校教育按社会对个体的基本要求对个体发展方向做出社会性规范；（方向性）</p><p class="item"><span class="ilabel">②</span>学校教育具有加速个体发展的特殊功能；</p><p class="item"><span class="ilabel">③</span>学校教育，尤其基础教育对个体发展的影响具有即时和延时的价值。</p><p class="item"><span class="ilabel">④</span>学校教育具有开发个体特殊才能和发展个性的功能。</p><h4><span class="h4num">4</span>人的主观能动性（内在动力）</h4><p>人的主观能动性是人发展的内在动力，对人的发展起决定作用。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>出淤泥而不染 备注：马克思主义认为，人的发展是社会历史的产物，受到多种因素的影响。因此，马克思主义关于 影响人的发展因素理论认为，人的发展是个体的内在因素（如先天遗传的素质、主观能动性等）与外 部环境（如外在刺激的强度、社会的发展水平、个体的文化背景等）在个体活动中相互作用的结果。 因此，遗传、环境、学校教育和个体的主观能动性均在人的身心发展中起着重要作用。</div></div></div></section>
+<section class="sec"><h2 id="sec18">第五节 教育制度</h2><div class="kcard"><div class="kcard-head"><h3 id="sec19"><span class="h3t">一、教育制度的概念</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>广义的教育制度指国民教育制度，是一个国家为实现其国民教育目的，从组织系统上建立起来的一切教育设施和有关的规章制度。</h4><h4><span class="h4num">2</span>狭义的教育制度指学校教育制度，简称学制，是一个国家各级各类学校的总体系，具体规定了各级各类学校的性质、任务、目的、入学条件、修业年限以及它们之间的相互衔接关系。学校教育制度处于国民教育制度的核心和主体地位，体现了一个国家国民教育制度的实质。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span></div><p class="item"><span class="ilabel">1）</span>辨析题中，注意教育制度的广义与狭义之分，如出现混淆情况，皆为错误。比 如教育制度就是指学校教育制度（×），作答时需要指出广义的教育是….狭义的教育是….所以，此题 错误。</p><p class="item"><span class="ilabel">2）</span>在做选择题时狭义的教育制度更多会以学制的简称出现，同时需要记清楚学制都具体规定了哪些 内容（加粗红色字体的部分），可以联想自己的大学，①你所在的大学性质是什么？公办的还是私立 的？</p><p class="item"><span class="ilabel">②</span>所在大学的任务是什么？目的是什么？培养什么类型的人才？是理工类的还是文科类的？</p><p class="item"><span class="ilabel">③</span>所在学校的入学条件是什么？比如高考分数线的要求</p><p class="item"><span class="ilabel">④</span>所在学校的修业年限是几年？四年还是三年制？</p><div class="tip">⑤ 学校间的相互衔接关系~小升初，初升高，高升大学是不是都是相互衔接的呀？不是割裂的。<span class="anno">【以防记忆时有小点遗漏，大家以自己的学校去问以上问题就可以完美囊括所有的要点了】</span> <span class="anno">【CocoPolaris 补充】</span> 各级各类学校的类型包括：幼儿教育、初等教育、中等教育和高等教育。其中，中等教育的普通中学分为初中和高中两个阶段， 其主要任务包括两个方面：一是为社会主义建设事业培养劳动后备力量；二是为高一级学校培养合格的新生。 普通中学的任务是为高一级学校输送合格的新生。（×）<span class="anno">【2023 下 辨析题】</span></div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec20">二、建立学制的依据（☆☆☆☆☆）【单选/简答】【口诀：社会+人+学制本身】</h3></div><div class="kcard-body"><h4><span class="h4num">1</span>社会依据：</h4><p class="item"><span class="ilabel">①</span>生产力发展水平和科学技术发展状况；</p><p class="item"><span class="ilabel">②</span>社会政治经济制度；</p><p class="item"><span class="ilabel">③</span>文化传统；</p><p class="item"><span class="ilabel">④</span>人口因素。</p><h4><span class="h4num">2</span>人的依据：青少年儿童身心发展规律。</h4><h4><span class="h4num">3</span>学制本身的依据：本国学制历史发展和国外学制的影响。</h4></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec21"><span class="h3t">三、学校教育制度的发展</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选，理解性记忆即可</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>前制度化教育：始于原始社会教育，也是一种实体化教育。教育实体化的出现，意味着教育形态趋于定型。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>“前”在此处可以理解为“无“，所以前制度化教育的也就是没有制度的阶段，想想我们古代的私塾教育，有老师，有学生，有教学场所，但是没有固定的学校制度。</div><h4><span class="h4num">2</span>制度化教育：最早产生于欧洲，制度化教育是指正规教育。学校教育系统的形成意味着教育制度化的形成。制度化教育建立的典型特征是学制的建立。（清朝末年，“废科举，兴学堂”，标志着我国进入了制度化教育阶段√）</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>我们现在的教育便是如此。学校教育有层次结构，按照学生的年龄分级教学，从初等学校到大学，从全日制普通大学到职业技术学校。</div><h4><span class="h4num">3</span>非制度化教育：推崇的理念是“教育不应再限于学校的围墙之内”。构建学习化社会（=终身教育）的理想正是非制度化教育的重要体现。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>“非”在此处可以理解为“超越”的意思。超越现有的制度束缚，不局限于学校围墙之内。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec22"><span class="h3t">四、现代学校教育制度的类型</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选，理解性记忆即可</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>双轨制：英法德的学校制度是双轨制的典型代表。一轨是为资产阶级子女设立的，自上而下的，从大学到中学，具有较强的学术性；另一轨是为劳动人民子女设立的，从小学到中等职业学校，是为培养劳动者服务的。（欧洲实行的这种学制）</h4><p class="subitem"><span class="slabel">特点：</span>两轨互不相通，互不衔接。<span class="anno">【口诀：平行不相交】</span></p><h4><span class="h4num">2</span>单轨制：19 世纪末20 世纪初，在美国形成的一种学制。所有的学生在同样的学校系统中学习，从小学、中学到大学，各级各类学校相互衔接。</h4><h4><span class="h4num">3</span>分支制：20 世纪上半叶由苏联建立的一种学制形式，是介于双轨学制和单轨学制之间的学制结构。分支型学制在基础教育阶段是共同的，儿童在接受了共同的基础教育后再行分流，一部分继续接受普通教育，一部分接受职业教育后就业。</h4><div class="note"><span class="callout-label">注意</span>我国现行的学制是从单轨制发展而来的分支学制，所以代表国家为前苏联和中国。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec23"><span class="h3t">五、我国学制的沿革</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选，理解性记忆即可</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>旧中国的学制沿革 <span class="anno">【口诀：人（壬）颁布，鬼（癸）实施，丑男女有资本，长期嘘（戌）美国】</span></h4><h5>（1）壬寅学制</h5><p>1902 年，我国正式颁布了第一个现代学制—“壬寅学制”，又称为《钦定学堂章程》，该学制以日本为蓝本，只颁布但没有实施。</p><p class="subitem"><span class="slabel">(2) 癸卯学制：</span>1904 年，清政府颁布并推行了“癸卯学制”，又称为《奏定学堂章程》，该学制以日本为蓝本，是中国实行的第一个现代学制。体现的思想是“中学为体，西学为用”。该学制首次纳入师范教育并实施。该学制规定男女不可以同校，轻视女子教育，体现了半封建半殖民地社会 的特点。</p><p class="subitem"><span class="slabel">(3) 壬子癸丑学制：</span>1912-1913 年，南京临时政府颁布的，该学制倡导男女平等，允许男女同校，废除了小学与师范学校的读经课堂，充实了自然科学的内容，并将学堂改为学校。是我国教育史上第一个具有资本主义性质的学制。</p><p class="subitem"><span class="slabel">(4) 壬戌学制：</span>1922 年，北洋军阀统治下，以美国为蓝本，颁布了“壬戌学制”，又称为“新学 制”或“六三三学制”（小学六年，初中三年，高中三年）。该学制明确以学龄儿童和青少年身心发 展规律作为划分学校教育阶段的依据，这在我国现代学制史上是第一次。</p><div class="tip"><span class="anno">【CocoPolaris 拓展补充】</span> 壬戌学制中列出的七项原则： 第一，适应社会进化之需要；第二，发挥平民教育精神；第三，谋个性之发展；第四，注意国民经济 力 ；第五，注意生活教育；第六，使教育易于普及；第七，多留各地方伸缩余地。 壬戌学制的主要特点：①缩短小学修业年限，延长中学修业年限。</div><p class="item"><span class="ilabel">②</span>若干措施注意根据地方实际需 要，不作硬性规定。</p><p class="item"><span class="ilabel">③</span>重视学生的职业训练和补习教育。</p><p class="item"><span class="ilabel">④</span>课程和教材内容侧重实用。</p><p class="item"><span class="ilabel">⑤</span>实行选科制 和分科教育，兼顾学生升学和就业两种准备。[中等教育阶段是壬戌学制改革的重点，也是精粹所在]</p><h4><span class="h4num">2</span>新中国的学制沿革 （了解即可）</h4><p>目前，我国义务教育制度的实际情况主要有“六三制”（小学六年，初中三年）、“五四制”（小学五年，初中四年）和“九年一贯制”。还有少数地区实行八年制的义务教育，即小学五 年制，初中三年制。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec24"><span class="h3t">六、现代教育制度的改革与发展</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><p>世界各国在学制改革与发展方面存在着共同的趋势，主要表现为：① 义务教育的范围逐步扩大，年限不断延长；</p><p class="item"><span class="ilabel">②</span>普通教育与职业教育朝着相互渗透的方向发展；</p><p class="item"><span class="ilabel">③</span>高等教育大众化、普及化；</p><p class="item"><span class="ilabel">④</span>终身教育体系的建构。<span class="anno">【口诀：义务要延长、职业要综合、高等要大众、终身要建构】</span></p><h4><span class="h4num">1</span>义务教育</h4><p class="item"><span class="ilabel">1）</span>定义：义务教育是指依据法律规定，适龄儿童和青少年都必须接受，国家、社会、学校、家庭必须予以保障的国民教育。</p><h6>2）义务教育的特点：（☆☆☆☆☆）<span class="badge-type">单选/简答</span></h6><p class="item"><span class="ilabel">①</span>强制性：义务教育最本质的特征</p><p class="item"><span class="ilabel">②</span>普及性：全体适龄儿童必须接受义务教育</p><p class="item"><span class="ilabel">③</span>免费性：免除学杂费</p><p class="item"><span class="ilabel">④</span>公共性：属于社会公共事业，属于国民教育范畴</p><p class="item"><span class="ilabel">⑤</span>基础性：进行的是基础知识、基本技能、基本方法和基本态度方面的教育；是一种全民性的教育，不是精英教育。</p><p class="subitem"><span class="slabel">备注：</span>其中强制性、普及性和免费性是义务教育三个最基本的特征。</p><h4><span class="h4num">2</span>我国义务教育的确定<span class="badge-type">单选</span></h4><p>确立的时间为1986 年，《中华人民共和国义务教育法》的颁布。义务教育法的颁布标志着我 国已确立了义务教育制度，也标志着我国基础教育发展到了一个新阶段。（2006 年进行了二次修 订）</p><p class="subitem"><span class="slabel">备注：</span>我国义务教育的学制年限是多种形式并存的。</p><p class="anno-line"><span class="anno">【前面提及过的六三学制、五四学制、九年一贯以及少数地区的八年义务教育】</span></p><h4><span class="h4num">3</span>终身教育<span class="badge-type">单选</span></h4><h5>终身教育的产生与发展<span class="anno">【三本书四大支柱】</span>：</h5><p class="subitem"><span class="slabel">三本书：</span></p><p class="item"><span class="ilabel">①</span>世界上第一本终身教育专著：1929 英国耶克斯利《终身教育》</p><p class="item"><span class="ilabel">②</span>概念化和体系化的形成：20c60s 法国保罗·朗格朗 《论终身教育》</p><p class="item"><span class="ilabel">③</span>最终形成：1996 联合国教科文组织报告《教育 - 财富蕴藏其中》</p><p class="subitem"><span class="slabel">四大支柱：</span><span class="anno">【四个学会】</span>学会认知、学会做事、学会共同生活和学会生存。</p></div></div></section>
+<section class="sec"><h2 id="sec25">第六节 教育目的</h2><div class="kcard"><div class="kcard-head"><h3 id="sec26"><span class="h3t">一、教育目的的概念</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教育目的的概念（☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>教育目的是把受教育者培养成一定社会需要的人的总要求。</p><p class="item"><span class="ilabel">②</span>教育目的是整个教育工作的方向，是教育活动的出发点和归宿，在教育活动中居于主导地位。</p><p class="item"><span class="ilabel">③</span>广义的概念：人们对受教育者的期望。</p><p class="item"><span class="ilabel">④</span>狭义的概念：各级各类学校在国家对受教育者培养的总的要求的指导下，对人才培养的质量和规格的具体要求。</p><h4><span class="h4num">2</span>教育目的的层次结构（☆☆☆☆☆）<span class="badge-type">单选/辨析</span></h4><p class="item"><span class="ilabel">①</span>国家教育目的 国家的教育目的是国家对培养人的总的要求，它规定着各级各类教育培养人的总的质量规格和标准 要求。</p><p class="item"><span class="ilabel">②</span>各级各类学校的培养目标</p><p class="item"><span class="ilabel">a.</span>培养目标是教育目的的具体化；是结合教育目的、社会要求和受教育者的特点制定的各级各类教育的培养要求；</p><p class="item"><span class="ilabel">b.</span>教育目的与培养目标之间的关系是普遍与特殊的关系。教育目的是针对所有受教育者提出来的；而培养目标是针对特定的教育对象提出的，各级各类学校的教育对象有各自不同的特点，制 定培养目标需要考虑各自学校学生的特点。<span class="anno">【2024 上已考辨析题】</span></p><p class="item"><span class="ilabel">③</span>教师教学目标</p><p class="item"><span class="ilabel">a.</span>教育者在教育教学过程中，在完成某一阶段（如一节课、一个单元或一个学期）工作时，希望受教育者达到的要求或产生的预期变化。</p><p class="item"><span class="ilabel">b.</span>教师的教学目标是微观层次的教育目的，是一切教育活动的基础，也是具体化的培养目标，具有很强的操作性。</p><p class="item"><span class="ilabel">c.</span>教学目标与教育目的、培养目标之间的关系是具体与抽象的关系。目标能测量，目的不能测量。教育目的和培养目标可以理解为是教育意志，它们落实在一系列实现教学目标的行动上。教学目标有次序地渐进为了接近和实现教育目的和培养目标。<span class="anno">【辨析题备考】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>辨析题备考，请注意可以三个层次结构进行考察，也可以小点考察，如上标注。注意理解之间的关系以及关键词。比如教育目的和培养目标是同一概念。（×）答题首先判断对错后，分别解释下教育目的和培养目标的概念以及它们之间的关系即可。</div><h4><span class="h4num">3</span>教育目的的作用（功能）（☆☆☆☆☆）<span class="anno">【单选，理解即可】</span></h4><p class="item"><span class="ilabel">①</span>导向作用：教育目的一经确立，就成为了人们的行动指南，无论对教育者还是受教育者都有目标导向的作用。<span class="anno">【指引方向的作用】</span></p><p class="item"><span class="ilabel">②</span>激励作用：教育目的是一种结果导向。教育目的本身包含了教育对学生成才的期望和要求，这对学生的发展具有很大的激励作用。<span class="anno">【积极性】</span></p><p class="item"><span class="ilabel">③</span>评价作用：教育目的是衡量和评价教育实施效果的根本依据和标准。</p><h4><span class="h4num">4</span>教育目的确立的依据（☆☆☆☆☆）<span class="anno">【单选/简答】</span><span class="anno">【口诀：三人一社会】</span></h4><p class="item"><span class="ilabel">①</span>我国特定的社会政治、经济、文化背景。 生产力水平和政治经济制度决定了教育目的的性质、方向和内涵。</p><p class="item"><span class="ilabel">②</span>受教育者的身心发展规律。（人）</p><p class="item"><span class="ilabel">③</span>制定者的教育理想和价值观。（人）</p><p class="item"><span class="ilabel">④</span>我国教育目的确立的理论依据是马克思关于人的全面发展学说。 教育与生产劳动相结合是实现人的全面发展的唯一途径（根本途径）。</p><div class="note"><span class="callout-label">注意</span><span class="anno">【①和④下面写的内容看，简答题时这句话可以不写，单选备考】</span></div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec27"><span class="h3t">二、教育目的的理论</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>社会本位论：教育的根本目的是由社会发展的需要所决定的，至于人的潜能与个性的需要是无关紧要的。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>培养社会发展需要的公民。 代表人物：荀子、柏拉图、赫尔巴特、涂尔干、凯兴斯泰纳、孔德 <span class="anno">【口诀：纳（凯兴斯泰纳）社会恐（孔德）吓（赫尔巴特）图（涂尔干）图（柏拉图）】</span> 名言：“真正的个人不存在的，只有人类才存在，因为不管从哪个方面看，我们个人的一切发展都有赖于社会”— 孔德 “教育就是一种使年轻一代系统地社会化的过程”— 涂尔干 “国家的教育制度只有一个目标，就是造就公民” — 凯兴斯泰纳</div><div class="tip"><span class="callout-label">CocoPolaris 说</span>单选题考察时，也经常使用代表人物说过的话，如果这样考就很简单哦，看句子里的关键词即可辨别属于哪个理论。</div><h4><span class="h4num">2</span>个人本位论：教育的根本目的是充分发展个人的潜能与个性，至于社会的要求是无关紧要的。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>从个体需要出发，培养自然人。 代表人物：孟子、卢梭、罗杰斯、福禄贝尔、裴斯泰洛齐、马斯洛、康德<span class="anno">【口诀：啰嗦（卢梭）人福禄(福禄贝尔)齐（裴斯泰洛齐）】</span></div><h4><span class="h4num">3</span>教育无目的论</h4><p>强调的是教育过程以内的目的，即每一次教育活动的具体目的；无目的指的是无一般的、抽象的目的。</p><p class="subitem"><span class="slabel">代表人物：</span>杜威</p><h4><span class="h4num">4</span>生活本位论</h4><p class="item"><span class="ilabel">①</span>斯宾塞：教育准备生活说—为完美生活做准备。</p><p class="item"><span class="ilabel">②</span>杜威：教育适应生活说—教育即生活；教育即生长；学校即社会。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>陶行知（杜威的学生）的“生活教育理论”：生活即教育，社会即学校，教学做合一 <span class="anno">【杜威和陶行知的理论很容易混淆，一定要区分清楚哦~】</span></div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec28">三、我国教育目的的基本精神（☆☆☆☆☆）【单选/简答】【口诀：全面发展社会人才素质】</h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>社会主义是我国教育性质的根本所在；坚持社会主义方向是我国教育目的的根本性质。</p><p class="item"><span class="ilabel">②</span>使受教育者德、智、体、美等方面全面发展；</p><p class="item"><span class="ilabel">③</span>注重提高全民族素质；</p><p class="item"><span class="ilabel">④</span>为经济建设和社会全面发展培养各级各类人才。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec29">四、全面发展的教育（☆☆☆☆☆）【单选/26 上简答（体育的意义）/2025 上辨析已考】 德育、智育、体育、美育和劳动技术教育是全面发展教育的基本组成部分。</h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>德育：德育是引导学生领悟社会主义思想观点和道德规范，组织和指导学生的道德实践，培养学生的社会主义品德的教育。<span class="anno">【灵魂与统帅的作用】</span></p><p class="item"><span class="ilabel">②</span>智育：智育是授予学生系统的科学文化知识、技能，发展他们的智力的教育。<span class="anno">【基础和前提的作用】</span></p><p class="item"><span class="ilabel">③</span>体育：体育是增强学生体质，使学生逐步掌握体育运动的基本知识和技能的教育。<span class="anno">【物质基础】</span></p><p class="item"><span class="ilabel">④</span>美育：美育是培养学生正确的审美观，发展他们鉴赏美、创造美的能力，培养他们的高尚情操与文明素质的教育。<span class="anno">【动力作用】</span></p><p class="item"><span class="ilabel">⑤</span>劳动技术教育：劳动技术教育是引导学生掌握劳动技术知识和技能，形成劳动态度和习惯的教育。</p><p class="anno-line"><span class="anno">【实践基础】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>全面发展是包括学生在德、智、体、美、劳等方面相互渗透和相互协调的发展。全面发展不是平均发展。<span class="anno">【2022 下辨析题】</span>全面发展就是学生德、智、体、美、劳五方面的平均发展。（×）</div><div class="tip"><span class="anno">【CocoPolaris 拓展补充1——体育】</span> 毛~主~xi 在1917 年初出刊的《新青年》杂志上以文言文发表《体育之研究》一文，明确阐述“德智体”三育并重的教育思想。</div><div class="tip"><span class="callout-label">CocoPolaris 说</span>看到《体育之研究》或强调“德智体”三育并重，就要对应上毛爷爷哦~ <span class="anno">【CocoPolaris 拓展补充2——美育原则】</span> 实施学校美育要遵循以下原则：</div><p class="item"><span class="ilabel">①</span>形象性原则：美育强调通过具体、生动的艺术形象，使学生能够直接感知美的形象，培养审美能力。例如，只有直观看到花枝的俊俏、色彩的艳丽，才可以深刻地感受到花的美。</p><p class="item"><span class="ilabel">②</span>情感性原则：美育注重激发学生的情感共鸣，通过艺术作品引导学生感受美、表达美，促进情感的发展。例如，欣赏齐白石画的虫鱼、花卉，感知到的不只是花鸟虫鱼，而是那清新奔放的春天般的气息引起的快慰和喜悦。</p><p class="item"><span class="ilabel">③</span>活动性原则：美育倡导在实践中学习，通过参与艺术创作、欣赏等活动，增强学生的审美体验和实践能力。例如，参观美术展、参加大合唱或各种体艺活动比赛等。</p><p class="item"><span class="ilabel">④</span>差异性原则：对学生进行美育应当根据学生年龄、个性差异及审美兴趣爱好的不同，选择不同的内容、采用灵活多样的方式进行，使他们对美和艺术的兴趣爱好与美的创造才能得到发展。例如，有的人爱赏春兰，有的人喜好秋菊，有的人则酷爱冬梅，有的人向往江河湖海。</p><p class="item"><span class="ilabel">⑤</span>创造性原则：在进行美育教育时要求具有丰富的想象力，应引导学生创造性地感知、理解和创造美。能够在艺术活动中探索和表达独特的审美观点，培养创新精神。例如，达芬奇从小爱绘画，画的就是生活中常见的东西，他的老师就教他从画鸡蛋开始，每天画几十张，锻炼毅力，培养创造力，最终成为了著名画家。</p><p class="subitem"><span class="slabel">练一练：</span>老师在对学生进行美育引导时，要使学生对太阳和灯光产生情感，就要引导他们去欣赏漫天红霞的日出，去感受红绿灯指导下众多的车辆、人流繁忙而有序地运转的都市之美，从而对太阳和灯光产生情感。这体现了美育原则中的(     )。   <span class="anno">【答案B】</span></p><p class="item"><span class="ilabel">A.</span>差异性原则</p><p class="item"><span class="ilabel">B.</span>形象性原则</p><p class="item"><span class="ilabel">C.</span>活动性原则</p><p class="item"><span class="ilabel">D.</span>情感性原则</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>美育是全面发展中非常重要的一环，近几年也一直被各种强调的教育热点。25 上首次出现在教资笔试中，虽考察的是选择题，根据题干也能做出来，但仍需引起重视，也可考察简答题。</div></div></div></section>
+<section class="sec"><h2 id="sec30">第七节 教育研究的基本方法 （☆）【单选，有印象即可】</h2><div class="sec-lead"><p class="item"><span class="ilabel">①</span>观察法 – 最基本的研究方法</p><p class="item"><span class="ilabel">②</span>调查法 – 关键词：问卷、访谈</p><p class="item"><span class="ilabel">③</span>历史法 – 关键词：揭示本质和规律的方法</p><p class="item"><span class="ilabel">④</span>实验法 – 关键词：控制或创设条件，探讨因果关系的研究方法</p><p class="item"><span class="ilabel">⑤</span>教育行动研究 – 关键词：一线老师、研究与活动一体化</p><p class="item"><span class="ilabel">⑥</span>教育叙事研究 – 关键词：叙事、讲故事</p></div></section>
+    <div class="nav"><span></span><a href="02_第二章_中学课程.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText && content.childNodes.length > 0) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) {
+          var parts = splitItem(child);
+          var subfold = document.createElement('div');
+          subfold.className = 'subfold';
+          var subHead = document.createElement('div');
+          subHead.className = 'subfold-head fold-head';
+          subHead.setAttribute('aria-expanded', 'false');
+          subHead.appendChild(makeArrow());
+          subHead.appendChild(parts.label);
+          var subBody = document.createElement('div');
+          subBody.className = 'subfold-body fold-body';
+          if (parts.content) subBody.appendChild(parts.content);
+          subfold.appendChild(subHead);
+          subfold.appendChild(subBody);
+          parent.appendChild(subfold);
+          bindToggle(subHead, subBody);
+          stack.push({ level: level, head: subHead, body: subBody });
+        } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child);
+      }
+    });
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中学教学 - 中学科二讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 教学概述</a><a class="lv2" href="#sec1">一、教学的概念</a><a class="lv2" href="#sec2">二、教学的意义/作用</a><a class="lv2" href="#sec3">三、教学的任务</a><a class="lv1" href="#sec4">第二节 教学过程</a><a class="lv2" href="#sec5">一、教学过程的概念</a><a class="lv2" href="#sec6">二、教学过程的本质</a><a class="lv2" href="#sec7">三、教学过程的基本规律（☆☆☆☆☆） 【单选/简答/辨析/材料题】【口诀：看和做，知识和能力，老师和学生、学知识有道德】</a><a class="lv2" href="#sec8">四、教学过程的基本阶段</a><a class="lv1" href="#sec9">第三节 教学原则</a><a class="lv2" href="#sec10">一、中学常用的教学原则</a><a class="lv1" href="#sec11">第四节 教学方法</a><a class="lv2" href="#sec12">一、我国中学常用的教学方法</a><a class="lv2" href="#sec13">二、教学方法选用的依据</a><a class="lv2" href="#sec14">三、国外常用的教学方法</a><a class="lv1" href="#sec15">第五节 教学组织形式、教学工作的基本环节和教学评价</a><a class="lv2" href="#sec16">一、常见的教学组织形式</a><a class="lv2" href="#sec17">二、教学工作的基本环节</a><a class="lv2" href="#sec18">三、教学评价</a><a class="lv1" href="#sec19">第六节 教学模式和教学策略</a><a class="lv2" href="#sec20">一、国外的主要教学模式</a><a class="lv2" href="#sec21">二、国外的主要教学策略</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>中学教学</h1>
+      <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
+      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 教学概述</a><a class="lv2" href="#sec1">一、教学的概念</a><a class="lv2" href="#sec2">二、教学的意义/作用</a><a class="lv2" href="#sec3">三、教学的任务</a><a class="lv1" href="#sec4">第二节 教学过程</a><a class="lv2" href="#sec5">一、教学过程的概念</a><a class="lv2" href="#sec6">二、教学过程的本质</a><a class="lv2" href="#sec7">三、教学过程的基本规律（☆☆☆☆☆） 【单选/简答/辨析/材料题】【口诀：看和做，知识和能力，老师和学生、学知识有道德】</a><a class="lv2" href="#sec8">四、教学过程的基本阶段</a><a class="lv1" href="#sec9">第三节 教学原则</a><a class="lv2" href="#sec10">一、中学常用的教学原则</a><a class="lv1" href="#sec11">第四节 教学方法</a><a class="lv2" href="#sec12">一、我国中学常用的教学方法</a><a class="lv2" href="#sec13">二、教学方法选用的依据</a><a class="lv2" href="#sec14">三、国外常用的教学方法</a><a class="lv1" href="#sec15">第五节 教学组织形式、教学工作的基本环节和教学评价</a><a class="lv2" href="#sec16">一、常见的教学组织形式</a><a class="lv2" href="#sec17">二、教学工作的基本环节</a><a class="lv2" href="#sec18">三、教学评价</a><a class="lv1" href="#sec19">第六节 教学模式和教学策略</a><a class="lv2" href="#sec20">一、国外的主要教学模式</a><a class="lv2" href="#sec21">二、国外的主要教学策略</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 教学概述</h2><div class="kcard"><div class="kcard-head"><h3 id="sec1"><span class="h3t">一、教学的概念</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教学的含义</h4><p>教学是在教育目的的规范下，由教师的教与学生的学共同组成的一种活动。<span class="anno">【关键词：双边活动（教+学）】</span></p><h4><span class="h4num">2</span>教学与其他概念的关系</h4><p class="item"><span class="ilabel">①</span>教学与教育的关系：部分与整体的关系。教育包括教学，教学是学校进行教育的一个基本途径。<span class="anno">【教育&gt;教学】</span><span class="anno">【2022 下辨析 已考】</span></p><p class="item"><span class="ilabel">②</span>教学与智育的关系：途径和内容的关系。教学是智育的主要途径，但不是唯一途径。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>教育的定义还记得吗？不记得一定要顺便回头复习一下哦~！ 教学与教育的关系2022 下已考辨析题。教学是学校教育的唯一途径。（×）注意 基本和唯一的关键词。教育也可以通过课外活动、班主任工作、班会等途径实现。 另外教育与智育的关系注意考辨析题的可能性<span class="anno">【2024 上已考辨析题】</span>，教学是智育的主要途径而非唯一途径，注意主要和唯一的关键词，智育还可以通过其他途径实现，比如家庭教育呀、课外活 动啊，益智游戏等；智育也不是教学的唯一教学内容，德智体美劳，教学还需要进行除智育外其他的 教学工作。 <span class="anno">【2024 上 辨析题】</span>教学就是智育。（×） 教学与智育既有联系又有区别。教学是智育的主要途径而非唯一途径。智育主要是发展学生的智力， 向学生传授系统的科学文化知识，它主要是通过教学来完成。但教学不等于智育，教学也是进行德 育、美育、体育、劳动技术教育的途径。同时，智育也需要通过课外活动等其他途径才能全面实现。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec2"><span class="h3t">二、教学的意义/作用</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/24 下简答已考</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教学是学校工作的中心工作，学校工作必须坚持以教学为主。</h4><h4><span class="h4num">2</span>教学是学校进行全面发展教育，实现教育目的的基本途径。</h4><h4><span class="h4num">3</span>教学是传授系统知识、促进学生发展的最有效的形式。</h4></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec3"><span class="h3t">三、教学的任务</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>形式教育论和实质教育论 （☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>形式教育论：重能力轻知识 ，重点在发展学生的智力，训练记忆或思维，不必在意知识的掌握多少。</p><p class="subitem"><span class="slabel">代表人物：</span>洛克、裴斯泰洛齐</p><p class="item"><span class="ilabel">②</span>实质教育论：重知识轻能力，重点在于传授学生实用知识。</p><p class="subitem"><span class="slabel">代表人物：</span>赫尔巴特、斯宾塞</p><div class="note"><span class="callout-label">注意</span>这个知识点只需知道形式教育和实质教育的侧重点是什么即可。</div><h4><span class="h4num">2</span>我国现阶段的教学任务 （☆☆☆☆☆） <span class="anno">【单选/辨析/简答】</span><span class="anno">【口诀：双基+德智体美和个性】</span></h4><p class="item"><span class="ilabel">①</span>传授系统的科学文化基础知识和基本技能。这是教学的首要任务。</p><p class="item"><span class="ilabel">②</span>发展学生智力，培养学生的创造能力和实践能力。</p><p class="item"><span class="ilabel">③</span>发展学生的体力，提高学生的健康水平。</p><p class="item"><span class="ilabel">④</span>培养社会主义品德和审美情趣，为学生形成科学的世界观奠定基础。</p><p class="item"><span class="ilabel">⑤</span>关注学生的个性发展。</p></div></div></section>
+<section class="sec"><h2 id="sec4">第二节 教学过程</h2><div class="kcard"><div class="kcard-head"><h3 id="sec5"><span class="h3t">一、教学过程的概念</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><p>教学过程是教师的教和学生的学所构成的一种双边的活动过程。<span class="anno">【关键词：双边活动（教+学）】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec6"><span class="h3t">二、教学过程的本质</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教学过程是一种认识过程。</h4><h4><span class="h4num">2</span>教学过程是一种特殊的认识过程。</h4><p class="item"><span class="ilabel">①</span>间接性：间接经验（学习人类积累的科学文化知识）</p><p class="item"><span class="ilabel">②</span>引导性：教师指导（学生需要在教师指导下认识，不能独立完成）</p><p class="item"><span class="ilabel">③</span>简捷性：效率高（学习人类积累的经验和科学文化知识走的是一条认识的捷径）</p><p class="item"><span class="ilabel">④</span>教育性：知识+品德（教学过程是知情意统一的过程。既要传授知识，又要进行品德教育）</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec7">三、教学过程的基本规律（☆☆☆☆☆） 【单选/简答/辨析/材料题】【口诀：看和做，知识和能力，老师和学生、学知识有道德】</h3></div><div class="kcard-body"><h4><span class="h4num">1</span>间接经验和直接经验相统一。（间接性规律和学生认识的特殊性规律）</h4><p class="item"><span class="ilabel">①</span>学生以学习间接经验为主。</p><p class="item"><span class="ilabel">②</span>学生学习间接经验要以直接经验为基础。</p><p class="item"><span class="ilabel">③</span>坚持直接经验与间接经验相统一。</p><h4><span class="h4num">2</span>掌握知识与发展能力（智力）相统一。（发展性规律）<span class="badge-type">2025 上辨析已考</span></h4><p class="item"><span class="ilabel">①</span>掌握知识是发展能力（智力）的基础。</p><p class="item"><span class="ilabel">②</span>发展能力（智力）是掌握知识的重要条件。</p><p class="item"><span class="ilabel">③</span>掌握知识与发展能力（智力）具有相互转化的内在机制。</p><div class="note"><span class="callout-label">注意</span>智力是一般能力，第五章会出现。</div><h4><span class="h4num">3</span>教师的主导与学生的主体相统一。（双边性规律）</h4><p class="item"><span class="ilabel">①</span>发挥教师的主导作用。</p><p class="item"><span class="ilabel">②</span>充分发挥学生学习的积极性和主动性。</p><p class="item"><span class="ilabel">③</span>教与学要相长。</p><h4><span class="h4num">4</span>传授知识与思想教育相统一。（教育性规律）</h4><p class="item"><span class="ilabel">①</span>知识是思想品德形成的基础。</p><p class="item"><span class="ilabel">②</span>品德的提高是知识学习的基础。</p><p class="item"><span class="ilabel">③</span>传授知识和思想品德要相结合。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec8"><span class="h3t">四、教学过程的基本阶段</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>激发学生的学习动机。（起始环节）</h4><p>学生的学习兴趣和求知欲是直接推动学生学习的动力。</p><p class="subitem"><span class="slabel">地位：</span>起始阶段、首要环节。</p><h4><span class="h4num">2</span>领会知识。（中心环节）</h4><p>领会知识是教学过程的中心环节，包括感知教材和理解教材。理解教材是学生掌握知识的中心环节。</p><h4><span class="h4num">3</span>巩固知识。</h4><h4><span class="h4num">4</span>运用知识。</h4><h4><span class="h4num">5</span>检查知识。</h4></div></div></section>
+<section class="sec"><h2 id="sec9">第三节 教学原则</h2><div class="kcard"><div class="kcard-head"><h3 id="sec10"><span class="h3t">一、中学常用的教学原则</span><span class="badge-star">☆☆☆☆☆</span></h3></div><div class="kcard-body"><p class="anno-line">【单选/简答/材料题，每个原则都可以单独考简答题，口诀：冯巩找阴（因）凉（量），寻（循）思理直发】</p><h4><span class="h4num">1</span>直观性原则① 概念：直观性教学原则是指在教学中，教师应尽量利用学生的多种感官和已有的经验，通过各种形式的感知，丰富学生的直接经验和感性认识，使学生获得生动的表象，从而比较全面、深刻地掌握知识。<span class="anno">【关键词：利用多种感官，获得感性认识】</span></h4><p class="item"><span class="ilabel">②</span>种类：实物直观：实物、标本、实地观测、现场参观；</p><p class="subitem"><span class="slabel">模象直观：</span>图片、录像、电影、幻灯片等；</p><p class="subitem"><span class="slabel">和言语直观：</span>形象化的语言。</p><p class="item"><span class="ilabel">③</span>贯彻要求：<span class="anno">【口诀：选择语言不滥用】</span><span class="anno">【2024 上已考简答 - 简述提高知识直观效果的途径。】</span> a) 正确选择直观教具和教学手段； b)直观教具的演示要与语言讲解结合； c) 重视运用言语直观; d)防止直观的不当和滥用。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是直观性原则，注意理解句子关键词】</span></p><p class="item"><span class="ilabel">1）</span>不闻不若闻之，闻之不若见之；闻之而不见，虽博必缪。— 荀子</p><p class="item"><span class="ilabel">2）</span>一切知识都是从感官的感知开始的。— 夸美纽斯</p><p class="item"><span class="ilabel">3）</span>儿童是依靠形式、颜色、声音和感觉来进行思维的。— 乌申斯基</p><h4><span class="h4num">2</span>启发性原则</h4><p class="item"><span class="ilabel">①</span>概念：启发性教学原则是指在教学中，教师要主动承认学生是学习的主体，注意调动他们的学习主动性，引导他们独立思考，积极探索，生动活泼地学习，自觉地掌握科学知识和提高分析问题、解决问题的能力。<span class="anno">【关键词：独立思考，积极探索】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求：<span class="anno">【口诀：主动独立动手（得）民主  2022 上简答已考】</span> a) 加强学习目的性教育，调动学生学习的主动性。 b）启发学生独立思考，发展学生的逻辑思维能力。 c）鼓励学生动手，培养他们独立解决问题的能力。 d）发扬教学民主。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是启发性原则，注意理解句子关键词】</span></p><h6>1）不愤不启，不悱不发。— 孔子</h6><p class="item"><span class="ilabel">2）</span>道而弗牵，强而弗抑，开而弗达。— 《学记》</p><p class="item"><span class="ilabel">3）</span>苏格拉底 — 问答法“产婆术”。</p><p class="item"><span class="ilabel">4）</span>一个坏的教师奉送真理，一个好的教师则教人发现真理。— 第斯多惠</p><h4><span class="h4num">3</span>巩固性原则</h4><p class="item"><span class="ilabel">①</span>概念：巩固性原则是指在教学中，要引导学生在理解的基础上牢固地掌握知识和技能，使其长久地保持在记忆中，以便在需要的时候，能够准确无误地将其提取出来，以利于知识技能的运用。<span class="anno">【关键词：理解的基础上掌握知识】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求： a) 在理解的基础上巩固知识。 b) 重视组织各种复习。 c) 在学习新知识的过程中不断练习和复习已有的知识。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是巩固性原则，注意理解句子关键词】</span></p><h6>1）“学而时习之；温故而知新。” — 孔子</h6><h6>2）复习是学习之母。— 乌申斯基</h6><h6>3）熟读而静思。— 朱熹</h6><p class="item"><span class="ilabel">4）</span>所教的科目若不常有适当的反复与练习，教育便不能达到彻底的境地。— 夸美纽斯</p><h4><span class="h4num">4</span>循序渐进原则（系统性原则）</h4><p class="item"><span class="ilabel">①</span>概念：循序渐进教学原则是指教学要按照学科知识的内在逻辑体系和学生认识能力发展的顺序进行教学，使学生系统地掌握基础知识、基本技能，形成严密的逻辑思维能力。<span class="anno">【关键词：知识的内在逻辑+认识能力发展的顺序】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求：<span class="anno">【口诀：有系统，注矛盾，按顺序】</span> a) 按照教材的系统性进行教学。 b）注意主要矛盾，解决好重点与难点的教学。 c）按照学生的认识顺序，由浅入深、由易到难、由简到繁的教学。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是循序渐进性原则，注意理解句子关键词】</span></p><p class="item"><span class="ilabel">1）</span>学不躐等；不陵节而施；杂施而不孙。— 《学记》</p><h6>2）盈科而后进。— 孟子</h6><h4><span class="h4num">5</span>因材施教原则</h4><p class="item"><span class="ilabel">①</span>概念：因材施教原则是指教师要从课程计划、学科课程标准的统一要求出发，面向全体学生，同时又要根据学生的个别差异，有的放矢地进行教学，使每个学生都能扬长避短，获得最佳发展。</p><p class="anno-line"><span class="anno">【关键词：个别差异，有的放矢】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求： a) 教师要坚持课程计划和学科课程标准的统一。 b) 教师要了解学生，从实际出发进行教学。 c) 教师要善于发现每个学生的兴趣、爱好，并创造条件，尽可能地使每个学生的不同特长都得以发挥。</p><p class="subitem"><span class="slabel">补充名言：</span>视其所以，观其所由，察其所安。孔子施教，各因其材。一把钥匙开一把锁。</p><h4><span class="h4num">6</span>理论联系实际原则</h4><p class="item"><span class="ilabel">①</span>概念：理论联系实际原则是指教学要以学习基础知识为主导，教师要引导学生从理论与实际的联系上去理解知识，注意运用知识去分析问题和解决问题，达到学懂会用、学以致用。<span class="anno">【关键词：学懂、学会，学以致用】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求：<span class="anno">【口诀：在村里实际运用知识和技能】</span> a) 书本知识要注重联系实际。 b) 重视培养学生运用知识的能力。 c) 正确处理知识教学与技能训练的关系。 d）补充必要的乡土教材。</p><p class="subitem"><span class="slabel">补充名言：</span>见之不若知之，知之不若行之；读万卷书，行万里路。</p><h4><span class="h4num">7</span>科学性与思想性统一原则<span class="anno">【2018 上材料题+2018 下简答题】</span></h4><p class="item"><span class="ilabel">①</span>概念：科学性与思想性统一原则又叫科学性与教育性相结合原则，是指在教学中，教师既要把现代先进科学的基础知识和基本技能传授给学生，又要结合知识、技能中蕴含的德育因素，对学生进行政治、思想教育和道德品质教育。<span class="anno">【关键词：知识+品德】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求： a) 保证教学的科学性。 b) 发掘教材的思想性，对学生进行品德教育。 c) 教师要不断提高自己的专业水平和思想素质。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是科学性与思想性统一原则，注意理解句子关键词】</span> 我想不到有任何无教学的教育，正如在相反的方面，我不承认有任何无教育的教学。— 赫尔巴特</p><h4><span class="h4num">8</span>量力性原则（可接受性原则）</h4><p class="item"><span class="ilabel">①</span>概念：量力性原则又叫可接受性原则，是指教学活动要适合学生的发展水平。<span class="anno">【关键词：可接受+适合学生发展水平】</span></p><p class="item"><span class="ilabel">②</span>贯彻要求： a) 重视学生的年龄特点。b) 了解学生发展的具体特点。c）恰当地把握教学难度。</p><p class="subitem"><span class="slabel">补充名言：</span><span class="anno">【以下名言体现的都是量力性原则，注意理解句子关键词】</span> 夫知者必量其力所能至而如从事焉。— 墨子 随人分限所及。— 王守仁 语之而不知，虽舍之可也。— 《学记》</p><p class="subitem"><span class="slabel">总结：</span>以上教学原则为每年必考知识点，务必认真记忆~！尤其标红的原则为重点中的重点，贯彻要求也要背诵记忆。</p></div></div></section>
+<section class="sec"><h2 id="sec11">第四节 教学方法</h2><div class="kcard"><div class="kcard-head"><h3 id="sec12"><span class="h3t">一、我国中学常用的教学方法</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/材料分析-教学原则和教学方法可以一起出材料题</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>以语言传递为主的教学方法</h4><p class="item"><span class="ilabel">①</span>讲授法</p><p class="subitem"><span class="slabel">概念：</span>教师运用口头语言系统向学生传授知识的一种方法。</p><p class="subitem"><span class="slabel">分类：</span>讲述、讲解、讲读、讲演</p><p class="subitem"><span class="slabel">优缺点：</span></p><p class="subitem"><span class="slabel">优点：</span>利于发挥教师的主导作用，效率高，能短时间内系统传授大量知识。</p><p class="subitem"><span class="slabel">缺点：</span>不利于学生主动、自觉地学习，不利于因材施教。</p><p class="item"><span class="ilabel">②</span>谈话法</p><p class="subitem"><span class="slabel">概念：</span>也叫问答法，向学生提问，通过问答的形式来引导学生获取或巩固知识的方法。</p><p class="subitem"><span class="slabel">分类：</span>复习谈话和启发谈话。</p><p class="subitem"><span class="slabel">优缺点：</span></p><p class="subitem"><span class="slabel">优点：</span>促进学生独立思考，发挥学生的主动性、因材施教</p><p class="subitem"><span class="slabel">缺点：</span>需要较多时间，需要学生有一定的知识基础</p><p class="item"><span class="ilabel">③</span>讨论法</p><p class="subitem"><span class="slabel">概念：</span>学生在教师的指导下为解决某个问题进行探讨，获取知识的方法。</p><p class="subitem"><span class="slabel">优缺点：</span></p><p class="subitem"><span class="slabel">优点：</span>集思广益、激发兴趣。</p><p class="subitem"><span class="slabel">缺点：</span>需要学生有一定的知识基础，讨论容易脱离主题。</p><div class="note"><span class="callout-label">注意</span>做题时通过主体来区分教授法（老师讲）、谈话法（老师和学生问答）和讨论法（学生间讨论）。</div><p class="item"><span class="ilabel">④</span>读书指导法 <span class="anno">【2023 下简答已考】</span></p><p class="subitem"><span class="slabel">概念：</span>教师指导学生通过阅读教科书和参考书获取或巩固知识的方法。</p><p class="subitem"><span class="slabel">基本要求：</span>§提出明确的目的、要求和思考题； §教给学生读书的方法； §善于在读书中发现问题和解决问题； §适当组织学生交流读书心得。</p><div class="note"><span class="callout-label">注意</span>做题时，读书指导法切记需要学生自行阅读书籍。</div><h4><span class="h4num">2</span>以直观感知为主的教学方法</h4><p class="item"><span class="ilabel">①</span>演示法：教师通过展示实物、模型、图片等直观教具获取知识或巩固知识的方法。</p><p class="item"><span class="ilabel">②</span>参观法：组织学生对实物进行实地观察、研究，获得新知识或巩固知识的方法。</p><h4><span class="h4num">3</span>以训练为主的教学方法</h4><p class="item"><span class="ilabel">①</span>练习法：学生运用所学知识反复地完成一定的操作，以巩固知识。</p><p class="item"><span class="ilabel">②</span>实验法：在教师的指导下，学生使用一定的仪器或设备进行观察和分析。</p><p class="item"><span class="ilabel">③</span>实习作业法：运用所学知识从事一定的工作或操作，将书本知识应用于实践。</p><p class="item"><span class="ilabel">④</span>实践活动法：参加社会实践活动，培养学生解决实际问题的能力。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>做题时，特别注意区分实习作业法和实践活动法，实习作业法跟所学知识联系紧 密；实践活动法跟所学知识联系不紧密。</div><h4><span class="h4num">4</span>以情感陶冶为主的教学方法</h4><p class="item"><span class="ilabel">①</span>欣赏教学法：教学过程中指导学生体验客观事物的真善美的一种教学方法。</p><p class="item"><span class="ilabel">②</span>情境教学法：教师引入或创设以形象为主体的具有一定情绪色彩的具体场景，以引起学生一定的 情感体验。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span> 欣赏教学法—真实场景，观赏；情境教学法—虚拟场景，角色扮演。</div><h4><span class="h4num">5</span>以探究为主的教学方法</h4><p>引导学生通过独立的探索和研究活动而掌握知识。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec13"><span class="h3t">二、教学方法选用的依据</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">简答，口诀：一课程二师生三教学</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教学目标和教学任务的要求。</h4><h4><span class="h4num">2</span>课程性质和特点（教学内容）。</h4><h4><span class="h4num">3</span>学生年龄特征。</h4><h4><span class="h4num">4</span>教学时间、设备、条件。</h4><h4><span class="h4num">5</span>教学手段、教学环境等因素。</h4><h4><span class="h4num">6</span>教师业务水平、实际经验和个性特点。</h4></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec14"><span class="h3t">三、国外常用的教学方法</span><span class="badge-type">了解即可，选择题</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>探究-研讨教学法<span class="anno">【人物：兰本达 关键词：集体交流和研讨】</span></h4><h4><span class="h4num">2</span>纲要图式教学法</h4><p class="anno-line"><span class="anno">【人物：沙塔洛夫 关键词：通过字母、数字、图表、表格、思维导图等展示重点知识】</span></p><h4><span class="h4num">3</span>暗示教学法 【人物：洛扎诺夫 关键词：利用联想、情境、音乐等强化教学效果，坚持理智与情感，有意识与无意识的结合】</h4><h4><span class="h4num">4</span>范例教学法</h4><p class="anno-line">【人物：瓦根 关键词：将事实范例作为教学内容，通过学习典型事例，掌握一般的知识和概念】</p></div></div></section>
+<section class="sec"><h2 id="sec15">第五节 教学组织形式、教学工作的基本环节和教学评价</h2><div class="kcard"><div class="kcard-head"><h3 id="sec16"><span class="h3t">一、常见的教学组织形式</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><p class="subitem"><span class="slabel">古代教学的基本组织形式：</span></p><h4><span class="h4num">1</span>个别教学制 （了解）</h4><p>一个一个轮流教，最古老的形式。古代中国、古埃及和古希腊的学校大都采用个别教学形式。</p><p class="subitem"><span class="slabel">现代教学的基本组织形式：</span></p><h4><span class="h4num">2</span>班级授课制 （☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="subitem"><span class="slabel">概念：</span>又称为课堂教学，是一种集体教学形式。班级授课制是指将学生按照年龄和文化程度编成有固定人数的班级，由教师按照课程计划统一规定的课程内容和教学时数，根据课程表进行分科教学的一种教学组织形式。班级授课制可简单概括为“班”、“课”、“时”。</p><p class="subitem"><span class="slabel">发展：</span>①1632 年，夸美纽斯在《大教学论》中首次从理论上对班级授课制进行了论述。</p><p class="item"><span class="ilabel">②</span>我国最早采用班级授课制的学校是：1862 京师同文馆</p><p class="subitem"><span class="slabel">优点：</span>① 有利于大面积培养人才。</p><p class="item"><span class="ilabel">②</span>有利于发挥教师的主导作用。</p><p class="item"><span class="ilabel">③</span>有利于发挥学生的集体作 用。</p><p class="item"><span class="ilabel">④</span>有利于学生多方面的发展。</p><p class="item"><span class="ilabel">⑤</span>有利于学生获得系统的科学文化知识。</p><p class="anno-line"><span class="anno">【口诀：大养人，教主导，学集体】</span></p><p class="subitem"><span class="slabel">缺点：</span>①不利于学生主体性的发挥。</p><p class="item"><span class="ilabel">②</span>不利于因材施教。</p><p class="item"><span class="ilabel">③</span>不利于培养学生的探索精神、创造能力和实践能力。</p><p class="item"><span class="ilabel">④</span>强调系统的书本知识的学习，容易与实际相脱节。</p><p class="anno-line"><span class="anno">【口诀：限主体、缺创造、易脱节、不能因材施教】</span></p><h4><span class="h4num">3</span>现代教学的辅助形式 – 个别辅导和现场教学（了解，选择题）</h4><p class="item"><span class="ilabel">①</span>个别辅导：针对不同学生的具体情况进行个别辅导的教学组织形式。</p><p class="item"><span class="ilabel">②</span>现场教学：根据一定的教学任务与教学内容，将学生带到与生产或生活相关的场所进行教学的一种 辅助性教学组织形式。</p><h4><span class="h4num">4</span>现代教学的特殊组织形式 – 复式教学（了解，选择题）</h4><p class="subitem"><span class="slabel">复式教学：</span>把两个或两个以上年级的学生编在同一个班里以交替的方式进行教学的组织形式。（偏远 地区）</p><h4><span class="h4num">5</span>其他教学组织形式（了解，选择题）</h4><p class="item"><span class="ilabel">①</span>分组教学：按学生能力或学生成绩把他们分成水平不同的组进行教学的组织形式。</p><p class="subitem"><span class="slabel">外部分组：</span>打破传统的按年龄编班的做法，而按学生的能力或成绩编组。（编班）</p><p class="subitem"><span class="slabel">内部分组：</span>在传统的按年龄编班的班级内，按学生的能力或学习成绩编组。（编组）</p><p class="item"><span class="ilabel">②</span>设计教学法：美教育家克伯屈提出，自己决定学习内容，主张废除班级授课制和教科书。</p><p class="item"><span class="ilabel">③</span>道尔顿制：美国教育家伯克赫斯特提出，教师指定参考书目，学生自学。</p><p class="item"><span class="ilabel">④</span>特朗普制：被称为“灵活的课程表”。这种教学组织形式把大班上课、小班讨论和个人独立研究三种教学形式结合起来。<span class="anno">【口诀：大小个特灵活】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec17"><span class="h3t">二、教学工作的基本环节</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答，可以整体考一个简答，也可以每个环节都考一个简答</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>备课：</h4><p>备课是上课前的准备工作，是教师上好课的先决条件；</p><p class="subitem"><span class="slabel">备课的要求要做好三方面的工作：</span>备教材（钻研教材）、备学生（了解学生）、备教法（设计教法）。</p><p class="subitem"><span class="slabel">同时需要写好三个计划：</span>学期教学进度计划、课题计划和课时计划。</p><p class="subitem"><span class="slabel">教师备课的基本要求：</span></p><p class="item"><span class="ilabel">①</span>要深入准确地把握学科课程标准和教学内容；</p><p class="item"><span class="ilabel">②</span>要有针对性，适应学生的特点；</p><p class="item"><span class="ilabel">③</span>要根据社会发展、科技发展和学生对象的变化，不断更新备课的内容；</p><p class="item"><span class="ilabel">④</span>要充分和周密考虑教学设计诸因素的关系和结构，并做好课前的各种准备。</p><h4><span class="h4num">2</span>上课</h4><p>上课是教学工作的中心环节，是提高教学质量的关键。</p><p class="subitem"><span class="slabel">课程类型：</span><span class="anno">【重点注意区分单一课和综合课】</span></p><p class="item"><span class="ilabel">①</span>按教学任务分：新授课（传授新知识课）；巩固课（巩固新知识）；技能课（培养技能技巧课）；检查课（检查知识课）</p><p class="item"><span class="ilabel">②</span>按一节课完成的任务数分：单一课（只完成一种任务）；综合课（完成两种以上任务）</p><p class="item"><span class="ilabel">③</span>按教学方法分：讲授课；演示课；练习课；实验课；复习课。</p><p class="subitem"><span class="slabel">上好课的具体要求：</span></p><p class="item"><span class="ilabel">①</span>目标明确；</p><p class="item"><span class="ilabel">②</span>内容正确；</p><p class="item"><span class="ilabel">③</span>方法得当；</p><p class="item"><span class="ilabel">④</span>结构合理；</p><p class="item"><span class="ilabel">⑤</span>语言艺术；</p><p class="item"><span class="ilabel">⑥</span>板书有序；</p><p class="item"><span class="ilabel">⑦</span>态度从容；</p><p class="item"><span class="ilabel">⑧</span>充分发挥学生的主体性。<span class="anno">【一堂好课的根本要求：充分发挥学生的主体性（2019 下简答）】</span></p><h4><span class="h4num">3</span>课外作业的布置<span class="anno">【双减政策后对布置作业的要求提高了，2022 下已考简答，单选/材料题】</span> 课外作业是课堂教学的延续和补充，是教学过程的有机组成部分。</h4><p class="subitem"><span class="slabel">布置课外作业的要求：</span><span class="anno">【简答，口诀：合标准、量适宜、有逻辑、启思维、明要求、理论要联实际】</span></p><p class="item"><span class="ilabel">①</span>作业的内容要符合学科课程标准规定的范围与深度，有利于帮助学生巩固和加深对所学知识的认识。</p><p class="item"><span class="ilabel">②</span>作业要有代表性、典型性、分量适宜、难易适度。</p><p class="item"><span class="ilabel">③</span>作业要与教科书的内容有逻辑联系，但不能照搬教科书的例题或材料，要达到触类旁通。</p><p class="item"><span class="ilabel">④</span>作业应有助于启发学生的思维，含有鼓励学生探究并进行创造性思维的因素。</p><p class="item"><span class="ilabel">⑤</span>作业尽量与现代生产和社会生活实际联系起来，理论联系实际。</p><p class="item"><span class="ilabel">⑥</span>布置作业要向学生提出明确要求，并规定完成的时间。</p><h4><span class="h4num">4</span>课外辅导</h4><p>课外辅导是上课的必要补充，是适应学生个别差异、贯彻因材施教原则的重要措施。<span class="anno">【注意这里的课外辅导是指校内老师针对学生的问题进行的辅导，非校外培训班】</span></p><h4><span class="h4num">5</span>学业成绩的检查与评价<span class="badge-type">单选/简答/材料</span></h4><p>测试质量的指标主要有信度、效度、难度与区分度。</p><p class="item"><span class="ilabel">①</span>信度：指测验结果的稳定性或可靠性，即在某一测试在多次测试后得到的分数的稳定性、一致性程度。<span class="anno">【关键词：稳定、可靠】</span></p><p class="item"><span class="ilabel">②</span>效度：指测验的有效性，即一个测验能测出所要测量的东西的程度。<span class="anno">【关键词：有效性、正确性】</span></p><p class="item"><span class="ilabel">③</span>难度：<span class="anno">【关键词：试题难易度】</span></p><p class="item"><span class="ilabel">④</span>区分度：<span class="anno">【关键词：区分不同水平学生的能力】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec18"><span class="h3t">三、教学评价</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析/简答/材料题</span></h3></div><div class="kcard-body"><h5>（一）教学评价的概念和基本内容<span class="badge-type">简答/辨析题</span></h5><p>教学评价是指以教学目标为依据，通过一定的标准和手段，对教学活动及其结果给予价值上的判断，即对教学活动及其结果进行测量、分析和评定的过程。 教学评价主要包括对学生学业成绩的评价、对教师教学质量的评价和对课程的评价。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>此知识点已经被考察过两次辨析题，所以后面也极可能考察简答题。 <span class="anno">【2013 下/2021 上】</span>教学评价就是对学生学业成绩的评价。（×）</div><h5>（二）教学评价的功能：</h5><p class="item"><span class="ilabel">①</span>诊断功能</p><p class="item"><span class="ilabel">②</span>反馈功能</p><p class="item"><span class="ilabel">③</span>导向功能</p><p class="item"><span class="ilabel">④</span>激励功能</p><p class="item"><span class="ilabel">⑤</span>鉴定功能</p><h5>（三）教学评价的种类：<span class="badge-type">简答/材料题</span></h5><h4><span class="h4num">1</span>按评价功能分：</h4><p class="item"><span class="ilabel">①</span>诊断性评价：指在学期教学开始或单元教学开始时所进行的评价；各种摸底考试，弄清学生已有的知识和能力发展情况。</p><p class="item"><span class="ilabel">②</span>形成性评价：指在教学进程中进行的评价；教学中进行的口头提问、课堂作业等。</p><p class="item"><span class="ilabel">③</span>总结性评价：在一个大的学习阶段结束后进行的全面评价；学期或学科结束时进行的期末考试、终结考试。</p><h4><span class="h4num">2</span>按评价标准分：</h4><p class="item"><span class="ilabel">①</span>相对性评价：又叫常模参照性评价；甄选、选拔人才。<span class="anno">【关键词 ：看排名，与其他人比】</span></p><p class="item"><span class="ilabel">②</span>绝对性评价：又叫目标参照性评价；毕业考试和合格考试。<span class="anno">【关键词 ：与标准比】</span></p><p class="item"><span class="ilabel">③</span>个体内差异评价：对个体的过去和现在或个体的不同方面进行比较；了解个体表现。<span class="anno">【关键词 ：与自己比】</span></p><h5>（四）教学评价的原则：<span class="badge-type">简答/材料题</span></h5><p class="item"><span class="ilabel">①</span>客观性原则。首先做到评价标准的客观性，不带随意性；其次要做到评价方法的客观，不带偶然性；最后要做到评价态度客观，不带主观性。</p><p class="item"><span class="ilabel">②</span>发展性原则。教学评价应该着眼于学生的学习进步、动态发展，着眼于教师的教学改进和能力提高，以调动师生的积极性，提高教学质量。</p><p class="item"><span class="ilabel">③</span>整体性原则。教学评价应该树立全面观点，从教学工作的整体出发，进行多方面的检查和评定，防止以偏概全。</p><p class="item"><span class="ilabel">④</span>指导性原则。教学评价应该在指出教师和学生的长处、不足的基础上，提出建设性意见， 使被评价者能够发扬优点，克服缺点，不断前进。</p></div></div></section>
+<section class="sec"><h2 id="sec19">第六节 教学模式和教学策略</h2><div class="kcard"><div class="kcard-head"><h3 id="sec20"><span class="h3t">一、国外的主要教学模式</span><span class="badge-star">☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>探究式教学模式（发现教学）：代表人物 布鲁纳<span class="anno">【关键词：学生主动探究】</span></h4><h4><span class="h4num">2</span>掌握学习教学模式：代表人物 布卢姆 <span class="anno">【关键词：班级教学和个别辅导相结合，为学生提供其需要的个别帮助和额外学习时间】</span></h4><h4><span class="h4num">3</span>非指导性教学模式：代表人物 罗杰斯<span class="anno">【关键词：以学习者为中心】</span></h4><h4><span class="h4num">4</span>程序教学模式：斯金纳 行为主义学习理论</h4><h4><span class="h4num">5</span>抛锚式教学模式：情境教学、基于问题的教学，理论基础建构主义。</h4><div class="note"><span class="callout-label">注意</span>主要理解前三种教学模式即可，识记模式名称及对应的代表人物。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec21"><span class="h3t">二、国外的主要教学策略</span><span class="badge-star">了解</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>以教师为主导的教学策略：直接教学（指导教学）+ 接受学习</h4><h4><span class="h4num">2</span>以学生为中心的教学策略：发现教学（发现学习）+情境教</h4><p class="subitem"><span class="slabel">学+合作学习3. 个别化教学：</span>程序教学+计算机辅助教学+掌握学习</p></div></div></section>
+    <div class="nav"><a href="02_第二章_中学课程.html">← 上一章</a><a href="04_第四章_中学生学习心理.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText && content.childNodes.length > 0) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) {
+          var parts = splitItem(child);
+          var subfold = document.createElement('div');
+          subfold.className = 'subfold';
+          var subHead = document.createElement('div');
+          subHead.className = 'subfold-head fold-head';
+          subHead.setAttribute('aria-expanded', 'false');
+          subHead.appendChild(makeArrow());
+          subHead.appendChild(parts.label);
+          var subBody = document.createElement('div');
+          subBody.className = 'subfold-body fold-body';
+          if (parts.content) subBody.appendChild(parts.content);
+          subfold.appendChild(subHead);
+          subfold.appendChild(subBody);
+          parent.appendChild(subfold);
+          bindToggle(subHead, subBody);
+          stack.push({ level: level, head: subHead, body: subBody });
+        } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child);
+      }
+    });
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

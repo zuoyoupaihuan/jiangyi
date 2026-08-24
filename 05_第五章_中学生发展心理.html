@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中学生发展心理 - 中学科二讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 中学生心理发展概述和中学生自我意识的发展</a><a class="lv2" href="#sec1">一、中学生心理发展概述</a><a class="lv2" href="#sec2">二、中学生自我意识的发展</a><a class="lv1" href="#sec3">第二节 中学生认知的发展</a><a class="lv2" href="#sec4">一、中学生认知发展的特点</a><a class="lv2" href="#sec5">二、皮亚杰的认知发展理论</a><a class="lv2" href="#sec6">三、维果斯基的文化-历史发展理论</a><a class="lv2" href="#sec7">四、认知风格的类型</a><a class="lv1" href="#sec8">第三节 中学生情绪情感与意志的发展</a><a class="lv2" href="#sec9">一、情绪</a><a class="lv2" href="#sec10">二、情感</a><a class="lv1" href="#sec11">第四节 中学生人格的发展和中学生能力的发展</a><a class="lv2" href="#sec12">一、中学生人格的发展</a><a class="lv2" href="#sec13">二、中学生能力的发展</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>中学生发展心理</h1>
+      <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
+      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 中学生心理发展概述和中学生自我意识的发展</a><a class="lv2" href="#sec1">一、中学生心理发展概述</a><a class="lv2" href="#sec2">二、中学生自我意识的发展</a><a class="lv1" href="#sec3">第二节 中学生认知的发展</a><a class="lv2" href="#sec4">一、中学生认知发展的特点</a><a class="lv2" href="#sec5">二、皮亚杰的认知发展理论</a><a class="lv2" href="#sec6">三、维果斯基的文化-历史发展理论</a><a class="lv2" href="#sec7">四、认知风格的类型</a><a class="lv1" href="#sec8">第三节 中学生情绪情感与意志的发展</a><a class="lv2" href="#sec9">一、情绪</a><a class="lv2" href="#sec10">二、情感</a><a class="lv1" href="#sec11">第四节 中学生人格的发展和中学生能力的发展</a><a class="lv2" href="#sec12">一、中学生人格的发展</a><a class="lv2" href="#sec13">二、中学生能力的发展</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 中学生心理发展概述和中学生自我意识的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec1"><span class="h3t">一、中学生心理发展概述</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>中学生心理发展的特点（☆☆☆）<span class="badge-type">单选/简答/材料题</span></h4><p class="item"><span class="ilabel">①</span>过渡性<span class="anno">【半幼稚半成熟】</span>；</p><p class="item"><span class="ilabel">②</span>闭锁性<span class="anno">【不轻易吐露心声】</span>；</p><p class="item"><span class="ilabel">③</span>社会性<span class="anno">【关注社会生活问题】</span>； 动荡性<span class="anno">【不稳定性】</span>；</p><p class="item"><span class="ilabel">⑤</span>独立性<span class="anno">【出现一定的“成人感”】</span>；</p><p class="item"><span class="ilabel">⑥</span>不平衡性</p><p class="anno-line"><span class="anno">【生理和心理发展不同步，心理与社会关系发展不同步】</span></p><h4><span class="h4num">2</span>中学生性心理特点（☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>性意识出现；</p><p class="item"><span class="ilabel">②</span>性情感发展</p><h4><span class="h4num">3</span>中学生异性交往的特点（☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>交往方式的隐蔽性；</p><p class="item"><span class="ilabel">②</span>交往动机的多样性；</p><p class="item"><span class="ilabel">③</span>交往欲望趋向强烈。</p><h4><span class="h4num">4</span>正确处理异性交往（☆☆☆）<span class="badge-type">单选/材料分析</span></h4><p class="item"><span class="ilabel">①</span>正确认识青少年学生的异性交往；</p><p class="item"><span class="ilabel">②</span>把握青少年学生异性交往的原则；<span class="anno">【自然原则+适度原则】</span></p><p class="item"><span class="ilabel">③</span>了解青少年学生异性交往的方法；<span class="anno">【克服羞怯+真实坦诚+留有余地】</span></p><p class="item"><span class="ilabel">④</span>引导青少年学生区分友谊与爱情。</p><div class="tip"><span class="anno">【CocoPolaris 补充】</span>中学生同伴交往的特点。（2024 下简答）</div><p class="item"><span class="ilabel">①</span>选择性。随着年龄的增长，逐渐改变了团伙式的交往方式，对同伴的选择越来越重视兴趣爱好的相 投，性格上的相合，具有一定的选择性。</p><p class="item"><span class="ilabel">②</span>亲密性。中学生的闭锁性突出，不再愿意向家长或老师吐露心声，更多地愿意与亲密的朋友分享。</p><p class="item"><span class="ilabel">③</span>异性交往。进入青春期后，由于第二性征的出现，男女生之间的关系出现了新特点，双方都开始意 识到性别问题，并对彼此产生了兴趣，出现了异性友谊。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec2"><span class="h3t">二、中学生自我意识的发展</span><span class="badge-star">☆☆</span><span class="badge-type">单选/26 上辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>自我意识的概念：个体对自己以及自己周围事物的关系的意识。</h4><h4><span class="h4num">2</span>自我意识的心理成分：</h4><p class="item"><span class="ilabel">①</span>自我认知<span class="anno">【认知自我】</span>；</p><p class="item"><span class="ilabel">②</span>自我体验<span class="anno">【情感表现】</span>；</p><p class="item"><span class="ilabel">③</span>自我控制<span class="anno">【自控力】</span></p><h4><span class="h4num">3</span>自我意识的发展阶段：</h4><p class="item"><span class="ilabel">①</span>生理自我（自我中心期）：1-3 周岁，生理自我在3 岁左右基本成熟；</p><p class="item"><span class="ilabel">②</span>社会自我（客观化时期）：3 周岁，自我意识的发展进入社会自我阶段；</p><p class="item"><span class="ilabel">③</span>心理自我（主观自我时期）：青春期，心理自我是在青春期实现的。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>以上内容理解为主，浏览一遍有印象即可，不需要花时间哦~即便考到大题，凭借 自己的常识也是非常容易作答的。</div></div></div></section>
+<section class="sec"><h2 id="sec3">第二节 中学生认知的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec4"><span class="h3t">一、中学生认知发展的特点</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>中学生注意发展的特点（☆☆☆☆）<span class="badge-type">单选/简答</span></h4><p class="item"><span class="ilabel">①</span>有意注意逐渐取代无意注意的优势地位；</p><p class="item"><span class="ilabel">②</span>注意的稳定性提高，但发展速度相对较慢；</p><p class="item"><span class="ilabel">③</span>注意的广度接近成人；</p><p class="item"><span class="ilabel">④</span>注意的分配能力还不够成熟；</p><p class="item"><span class="ilabel">⑤</span>注意的转移能力缓慢增长。</p><h4><span class="h4num">2</span>中学生记忆发展的特点（☆☆☆☆☆）<span class="badge-type">单选/简答</span></h4><p class="item"><span class="ilabel">①</span>记忆容量逐渐增大，短时记忆的广度接近成人；</p><p class="item"><span class="ilabel">②</span>记忆的有意性加强；</p><p class="item"><span class="ilabel">③</span>意义识记成为主要记忆手段；</p><p class="item"><span class="ilabel">④</span>抽象记忆逐渐占据主导地位。</p><h4><span class="h4num">3</span>中学生思维发展的特点（☆☆☆） <span class="anno">【单选，25 下已考简答】</span> 抽象思维逐渐处于优势地位。</h4><p class="subitem"><span class="slabel">初中阶段（经验型）：</span></p><p class="item"><span class="ilabel">①</span>思维活动仍需具体、直观的感性经验的直接支持；</p><p class="item"><span class="ilabel">②</span>初三学生的辩证逻辑思维处于迅速发展阶段。</p><p class="subitem"><span class="slabel">高中阶段（理论型）：</span></p><p class="item"><span class="ilabel">③</span>逐步摆脱感性经验的限制；</p><p class="item"><span class="ilabel">④</span>高中生辩证逻辑思维已趋于优势地位。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>以上内容可以结合前面章节学过的认知过程中的知识点再系统梳理一遍。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec5"><span class="h3t">二、皮亚杰的认知发展理论</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/辨析</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>皮亚杰的基本观点<span class="anno">【单选，抓红色关键字理解】</span></h4><h5>（1）发展的实质</h5><p>动作是感知的源泉和思维的基础；适应的本质在于取得机体与环境的平衡。</p><h5>（2）发展的结构：<span class="anno">【24 下已考材料题，主要关于同化与顺应的理解】</span></h5><p class="item"><span class="ilabel">①</span>图式：自己独特的认知结构；</p><p class="item"><span class="ilabel">②</span>同化：不改变原有认知结构；</p><p class="subitem"><span class="slabel">例子：</span>鸟--麻雀<span class="anno">【量变】</span></p><p class="item"><span class="ilabel">③</span>顺应：改变原有认知结构；</p><p class="subitem"><span class="slabel">例子：</span>鸟--鸵鸟 <span class="anno">【质变】</span></p><p class="item"><span class="ilabel">④</span>平衡：同化与顺应之后的结果。</p><h4><span class="h4num">2</span>皮亚杰认知发展阶段论</h4><p class="anno-line">【单选/简答/辨析/材料 2022 上简答，尽管考过简答，下次依然可以考辨析题或材料题】</p><h5>（1）感知运动阶段（0-2 岁）</h5><p class="item"><span class="ilabel">①</span>主要表现为感觉和动作的发展；</p><p class="item"><span class="ilabel">②</span>客体永恒性：指儿童意识到当物体不在眼前时它仍然是存在的。<span class="anno">【小白象实验、幕布实验】</span></p><h5>（2）前运算阶段（2-7 岁）</h5><p class="item"><span class="ilabel">①</span>万物有灵论（泛灵论）：认为一切事物都是有生命的。<span class="anno">【例子：月亮跟着我走】</span></p><p class="item"><span class="ilabel">②</span>自我中心：“一切以自我为中心”，认为别人眼中的世界和他所看到的世界是一样的；自我为中心体</p><p class="subitem"><span class="slabel">现在儿童语言中的三种表现形式：</span>重复、独白、集体独白。<span class="anno">【三山实验】</span></p><p class="item"><span class="ilabel">③</span>思维具有不可逆、刻板性：思维具有只能前推不能后推的不可逆性；注意事物的某一方面时，往往忽略事物的其他方面，即思维具有刻板性。<span class="anno">【例子：吉姆的兄弟】</span></p><p class="item"><span class="ilabel">④</span>思维不具有守恒性：判断只能用一个标准或维度，不能同时运用两个维度。<span class="anno">【量杯实验】</span></p><h5>（3）具体运算阶段（7-11 岁）</h5><p class="item"><span class="ilabel">①</span>思维形成了守恒概念；</p><p class="item"><span class="ilabel">②</span>思维具有可逆性；</p><p class="item"><span class="ilabel">③</span>思维具有去自我中心性；</p><p class="item"><span class="ilabel">④</span>能进行具体逻辑推理，简单抽象思维；</p><p class="item"><span class="ilabel">⑤</span>能理解原则和规则，但只能刻板遵守规则，不敢改变；</p><p class="item"><span class="ilabel">⑥</span>具有多维思维。</p><h5>（4）形式运算阶段（11 岁以后）<span class="badge-type">钟摆实验</span></h5><p class="item"><span class="ilabel">①</span>思维发展水平已接近成人；</p><p class="item"><span class="ilabel">②</span>具有抽象逻辑思维，能理解符号的意义、隐喻和直喻，能对事物进行一定的概括；</p><p class="item"><span class="ilabel">③</span>进行假设--演绎推理；</p><p class="item"><span class="ilabel">④</span>认识命题之间的关系；</p><p class="item"><span class="ilabel">⑤</span>思维具有可逆、补偿、灵活性。</p><h4><span class="h4num">3</span>皮亚杰认知发展阶段论的教育价值/教育启示<span class="badge-type">可单独考一道简答题</span></h4><p class="item"><span class="ilabel">①</span>充分认识儿童不是“小大人”，学习是主动建构的过程。 从思维方面讲，儿童对问题的解决，最初是依赖先天图式，到感知运动阶段末期，出现动作思维的萌 芽；从言语方面来说，儿童在感知运动阶段的末期，才出现了言语的萌芽。儿童只有发展到形式运算 阶段，才逐渐像成人一样去使用语言。</p><p class="item"><span class="ilabel">②</span>遵循儿童的思维发展规律。 儿童智力发展不仅是渐进的，而且是遵循一定顺序，每个阶段之间是不可逾越的、不可颠倒的，前一 阶段总是后一阶段发展的条件。因此，教育必须遵循这一规律。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>皮亚杰的认知发展阶段论以简答题和辨析题备考，也可能会以材料题形式出现。辨析题注意每个阶段之间是不可跨越的。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec6"><span class="h3t">三、维果斯基的文化-历史发展理论</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/材料题</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>维果斯基认为应从四个方面评价人类发展<span class="anno">【了解，有印象即可】</span></h4><p>微观发生发展层面；个体发生发展层面；种系（系统）发生发展层面；社会历史发展层面。</p><h4><span class="h4num">2</span>心理发展观的核心内容<span class="anno">【了解，单选】</span></h4><p class="subitem"><span class="slabel">文化历史发展观：</span></p><p class="subitem"><span class="slabel">维果斯基区分了两种心理机能：</span>一种是作为生物进化结果的低级心理机能；另一种是作为历史发展结果的高级心理机能，即以符号系统为中介的心理机能。</p><h4><span class="h4num">3</span>最近发展区：<span class="anno">【简答/材料题 2022 上材料已考，重点简答备考】</span></h4><p class="subitem"><span class="slabel">儿童发展的两种发展水平：</span>一种是儿童现有的水平；另一种是在成人的指导下可以达到的解决问题的水平。这两种水平之间的差距就是最近发展区。</p><p class="subitem"><span class="slabel">教学启示：</span></p><p class="item"><span class="ilabel">①</span>了解学生现有的水平；</p><p class="item"><span class="ilabel">②</span>教学走在发展的前面；</p><p class="item"><span class="ilabel">③</span>教育不能超越最近发展区，要让学生“跳一跳，够得着”；</p><p class="item"><span class="ilabel">④</span>支架式教学；</p><p class="item"><span class="ilabel">⑤</span>教师是学生实现发展与成长的必要的帮助者。</p><h4><span class="h4num">4</span>内化学说</h4><p>在儿童认知发展的内化过程中，语言符号系统的作用是至关重要的。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec7"><span class="h3t">四、认知风格的类型</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析/材料题，根据红色关键词理解即可</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>场独立与场依存型</p><p class="subitem"><span class="slabel">场独立：</span>内部参照，不易受外界的干扰；</p><p class="subitem"><span class="slabel">场依存型：</span>外部参照，易受其他人的影响。</p><p class="item"><span class="ilabel">②</span>沉思型与冲动型</p><p class="subitem"><span class="slabel">沉思型：</span>速度慢、精度高、深思熟虑；</p><p class="subitem"><span class="slabel">冲动型：</span>速度快、精度低、容易出错。</p><p class="item"><span class="ilabel">③</span>辐合型与发散型</p><p class="subitem"><span class="slabel">辐合型：</span>解决问题时，思路集中到一个方向，唯一答案；</p><p class="subitem"><span class="slabel">发散型：</span>思路向多个方向扩散，寻找各种可能性，多个答案。</p><p class="item"><span class="ilabel">④</span>整体型和序列型（同时型和继时型）</p><p class="subitem"><span class="slabel">整体型：</span>一系列问题组合起来进行整体思考；</p><p class="subitem"><span class="slabel">序列型：</span>重视一系列问题的逻辑，解决问题时一步一步分析问题。</p></div></div></section>
+<section class="sec"><h2 id="sec8">第三节 中学生情绪情感与意志的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec9"><span class="h3t">一、情绪</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>情绪的概念（☆☆☆）</h4><p>人对客观事物是否得到满足的情景中直接产生的心理体验和相应的反应。<span class="anno">【关键词：需求是否得到满足】</span> 认知是情绪产生的基础，需要是引发情绪和情感的中介。情绪反过来也影响人的认识活动，对人的 认识产生动力或阻力作用。<span class="anno">【2022 上辨析题：情绪与认知是互不影响的。×】</span></p><h4><span class="h4num">2</span>情绪的特点（☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>主观性：不同的人看待同一件事，例如不同的人看到半瓶水的情绪态度不同。</p><p class="item"><span class="ilabel">②</span>社会性：社会条件不同，面对同样的刺激，产生的情绪反应不同。</p><p class="item"><span class="ilabel">③</span>两极性：同一个人，两种对立情绪，例如：喜极而泣、乐极生悲。</p><h4><span class="h4num">3</span>情绪的分类（☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>心境：是一种微弱、平静和持久的情绪状态，具有弥散性和长期性；</p><p class="subitem"><span class="slabel">例子：</span>忧者见之则忧，喜者见之则喜；人逢喜事精神爽。<span class="anno">【时间长、强度弱、弥散性】</span></p><p class="item"><span class="ilabel">②</span>激情：是一种爆发强烈而持续时间短暂的情绪状态，具有爆发性和冲动性；</p><p class="subitem"><span class="slabel">例子：</span>成功后欣喜若狂。<span class="anno">【短暂的、强烈的、爆发的】</span></p><p class="item"><span class="ilabel">③</span>应激：由于出乎意料的紧张和危险情况引起的情绪状态；</p><p class="subitem"><span class="slabel">例子：</span>火灾、地震、急刹车。</p><p class="anno-line"><span class="anno">【紧急突发、未知状况】</span></p><h4><span class="h4num">4</span>情绪理论（☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>詹姆斯-兰格理论：情绪源于身体的反馈，刺激→生理反应→情绪。<span class="anno">【口诀：展（詹）览生理】</span></p><p class="item"><span class="ilabel">②</span>坎农-巴德学说：情绪产生中心在中枢神经系统的丘脑，刺激→丘脑→情绪。</p><p class="anno-line"><span class="anno">【口诀：砍（坎）吧大脑】</span></p><p class="item"><span class="ilabel">③</span>阿诺德“评定-兴奋”说：情绪的产生来源于大脑皮层对情境的评估；刺激情境→评估→情绪。<span class="anno">【口诀：阿诺评定】</span></p><p class="item"><span class="ilabel">④</span>沙赫特-辛格情绪理论：人对生理反应的认知和了解决定了最后的情绪体验；生理唤醒+认知性唤醒+环境因素。其中，认知对情绪产生起决定性作用。<span class="anno">【口诀：啥（沙）认知】</span></p><h4><span class="h4num">5</span>中学生情绪发展的特点（☆☆☆☆☆） <span class="anno">【单选/材料题/2022 下+2024 下已考简答】</span></h4><p class="item"><span class="ilabel">①</span>爆发性和冲动性；<span class="anno">【体验迅速、强烈】</span></p><p class="item"><span class="ilabel">②</span>不稳定性和两极性；<span class="anno">【起伏波动大，两极性明显】</span></p><p class="item"><span class="ilabel">③</span>外露性和内隐性（掩饰性）</p><p class="item"><span class="ilabel">④</span>心境化和持久性。 （24 下简答问法是简述中学生情绪矛盾性的主要表现。本质一样，不要学死，灵活理解知识点）</p><h4><span class="h4num">6</span>中学生情绪调节的方法（☆☆☆☆☆）<span class="badge-type">单选/简答/材料分析题</span></h4><p class="item"><span class="ilabel">①</span>合理宣泄法：比如在山上或面对大海大喊，打沙袋，还有的一些人可能是情绪特别差的时候就通过买买买或吃吃吃进行宣泄。或者找好朋友倾诉，把情感宣泄出来。</p><p class="item"><span class="ilabel">②</span>注意转移法：离开受到不良刺激的环境，比如心情不好的时候去听听音乐，看个电影。</p><p class="item"><span class="ilabel">③</span>意志调节法：当愤愤不已的情绪即将爆发时，要用意识控制自己，提醒自己应当保持理性，比如小明在床头贴一张“静”提醒自己，这个利用的就是意志调节法。</p><p class="item"><span class="ilabel">④</span>幽默法：遇到困难或挫折的时候自我解嘲、自我调侃。</p><p class="item"><span class="ilabel">⑤</span>补偿法：比如其貌不扬，才华来凑。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>此知识点如出现在材料分析题中，一般是和第六章中学生心理辅导的内容结合起来考察。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec10"><span class="h3t">二、情感</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>情感的概念（☆）<span class="badge-type">了解</span></h4><p>社会性情感是与人的社会性需要相联系的态度体验。</p><h4><span class="h4num">2</span>情感的分类（☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>道德感：根据一定的道德标准去评价自己或他人的思想和言行时产生的情感体验；</p><p class="subitem"><span class="slabel">例子：</span>先天下之忧而忧，后天下之乐而乐。<span class="anno">【关键词：道德标准】</span></p><p class="item"><span class="ilabel">②</span>理智感：在智力活动中，认识和评价事物时产生的情感体验；</p><p class="subitem"><span class="slabel">例子：</span>没有人的情感就从来没有也不可能有人对真理的追求。<span class="anno">【关键词：智力活动/学习】</span></p><p class="item"><span class="ilabel">③</span>美感：用一定的审美标准来评价事物时产生的情感体验；</p><p class="subitem"><span class="slabel">例子：</span>觉得蒙娜丽莎很美。<span class="anno">【关键词：审美标准】</span></p><h4><span class="h4num">3</span>情绪与情感的区别和联系（☆☆）<span class="badge-type">单选</span></h4><p class="subitem"><span class="slabel">区别：</span>情绪-自然需要，人和动物，产生早，情境性和动摇性、外显性与冲动性；情感-社会需要，人类特有，产生晚，稳定性和深刻性，内隐性和持久性。</p><p class="subitem"><span class="slabel">联系：</span>相互依存、相互转化。</p><h4><span class="h4num">4</span>意志（☆☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>概念：人自觉地确定目标，有意识地根据目的支配，调节自己的行为，克服困难和挫折，实现预定目的的心理过程。</p><p class="item"><span class="ilabel">②</span>意志行动中的动机冲突 双趋冲突<span class="anno">【既想...又想...】</span></p><p class="subitem"><span class="slabel">观点：</span>两个都想要；</p><p class="subitem"><span class="slabel">例子：</span>鱼和熊掌不可兼得。 双避冲突<span class="anno">【既不想...又不想...】</span> 趋避冲突<span class="anno">【既想...又不想...】</span></p><p class="subitem"><span class="slabel">观点：</span>同一事物两种相反态度；</p><p class="subitem"><span class="slabel">例子：</span>想吃又怕胖。 多重趋避冲突<span class="anno">【既想...又不想...；既想...又不想...】</span></p><p class="subitem"><span class="slabel">观点：</span>多个兼具好恶的目标择其一；</p><p class="subitem"><span class="slabel">例子：</span>找工作，面临多种选择。</p><p class="item"><span class="ilabel">③</span>意志的品质 自觉性vs 易受暗示性和独断性； 果断性vs 优柔寡断和武断； 坚持性vs 动摇性和执拗性； 自制性vs 任性和懦弱。</p></div></div></section>
+<section class="sec"><h2 id="sec11">第四节 中学生人格的发展和中学生能力的发展</h2><div class="kcard"><div class="kcard-head"><h3 id="sec12"><span class="h3t">一、中学生人格的发展</span></h3></div><div class="kcard-body"><h5>（一）人格概述</h5><h4><span class="h4num">1</span>人格的定义：构成一个人思想、情感及行为的特有模式，是一个人区别于他人的稳定而统一的心理品质。<span class="badge-type">了解</span></h4><h4><span class="h4num">2</span>人格特征（☆☆☆☆☆） <span class="anno">【单选/2022 下已考简答/2024 上已考辨析题】</span></h4><p class="item"><span class="ilabel">①</span>独特性：人心不同，各如其面。</p><p class="item"><span class="ilabel">②</span>稳定性：江山易改，本性难移。</p><p class="item"><span class="ilabel">③</span>整合性：人格的整合性是心理健康的重要指标，各方面和谐一致—健康；否则可能出现“分裂人格”。</p><p class="item"><span class="ilabel">④</span>功能性：人格决定命运。比如面对挫折与失败时，强者--奋发拼搏；弱者 — 一蹶不振。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>人格具有稳定性的特征，但人格并不是一成不变的。根据下面真题理解。 <span class="anno">【2024 上 辨析】</span>人格具有可塑性。（√） 强调人格的稳定性并不意味着它在人的一生中是一成不变的，随着生理的成熟和环境的变化，人格也有可能产生或多或少的变化，这是人格可塑性的一面。正因为人格具有可塑性，才能培养和发展人格。人格是稳定性与可塑性的统一。</div><h4><span class="h4num">3</span>影响人格发展的因素（☆☆☆☆☆） <span class="anno">【简答，口诀：遗传+环境+学校教育+主观】</span></h4><p class="item"><span class="ilabel">①</span>生物遗传因素</p><p class="item"><span class="ilabel">②</span>社会文化因素<span class="anno">【环境】</span></p><p class="item"><span class="ilabel">③</span>家庭环境因素<span class="anno">【环境】</span></p><p class="item"><span class="ilabel">④</span>早期童年经验<span class="anno">【环境】</span></p><p class="item"><span class="ilabel">⑤</span>学校教育因素</p><p class="item"><span class="ilabel">⑥</span>个人主观因素</p><h5>（二）人格结构</h5><p>人格结构=气质+性格+自我调控（了解，主要看气质和性格） 气质</p><h4><span class="h4num">1</span>气质的概念<span class="badge-type">了解/辨析</span></h4><p>气质是表现在心理活动的强度、速度、灵活性与指向性等方面的一种稳定的心理特征，即脾气、秉性。<span class="anno">【气质是先天的，无好坏之分。】</span></p><h4><span class="h4num">2</span>气质的类型（☆☆☆☆☆）<span class="badge-type">单选/辨析/材料分析</span></h4><p class="item"><span class="ilabel">①</span>胆汁质：精力旺盛、热情率真vs 冲动、鲁莽</p><p class="subitem"><span class="slabel">代表人物：</span>张飞、李逵</p><p class="item"><span class="ilabel">②</span>多血质：活泼、爱交际vs 少耐性、见异思迁</p><p class="subitem"><span class="slabel">代表人物：</span>王熙凤</p><p class="item"><span class="ilabel">③</span>黏液质：安静稳重、踏实、自制力强vs 可塑性差、死板代表人物：林冲、科学家</p><p class="item"><span class="ilabel">④</span>抑郁质： 观察力强 vs多愁善感</p><p class="subitem"><span class="slabel">代表人物：</span>林黛玉</p><p class="subitem"><span class="slabel">备注：</span>辨析题一般是说某一种气质优于另一种气质，记住气质无好坏，分别解释各自优缺点即可。 <span class="anno">【2022 下/2025 上已考辨析题】</span>气质没有好坏之分。（√）</p><h4><span class="h4num">3</span>气质与教育（☆☆☆☆☆）<span class="badge-type">材料分析</span></h4><p class="item"><span class="ilabel">①</span>对待学生应克服气质偏见。</p><p class="item"><span class="ilabel">②</span>针对学生气质差异因材施教。</p><p class="subitem"><span class="slabel">胆汁质：</span>直截了当，培养自制力；</p><p class="subitem"><span class="slabel">多血质：</span>定期提醒，适时引导，培养专一精神；</p><p class="subitem"><span class="slabel">黏液质：</span>耐心教育，多给时间；</p><p class="subitem"><span class="slabel">抑郁质：</span>委婉暗示，多关心爱护。</p><p class="item"><span class="ilabel">③</span>帮助学生自我分析、自我教育，培养良好的气质品质。</p><p class="item"><span class="ilabel">④</span>特别重视胆汁质和抑郁质学生。</p><p class="item"><span class="ilabel">⑤</span>组建学生干部队伍，应考虑学生的气质类型。</p><p class="anno-line"><span class="anno">【口诀：特别重视自我分析考虑类型克服偏见因材施教是良策】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>气质的类型和针对不同气质类型学生的教育方式会一起放在材料题中考察。 性格</div><h4><span class="h4num">1</span>性格的概念<span class="badge-type">了解</span></h4><p>一个人在现实的稳定态度和习惯化了的行为方式中所表现出来的个性心理特征。后天形成，有好坏之分。<span class="anno">【性格是人格的核心】</span></p><div class="tip"><span class="callout-label">CocoPolaris 说</span>注意区分心理学中的性格和气质的定义，选择题特别容易考。</div><h4><span class="h4num">2</span>性格的结构特征（☆☆☆）<span class="badge-type">单选/简答</span></h4><p class="item"><span class="ilabel">①</span>态度特征（核心）：对周围人、事、物的态度；比如文明礼貌、认真负责、谦虚、自私自利、 不负责任、自大。</p><p class="item"><span class="ilabel">②</span>意志特征：自觉确定目标、调节行为；比如果断、盲目、意志力强、随大流。</p><p class="item"><span class="ilabel">③</span>情绪特征：情绪活动方式，比如积极乐观、消极悲观。</p><h6>④ 理智特征：认知活动中表现出来的稳定的心理特征，比如独立思考、借用他人现成的答案。 人格特质理论（☆☆☆）<span class="badge-type">单选</span></h6><p class="item"><span class="ilabel">①</span>弗洛伊德人格“三我”结构：</p><p class="subitem"><span class="slabel">本我：</span>本我遵循“快乐原则”<span class="anno">【基本欲望、冲动→本能】</span></p><p class="subitem"><span class="slabel">自我：</span>自我遵循“现实原则”<span class="anno">【协调作用】</span></p><p class="subitem"><span class="slabel">超我：</span>超我遵循“道德原则”<span class="anno">【道德至上】</span></p><p class="item"><span class="ilabel">②</span>奥尔波特的人格特质理论</p><p class="subitem"><span class="slabel">共同特质：</span>群体共有，德国人严谨、法国人浪漫、南方人精明、北方人豪爽。</p><p class="subitem"><span class="slabel">个人特质：</span>首要特质-最典型；中心特质-构成个体独特性的5-10 个重要特质；次要特质-不太重 要的特质，特殊情况下才会表现出来。</p><p class="item"><span class="ilabel">③</span>卡特尔的人格特质理论</p><p class="subitem"><span class="slabel">表面特质：</span>从外部行为能直接观察到的特质。</p><p class="subitem"><span class="slabel">根源特质：</span>决定外显行为的潜在变量，是人格的本质。</p><p class="item"><span class="ilabel">④</span>A-B 型人格理论</p><p class="subitem"><span class="slabel">A 型：</span>进取心强、紧张、急躁、自我压力过大。</p><p class="subitem"><span class="slabel">B 型：</span>安宁松弛、中庸、按部就班，不喜欢紧张的情境。 人格发展理论（☆☆☆☆☆） <span class="anno">【单选/简答，每个理论都可以单考简答】</span></p><h4><span class="h4num">1</span>弗洛伊德人格发展阶段理论</h4><p class="item"><span class="ilabel">①</span>口唇期（0-18 个月）：通过吮吸、吞咽、咬等获得快感；快感集中在口腔部位。</p><p class="item"><span class="ilabel">②</span>肛门期（18 个月-3 岁）：对大便的控制，会帮助他们建立自我，他们意识到，能自我控制的事物才是真正属于自己的；快感中心集中在肛门部位。</p><p class="item"><span class="ilabel">③</span>性器期（3-6 岁）：开始有了性别的意识。他们开始变得更愿意跟异性的父母更亲密，同时会对同性的父母显现出排斥心理；开始对生殖器感兴趣。<span class="anno">【可能会出现“恋母”或“恋父”情节】</span></p><p class="item"><span class="ilabel">④</span>潜伏期（6-12 岁）：更重视和同性的交往，“性”中立。</p><p class="item"><span class="ilabel">⑤</span>生殖期（12-18 岁）：心理和生理都趋向成熟，最终做好了生殖的准备，青春期里最突出的一个特点就是对异性的那种渴求。<span class="anno">【预防早恋】</span></p><h4><span class="h4num">2</span>埃里克森的人格发展阶段理论<span class="badge-type">八阶段理论</span></h4><p>埃里克森将人格发展分为八个阶段，并认为个体在每个发展阶段都会面临一个确定的主题或者说一个特定的心理危机。 第一阶段（0-18 个月婴儿期）：这一时期的人格冲突是基本的信任感对基本的不信任感，该阶段的目的是发展信任感，克服不信任感。 第二阶段（18 个月-3 岁儿童早期）：这一时期的人格冲突是自主对羞怯与怀疑，该阶段的目的是培养自主感，克服羞怯与怀疑。 第三阶段（3-6 岁幼儿期/学前期）：这一时期的人格冲突是主动对内疚，该阶段的目的是培养主动感，克服内疚感。 第四阶段（6-12 岁童年期/学龄期）：这一时期的人格冲突是勤奋对自卑感，该阶段的目的是培养勤奋感，克服自卑感。 第五阶段（12-18 岁青年期）：这一时期的人格冲突是同一性对角色混乱，该阶段的目的是建立同一性，防止角色混乱。 第六阶段（18-30 岁成年初期）：这一时期的人格冲突是亲密对孤独，该阶段的目的是发展亲密感，避免孤独感。 第七阶段（30-60 岁成年中期）：这一时期的人格冲突是繁殖（充沛感）对停滞感，该阶段的目的是获得充沛感，避免停滞感或颓废感。 第八阶段（60 岁以后成年晚期）：这一时期的人格冲突是完美对绝望，该阶段的目的是获得完善感，避免绝望与沮丧。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>特别注意青春期（青年期）的特点，即埃里克森最具创造性，也最为人们所熟知的概念——自我同一性。经常考选择题，近年来也喜欢考主观大题。选择题如果出现中学生迷茫， 问：“我是谁？""我将来做什么”，可以直接判断是同一性vs 角色混乱。 <span class="anno">【24 下 辨析题】</span>青少年的自我同一性发展就是获得自我性别角色的认同。（×）</div><div class="tip"><span class="anno">【CocoPolaris 拓展补充—玛西亚同一性发展理论】</span> 玛西亚在埃里克森的“自我同一性 vs. 角色混乱”理论基础上，根据“探索”与“承诺”两个维度将 同一性划分成了四种不同的状态。</div><p class="item"><span class="ilabel">①</span>同一性完成/获得：形成自我认同的人，都是经历过探索给自己带来的危机的（高探索）。他们在穿越危机之后，最终获得了对自己更清晰的认知，对某些特定的人生目标、信仰、价值观做出了“承诺”（高承诺）——认定了自己努力的方向。同一性获得者是个体自我同一性发展的最佳状态，这类人通常表现出更高的自主和自尊水平，具有更高的自我发展潜力，对外部环境具有更强的适应性。</p><p class="anno-line"><span class="anno">【个体经历了探索，并最终做出了清晰的自我认同和承诺。】</span></p><p class="item"><span class="ilabel">②</span>同一性延缓：是那些正在努力探索自我，寻找自我（高探索），但还没有得到答案的人（低承诺）。比如，他们可能正在思考“什么样的工作是我真正的热情所在？”，“大家都想去金融行业，我应该随大流吗？”这类人正在经历艾里克森预言的危机，正在寻找生命的价值和方向。他们要做出一个承诺，但是现在仍然在各种选择之间犹豫不决。他们往往具有更高的焦虑水平，并通过拒绝、发泄和认同来控制焦虑，同时表现出较低的决断性。<span class="anno">【个体正在探索，但尚未做出明确的承诺。】</span></p><p class="item"><span class="ilabel">③</span>同一性早闭/停滞：处在这种状态中的人，通常已经“获得”了一种自我认同；不过，这种认同感并非基于自身的探索和尝试，而是基于他人，尤其是父母。比如，他们认为“因为父母说老师的工作比较稳定，有寒暑假，所以长大后我也要当老师”。这类人从来没有思考过自己想要成为谁，想要过什么样的生活，而是不经思考地认为父母或者重要他人的价值观就是自己的价值观，过早地把对同一性的探索和讨论关闭了。<span class="anno">【个体未经过探索，直接接受了家长或权威人士为其设定的身份或职业方向。】</span></p><p class="item"><span class="ilabel">④</span>同一性混乱/扩散：是那些既不了解自己，不确定未来的发展（低承诺），也并不太关心这类问题的人（低探索）。没有进行过同一性的讨论，认为“这个问题跟我没关系”。这类人没有仔细思考或解决同一性问题，也没有详细计划将来的生活方向。<span class="anno">【个体既没有进行探索，也没有做出承诺】</span></p><div class="tip"><span class="anno">【CocoPolaris 拓展补充—自我概念/意识的发展】</span></div><h4><span class="h4num">1</span>自我概念/意识指个体对自己存在状态的认知，包括对自己的生理状态、心理状态、人际关系、社会角色的认知，是人格结构的重要组成部分。从内容看，自我概念可分为生理自我、社会自我和心理自我。<span class="badge-type">一个人对自身存在的体验</span></h4><h4><span class="h4num">2</span>自我概念形成的三个阶段<span class="badge-type">生理自我→社会自我→心理自我</span></h4><p class="subitem"><span class="slabel">第一阶段：</span>生理自我形成阶段（8 个月—3 岁）<span class="anno">【最本质、最直接的，原始阶段，对躯体的认识】</span></p><p class="item"><span class="ilabel">①</span>生理自我，是个体如何看自己身体的层面，主要是个体对自己躯体认知、包括占有感、支配感与爱护感等，这是自我概念的原始形态。</p><p class="item"><span class="ilabel">②</span>孩子这个阶段是通过自己的肢体、肌肤、感官刺激来感知自己的存在，这个过程是孩子神经系统开发，语言表达能力、听觉系统等生理层面上自我的形成和发展。 第二阶段，社会自我的形成阶段（3 岁—14 岁）<span class="anno">【自我中心，了解社会期待，调节自己行为】</span></p><p class="item"><span class="ilabel">①</span>社会自我是指处于社会关系、社会身份与社会资格中的自我，是自我概念的核心，是社会如何看待个体同时被个体意识到的层面。</p><p class="item"><span class="ilabel">②</span>这时孩子的社会自我处于自我的中心，这阶段孩子自我概念形成主要来自于父母和周围人的看法，孩子会从别人的眼中判断自己是什么样的人，并分析得出父母和周围人期望自己如何去做。 第三阶段，心理自我形成的阶段（青春期—成年）<span class="anno">【根据社会的需要和自身的发展的要求知觉和调节自己的心理和行为】</span></p><p class="item"><span class="ilabel">①</span>心理自我是个体态度、信念、价值观念及人格特征的总和，是个体如何看自己心理世界的层面。</p><p class="item"><span class="ilabel">②</span>这个阶段孩子自我概念的发展，开始逐渐脱离对成人的依赖，表现出主动和独立的特点，强调自我的价值与自我的理想。特别重要的是发展了自尊和自信心——自我概念中两个主要因素。</p><h4><span class="h4num">3</span>青少年自我概念发展的特点<span class="badge-type">2025 上简答</span></h4><p>青少年期是个体自我概念发展的关键时期。一般来说，青少年期自</p><p class="subitem"><span class="slabel">我概念的发展表现出了以下特点：</span></p><p class="item"><span class="ilabel">①</span>青少年自我概念的抽象性和理想化。青少年思维的抽象性和理想性使青少年倾向于以抽象性和理想化的方式进行自我描述。大多数儿童倾向于以简单、具体的术语来描述他们自己，青少年则更可能使用复杂、抽象的自我描述，并且较多地涉及心理品质的描述。</p><p class="item"><span class="ilabel">②</span>青少年的自我概念在结构上更加分化。与儿童期相比，青少年在进行自我描述时更倾向于把自己的一些特质和品质与特定的情境联系起来，而不是泛泛地使用这些特质。例如，儿童可能会说，”我很开朗”，但青少年可能会说，”在我心情好的时候，我是开朗的”、”当我跟熟悉的人在一起时，我很开朗”。</p><p class="item"><span class="ilabel">③</span>青少年自我概念的组织性和整合性增强。处于青少年期的个体能够把自我形象的不同方面整合成一个较有逻辑性和连贯性的整体。</p><p class="item"><span class="ilabel">④</span>青少年的自我概念存在年龄差异。一般自我概念的发展曲线是起伏变化的，从小学到初中逐年下降，青春期后显著上升，大学毕业后又下降。</p><p class="item"><span class="ilabel">⑤</span>青少年的自我概念存在性别差异。由于男性和女性在生理特征上的差异以及不同文化背景中社会期望和社会角色的不同，男女自我概念的发展表现出了各自不同的特点。一般来说，男孩在成就、领导方面的自我概念高于女孩，在意气相投性、社会能力方面的自我概念却低于女孩。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec13"><span class="h3t">二、中学生能力的发展</span></h3></div><div class="kcard-body"><h5>（一）能力定义</h5><p>直接影响个体的活动效率，促使活动顺利完成的个性心理特征。</p><h5>（二）能力的分类</h5><h4><span class="h4num">1</span>按能力的构造分</h4><p class="item"><span class="ilabel">①</span>一般能力（智力）：在不同活动中表现出来的共同能力，如观察力、记忆力、思维力、想象力和注意力。<span class="anno">【思维力是智力的核心】</span></p><p class="item"><span class="ilabel">②</span>特殊能力：从事某种专业活动所必备的综合的能力，如数学能力、文学能力、艺术表演能力等。</p><h4><span class="h4num">2</span>按发展趋势不同分（☆☆☆☆）<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>流体能力：先天禀赋，先增长后降低，20 岁之后发展达到顶峰，30 岁后随着时间增长而降 低。<span class="anno">【解决问题的能力】</span></p><p class="item"><span class="ilabel">②</span>晶体能力：后天学习、一直增长，以掌握社会文化和经验为基础的智力，是长期学习的结果。</p><p class="anno-line"><span class="anno">【习得经验方法】</span></p><h5>（三）加德纳—多元智力理论（☆☆☆☆☆）<span class="badge-type">单选/简答</span></h5><p class="item"><span class="ilabel">①</span>语言智能</p><p class="item"><span class="ilabel">②</span>逻辑数理智能</p><p class="item"><span class="ilabel">③</span>音乐智能</p><p class="item"><span class="ilabel">④</span>身体-运动智能</p><p class="item"><span class="ilabel">⑤</span>人际智能</p><p class="item"><span class="ilabel">⑥</span>自省智能（自我认识智能）</p><p class="item"><span class="ilabel">⑦</span>自然智能</p><p class="item"><span class="ilabel">⑧</span>视觉-空间智能</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>简答题每种智力后的一句话解释，直接写图中所示即可。</div><h5>（四）能力发展的个别差异（☆☆☆☆☆）<span class="badge-type">简答/辨析/材料</span></h5><p class="item"><span class="ilabel">①</span>能力发展水平的差异 能力发展水平的差异主要体现在智力上。智力分布近似正态分布，有些人的智力发展水平较高，有些人的智力发展水平较低，大多数人的智力属于中等水平。</p><p class="item"><span class="ilabel">②</span>能力发展类型的差异 能力发展类型的差异是指构成能力的各种因素存在质的差异，主要表现在知觉、记忆、想象、思维的类型和品质方面。</p><p class="item"><span class="ilabel">③</span>能力表现早晚的差异。 能力表现早晚的差异主要体现在能力早期的显露和大器晚成两个方面。</p><p class="item"><span class="ilabel">④</span>能力发展的性别差异。</p><p class="subitem"><span class="slabel">主要体现在两个方面：</span>第一，男女智力的总体水平大致相当，但在智力的分布离散度上男性比女性要大，即很聪明的男性和很笨的男性都比女性多，中等智力的女性比男性多。第二，智力结构上男女存在差异，各自具有自己的优势领域。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>辨析题，人的能力发展水平都是一样的。（×）</div><h5>（五）影响能力发展的因素及能力的培养</h5><h4><span class="h4num">1</span>影响能力发展的因素</h4><p class="item"><span class="ilabel">①</span>遗传因素；</p><p class="item"><span class="ilabel">②</span>早期经验；</p><p class="item"><span class="ilabel">③</span>学校教育；</p><p class="item"><span class="ilabel">④</span>实践活动；</p><p class="item"><span class="ilabel">⑤</span>主观努力。</p><h4><span class="h4num">2</span>能力的培养（☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="item"><span class="ilabel">①</span>注重对学生早期能力的培养；</p><p class="item"><span class="ilabel">②</span>教学中要加强知识与技能的学习与训练；</p><p class="item"><span class="ilabel">③</span>教学中要针对学生的能力差异因材施教；</p><p class="item"><span class="ilabel">④</span>在教学中积极培养学生的元认识能力和创造力；</p><p class="item"><span class="ilabel">⑤</span>社会实践活动是培养学生能力的基本途径；</p><p class="item"><span class="ilabel">⑥</span>要注意培养学生的非智力因素。</p></div></div></section>
+    <div class="nav"><a href="04_第四章_中学生学习心理.html">← 上一章</a><a href="06_第六章_中学生心理辅导.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText && content.childNodes.length > 0) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) {
+          var parts = splitItem(child);
+          var subfold = document.createElement('div');
+          subfold.className = 'subfold';
+          var subHead = document.createElement('div');
+          subHead.className = 'subfold-head fold-head';
+          subHead.setAttribute('aria-expanded', 'false');
+          subHead.appendChild(makeArrow());
+          subHead.appendChild(parts.label);
+          var subBody = document.createElement('div');
+          subBody.className = 'subfold-body fold-body';
+          if (parts.content) subBody.appendChild(parts.content);
+          subfold.appendChild(subHead);
+          subfold.appendChild(subBody);
+          parent.appendChild(subfold);
+          bindToggle(subHead, subBody);
+          stack.push({ level: level, head: subHead, body: subBody });
+        } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child);
+      }
+    });
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中学课程 - 中学科二讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 课程概述</a><a class="lv2" href="#sec1">一、课程的概念</a><a class="lv2" href="#sec2">二、课程的类型</a><a class="lv2" href="#sec3">三、课程理论流派</a><a class="lv1" href="#sec4">第二节 课程组织</a><a class="lv2" href="#sec5">一、课程设计</a><a class="lv2" href="#sec6">二、课程内容</a><a class="lv2" href="#sec7">三、课程评价</a><a class="lv1" href="#sec8">第三节 基础教育课程改革</a><a class="lv2" href="#sec9">一、新课程改革的理念</a><a class="lv2" href="#sec10">二、基础教育课程改革的具体目标</a><a class="lv2" href="#sec11">三、新课程改革的课程结构（☆☆☆☆☆） 【单选/简答】【口诀：小综高分初结合，综合实践为必修农村要为当地来服务】</a><a class="lv2" href="#sec12">四、课程评价的改革</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>中学课程</h1>
+      <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
+      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 课程概述</a><a class="lv2" href="#sec1">一、课程的概念</a><a class="lv2" href="#sec2">二、课程的类型</a><a class="lv2" href="#sec3">三、课程理论流派</a><a class="lv1" href="#sec4">第二节 课程组织</a><a class="lv2" href="#sec5">一、课程设计</a><a class="lv2" href="#sec6">二、课程内容</a><a class="lv2" href="#sec7">三、课程评价</a><a class="lv1" href="#sec8">第三节 基础教育课程改革</a><a class="lv2" href="#sec9">一、新课程改革的理念</a><a class="lv2" href="#sec10">二、基础教育课程改革的具体目标</a><a class="lv2" href="#sec11">三、新课程改革的课程结构（☆☆☆☆☆） 【单选/简答】【口诀：小综高分初结合，综合实践为必修农村要为当地来服务】</a><a class="lv2" href="#sec12">四、课程评价的改革</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 课程概述</h2><div class="kcard"><div class="kcard-head"><h3 id="sec1"><span class="h3t">一、课程的概念</span><span class="badge-star">☆☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>课程作为教育科学的专门术语，始见于斯宾塞的《什么知识最有价值》。</h4><h4><span class="h4num">2</span>博比特 1918 年出版的《课程》一书，标志着课程作为专门研究领域的诞生。</h4><div class="tip"><span class="callout-label">CocoPolaris 说</span>单选备考，这两点在第二节中学过，快速回忆一下和斯宾塞相关的所有知识点，口诀是什么？</div><h4><span class="h4num">3</span>课程的定义 （☆☆☆☆☆）<span class="badge-type">单选/辨析题</span></h4><p class="item"><span class="ilabel">①</span>广义的课程：指各级各类学校为实现培养目标而制定的学习科目及其进程的总和。</p><p class="item"><span class="ilabel">②</span>狭义的课程：特指某一门学科，如数学课程、历史课程等。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>广义的课程=所有课程的总和；狭义的课程=某一门课程。</div><h4><span class="h4num">4</span>课程的意义/课程在学校教育中的作用。<span class="anno">【补充，单选/2025 上已考简答】</span></h4><p class="item"><span class="ilabel">①</span>课程是学校培养人才蓝图的具体表现。</p><p class="item"><span class="ilabel">②</span>课程是教师从事教育活动的基本依据。</p><p class="item"><span class="ilabel">③</span>课程是学生吸取知识的主要来源。</p><p class="item"><span class="ilabel">④</span>合理的课程设置对学生的全面发展起着决定作用。</p><p class="item"><span class="ilabel">⑤</span>课程是评估教学质量的主要依据。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec2"><span class="h3t">二、课程的类型</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答/辨析题</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>按学科内容属性分</h4><p class="item"><span class="ilabel">①</span>学科课程：以文化知识为基础，按照一定的价值标准，从不同的知识领域或学术领域选择一定的内容，根据知识的逻辑体系，将所选出的知识组织为学科的课程。</p><p class="subitem"><span class="slabel">学科课程特点<span class="anno">【2022 下已考简答】</span>：</span></p><p class="subitem"><span class="slabel">①</span>逻辑性：按照学科知识固有的逻辑组织；</p><p class="subitem"><span class="slabel">②</span>系统性：有助于学生掌握系统的文化知识；</p><p class="subitem"><span class="slabel">③</span>简约性：保证学生在有效时间内高效地获取知识。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>学习的是前人的间接经验；分科设置，例如语数外物化史地均属于学科课程， 中国古代的“六艺”和西方古代的“七艺”是最早的学科课程。</div><p class="item"><span class="ilabel">②</span>活动课程<span class="anno">【简答】</span>：又称为儿童中心课程、经验课程，从儿童的兴趣和需要出发，以活动 为中心组织的课程。主导价值在于使学生获得关于现实世界的直接经验和真切的体验。</p><p class="subitem"><span class="slabel">代表人物：</span>杜威。</p><p class="subitem"><span class="slabel">活动课程的特点：</span></p><p class="subitem"><span class="slabel">①</span>从儿童的需要、兴趣和个性出发设计课程</p><p class="subitem"><span class="slabel">②</span>以儿童的心理发展顺序为中心编制课程</p><p class="subitem"><span class="slabel">③</span>主张儿童在活动中探索，尝试错误，学到方法。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>学习的是直接经验。</div><h4><span class="h4num">2</span>按内容组织形式分</h4><p class="item"><span class="ilabel">①</span>分科课程：一种单学科的课程组织模式，强调不同学科门类之间的相对独立性，强调一门学科逻辑体系的完整性。主导价值在于使学生获得逻辑严密和条理清晰的文化知识。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>分科课程=学科课程，同上述学科课程部分</div><p class="item"><span class="ilabel">②</span>综合课程：组合两门或两门以上学科而构成的一门新的学科，强调学科之间的关联性、统一性和内在联系。主导价值在于通过相关学科的整合，促进学生认识的整体性发展。</p><h4><span class="h4num">3</span>按实施要求分</h4><p class="item"><span class="ilabel">①</span>必修课程：学生必须学习的公共课程，主导价值在于培养和发展学生的共性。</p><p class="item"><span class="ilabel">②</span>选修课程：根据不同学生的特点和发展方向，允许个人选择的课程，主导价值在于培养和发展学生的个性。</p><h4><span class="h4num">4</span>按设计开发主体分</h4><p class="item"><span class="ilabel">①</span>国家课程：根据所有公民基本素质发展的一般要求设计的课程，反映了国家教育的基本标准，体现了国家对各个地方的中小学教育的共同要求。主导价值在于通过课程体现国家的意志。</p><p class="item"><span class="ilabel">②</span>地方课程：地方教育主管部门以国家课程标准为基础，根据地方实际情况而设计的课程。主导价值在于满足地方社会发展的需要。</p><p class="item"><span class="ilabel">③</span>校本课程：以学校为课程编制主体，学校自主开发与实施的一种课程。主导价值在于展示学校的办学宗旨和特色。</p><p class="subitem"><span class="slabel">校本课程的基本特征<span class="anno">【拓展补充】</span>（2023 上简答，继续以单选备考）：</span></p><p class="subitem"><span class="slabel">①</span>校本课程开发的主体是学校、教师、学生与家长等而不是专家；</p><p class="subitem"><span class="slabel">②</span>校本课程开发立足于学校现有的课程资源的充分利用；</p><p class="subitem"><span class="slabel">③</span>校本课程开发的性质是国家课程的补充；</p><p class="subitem"><span class="slabel">④</span>校本课程开发基于学生的兴趣与需要；</p><p class="subitem"><span class="slabel">⑤</span>校本课程开发追求一个共同目标，即学校教育哲学。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>注意辨别主体，国家课程的开发主体是国家；地方课程的开发主体是地方；校本 课程的开发主体是学校。</div><h4><span class="h4num">5</span>按课程呈现的形式分<span class="badge-type">25 下简答已考</span></h4><p class="item"><span class="ilabel">①</span>显性课程：以直接的、明显的方式呈现的课程，计划性是显性课程的主要特征。</p><p class="item"><span class="ilabel">②</span>隐性课程：以间接的、内隐的方式呈现的课程，比如教育环境、校风、学风、班风。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>课程表上所呈现的课程都是显性课程；学生有意或无意间接受的态度、兴趣、情感 的熏陶等都是隐性课程。</div><h4><span class="h4num">6</span>按课程的任务分</h4><p class="item"><span class="ilabel">①</span>基础型课程：培养学生基础能力。</p><p class="item"><span class="ilabel">②</span>拓展型课程：拓展学生的视野，发展学生特殊的能力。</p><p class="item"><span class="ilabel">③</span>研究型课程：培养学生的探究态度和能力，由学生自主设计、自主探索。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec3"><span class="h3t">三、课程理论流派</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/辨析题/简答</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>学科中心课程论</h4><p class="item"><span class="ilabel">①</span>以学科逻辑体系为核心，传授各学科的知识；</p><p class="item"><span class="ilabel">②</span>代表人物：赫尔巴特、斯宾塞、布鲁纳、夸美纽斯。</p><h4><span class="h4num">2</span>活动中心课程论（☆☆☆☆☆）<span class="badge-type">简答题</span></h4><p class="item"><span class="ilabel">①</span>又称为儿童中心课程论或经验课程论；</p><p class="item"><span class="ilabel">②</span>以儿童活动为中心，从儿童的兴趣和需要出发，课程组织应心理学化。</p><p class="item"><span class="ilabel">③</span>代表人物：杜威及学生克伯屈。</p><div class="note"><span class="callout-label">注意</span>看到赫尔巴特和杜威是不是感觉见到了老朋友，回忆一下“旧三中心”和“新三中心”理论吧 其中活动中心课程论重点注意，和之前学过的杜威相关理论一起重点记忆，这个知识点也可以单独考 简答题哦~</div><h4><span class="h4num">3</span>社会中心课程论</h4><p class="item"><span class="ilabel">①</span>又称社会改造主义课程论，以社会问题为中心。</p><p class="item"><span class="ilabel">②</span>主张学生尽可能多地参与到社会中去。</p><p class="item"><span class="ilabel">③</span>代表人物：布拉梅尔德、弗莱雷。</p></div></div></section>
+<section class="sec"><h2 id="sec4">第二节 课程组织</h2><div class="kcard"><div class="kcard-head"><h3 id="sec5"><span class="h3t">一、课程设计</span><span class="badge-star">☆☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>课程设计是以一定的课程观为指导，制定课程标准，选择和组织课程内容，预设学习活动方式的过程。</h4><h4><span class="h4num">2</span>课程设计（开发）的模式 （☆☆☆☆）<span class="badge-type">单选/简答</span></h4><p class="item"><span class="ilabel">①</span>目标模式：以目标为课程开发的基础和核心；代表人物美国课程论专家泰勒。泰勒又被称为课程评价之父。《课程与教学的基本原理》一书，提出了课程编制的“四段论”，</p><p class="subitem"><span class="slabel">形成了著名的泰勒原理：</span>确定教育目标（目标）、选择教育经验（内容）、组织教育经验（方法）、评价教育计 划（评价）。<span class="anno">【口诀：标泰（表态）】</span></p><p class="item"><span class="ilabel">②</span>过程模式：强调课程开发关注的应是过程，而不是目标；代表人物斯腾豪斯，著作《课程研究与开发导论》。<span class="anno">【口诀：斯过（思过）】</span></p><p class="item"><span class="ilabel">③</span>情景模式：以上两者的综合，既能包含目标模式，又能包含过程模式的综合化课程开发模式。</p><h4><span class="h4num">3</span>制约课程开发的因素（☆☆☆☆☆）<span class="badge-type">单选（2022 上简答已考）</span></h4><p class="anno-line"><span class="anno">【口诀：人+社会+学科/学生在社会上学知识】</span></p><p class="item"><span class="ilabel">①</span>社会政治经济制度和文化发展水平。</p><p class="item"><span class="ilabel">②</span>学科（知识）特征和性质。</p><p class="item"><span class="ilabel">③</span>学生的年龄特征、知识能力基础和其可接受性。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec6"><span class="h3t">二、课程内容</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><h5>（一） 课程目标 （☆☆☆）<span class="badge-type">了解即可/单选</span></h5><h4><span class="h4num">1</span>课程目标的概念：课程本身要实现的目标和意图，是确定课程内容、教学目标和教学方法的基础。</h4><h4><span class="h4num">2</span>课程目标确立的依据 <span class="anno">【和上面制约课程开发的因素结合记忆】</span></h4><p class="item"><span class="ilabel">①</span>对学生的研究（学习者的需要）；</p><p class="item"><span class="ilabel">②</span>对社会的研究（当代社会生活的需要）；</p><p class="item"><span class="ilabel">③</span>对学科的研究（学科的发展）。</p><h4><span class="h4num">3</span>三维课程目标</h4><p class="item"><span class="ilabel">①</span>知识与技能目标：强调基础知识和基本技能（双基）</p><p class="item"><span class="ilabel">②</span>过程与方法目标：突出的是教会学生学习</p><p class="item"><span class="ilabel">③</span>情感态度与价值观目标：强调教学过程中激发学生的情感共鸣，使其形成正确的价值观</p><div class="note"><span class="callout-label">注意</span>三维课程目标是不是感觉有些似曾相识？还记得和之前学过的那个大佬的理念是一致的吗？</div><p class="anno-line"><span class="anno">【布卢姆《教育目标分类学》中将教育目标分为：认知、情感和动作技能三大领域】</span></p><h5>（二） 课程内容 （☆☆☆☆☆）<span class="badge-type">单选/简答</span></h5><h4><span class="h4num">1</span>课程内容的组织形式：<span class="badge-type">单选</span></h4><p class="item"><span class="ilabel">①</span>直线式vs 螺旋式：</p><p class="subitem"><span class="slabel">直线式—</span>前后内容基本不重复出现；螺旋式—课程内容重复出现。</p><p class="item"><span class="ilabel">②</span>纵向组织vs 横向组织：</p><p class="subitem"><span class="slabel">纵向组织—</span>知识逻辑序列（从已知到未知，从简到难）； 横向组织—打破学科知识界限（一个个相对独立的专题）。</p><p class="item"><span class="ilabel">③</span>逻辑顺序 vs 心理顺序：</p><p class="subitem"><span class="slabel">逻辑顺序：</span>根据学科本身的体系和知识内在联系组织内容（关注学科）；</p><p class="subitem"><span class="slabel">心理顺序：</span>根据学生心理发展特点组织内容（关注人）。</p><div class="note"><span class="callout-label">注意</span>这个知识点主要考察单选题，所以主要理解关键词即可。</div><h4><span class="h4num">2</span>课程内容的文本表现形式（☆☆☆☆☆）<span class="anno">【单选/简答-2024 上已考简答】</span> 课程内容的文本表现形式包括课程计划、课程标准和教材三个层次。</h4><p class="item"><span class="ilabel">①</span>课程计划（教学计划）</p><p class="subitem"><span class="slabel">概念：</span>课程计划是课程设置与编排的总体规划，是教育行政部门依据一定的教育目的和培养目标制定的有关学校教育和教学工作的指导性文件。</p><p class="subitem"><span class="slabel">作用：</span>课程计划体现了国家对学校的统一要求，是各级各类学校办学的基本纲领和组织教育教学工作的重要依据，也是学校安排整个课程检查、衡量学校工作和质量的基本依据。对学校的教学、生产劳动、课外活动等做出全面安排。</p><p class="subitem"><span class="slabel">构成：</span>具体规定了培养目标、教学科目的设置、学科顺序、课时分配、学年编制与学周安排。其中，教学科目的设置（课程设置）是课程计划的中心和首要问题。</p><p class="item"><span class="ilabel">②</span>课程标准（教学大纲）</p><p class="subitem"><span class="slabel">概念：</span>课程标准是在一定课程理论的指导下，依据培养目标和课程方案，以纲要的形式编制的关于教学科目内容、教学实施建议以及课程资源开发等方面的指导性文件。</p><p class="subitem"><span class="slabel">作用：</span>课程标准是教材编写、教学、评估和考试命题的依据，是国家管理和评价课程的基础；是教师进行教学的直接依据，也是衡量各科教学质量的重要标准。</p><p class="subitem"><span class="slabel">构成：</span>具体包括课程性质与地位、课程的基本理念、课程目标、课程内容标准、教学实施建议和课程资源的开发与利用等。</p><p class="item"><span class="ilabel">③</span>教材（根据课程标准编制）</p><p class="subitem"><span class="slabel">概念：</span>教材是教师和学生进行教学活动的材料。</p><p class="subitem"><span class="slabel">构成：</span>包括教科书、讲义、讲授提纲、参考书、活动指导书以及各种视听材料。其中，教科书和讲义是教材的主体部分，故人们常把教科书与讲义简称为教材。</p><p class="subitem"><span class="slabel">作用：</span>是教师教学的主要依据。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>课程计划是针对各级各类学校进行的总规划；课程标准是针对某一门学科进行的要求。课程标准是课程计划的具体化和分科展开。教材是根据课程标准编制的教学用书（课程计划&gt;课程标准&gt;教材）</div><div class="note"><span class="callout-label">注意</span>课程内容的文本表现形式这个知识点非常重要，内容点也多，大家一定要真正的理解哦，这样后期才好背诵。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec7"><span class="h3t">三、课程评价</span><span class="badge-star">☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>目标评价模式：在泰勒评价原理和课程原理的基础上形成的。看重“预设目标”的重要性，认为预设目标是课程评价的出发点和依据，是进行课程评价的决定因素。<span class="anno">【关键词：关注计划，关注预期】</span></p><p class="item"><span class="ilabel">②</span>目标游离评价模式：把评价的重点从“课程计划预期的结果”转向“课程计划实际的结果”上来，强调评价的重点应该由“预设”转变为“实践”。<span class="anno">【关键词：关注实际，关注非预期】</span></p><p class="item"><span class="ilabel">③</span>CIPP 评价模式 （有印象即可） 背景评价(context evaluation)、输入评价（input evaluation）、过程评价（process evaluation）、成果评价（product evaluation）</p></div></div></section>
+<section class="sec"><h2 id="sec8">第三节 基础教育课程改革</h2><div class="kcard"><div class="kcard-head"><h3 id="sec9"><span class="h3t">一、新课程改革的理念</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选</span></h3></div><div class="kcard-body"><h4><span class="h4num">1</span>教育改革的核心是课程改革；新课程改革的核心理念是教育以人为本，一切为了每一位学生的发展。</h4></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec10"><span class="h3t">二、基础教育课程改革的具体目标</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>实现课程功能的转变：双基—基础知识和基本技能；学会学习和形成正确的价值观；</p><p class="item"><span class="ilabel">②</span>课程结构的均衡性、综合性、选择性：设置九年一贯的课程门类和课时比例；设置综合课程，满足不同地区和学生发展的需求。</p><p class="item"><span class="ilabel">③</span>密切课程内容和生活时代的联系：改变“繁、难、偏、旧”和过分重视书本知识的现状，加强课程内容与学生生活以及现代社会和科技发展的联系。</p><p class="item"><span class="ilabel">④</span>改善学生的学习方式：改变死记硬背、接受学习，倡导学生主动参与、乐于探究。</p><p class="item"><span class="ilabel">⑤</span>建立与素质教育理念一致的评价与考试制度：改变过分强调甄选与选拔的功能，发挥评价促进学生发展、教师提高和改进教学实践的功能。</p><p class="item"><span class="ilabel">⑥</span>实行三级课程管理：国家、地方、学校。</p><div class="tip"><span class="anno">【CocoPolaris 补充】</span>素质教育是以提高国民素质为根本宗旨，培养学生的创新精神和实践能力为重点，目标是培养德智体美劳全面发展的合格公民，灵魂是思想道德教育。它与马克思关于人的全面发展学说相一致。</div><h4><span class="h4num">1</span>素质教育的内涵主要有：</h4><p class="item"><span class="ilabel">①</span>素质教育强调要面向全体学生、为了全体学生开展教育。</p><p class="item"><span class="ilabel">②</span>素质教育是促进学生德智体美各方面全面、均衡发展的教育。</p><p class="item"><span class="ilabel">③</span>素质教育强调发挥教师和学生的主体性，关注学生个性和创造力发展的教育。</p><p class="item"><span class="ilabel">④</span>素质教育强调要培养学生的基本素质和终身学习能力。（24 下小学科二简答题，其中第2 点，24 下/25 下中学已考辨析题，具体如下，故中学科二以简答继续备考） <span class="anno">【24 下辨析】</span>素质教育是我国在反思和批判应试教育重知识轻能力，重分数轻素质等弊端背景下提出的一个概念。对此，李老师认为素质教育就是在课外活动中注重学生的特长教育。对李老师的观点进行辨析。（×）<span class="anno">【全面发展，而非就是特长】</span> <span class="anno">【25 下辨析】</span>杨老师认为学生全面发展阻碍个性发展。（×）<span class="anno">【全面发展与个性发展并非相互对立,而是相辅相成辩证统一的关系】</span></p><div class="tip">【CocoPolaris 说：本括号内的内容帮大家理解，考试的时候不用写这么多。24 下和25 下辨析若能看出考察的本质是一样的，说明你融会贯通了，棒棒哒~(｡≧3≦)ﾉ⌒☆素质教育不是针对部分学生的“精英教育”，而是面向全体学生、为了全体学生的“大众教育”；不是压抑学生发展的“片面教育”，而是促进学生德智体美和谐发展的“全面教育”；不是追求升学率的“被动教育”，而是鼓励学生热爱学习、创新思考和乐观生活的“主动教育”。】</div><h4><span class="h4num">2</span>素质教育和应试教育的区别</h4><p class="item"><span class="ilabel">①</span>素质教育重视学生德智体美全面发展，应试教育只顾抓升学率。</p><p class="item"><span class="ilabel">②</span>素质教育重视改善学生的知识结构，应试教育只按考试要求向学生传授知识。</p><p class="item"><span class="ilabel">③</span>素质教育重视学生创新精神和实践能力的培养，应试教育只注重向学生传授考试技能。</p><p class="item"><span class="ilabel">④</span>素质教育重视引导学生把知识内化成自身素质，应试教育只要求学生在考试时能完整复述所学内容。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec11">三、新课程改革的课程结构（☆☆☆☆☆） 【单选/简答】【口诀：小综高分初结合，综合实践为必修农村要为当地来服务】</h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>九年一贯的义务教育课程：小学以综合课程为主；初中阶段设置分科与综合相结合的课程。</p><p class="item"><span class="ilabel">②</span>高中以分科课程为主。</p><p class="item"><span class="ilabel">③</span>从小学至高中设置综合实践活动并作为必修课程。</p><p class="item"><span class="ilabel">④</span>农村中学课程要为当地社会经济发展服务。</p><p class="subitem"><span class="slabel">【综合实践活动课程的内容：</span>侧重跨学科研究性学习和社会实践。一至九年级开展班团队活动，内容由学校安排。</p><p class="subitem"><span class="slabel">（口诀：</span>研社）】</p><div class="tip">CocoPolaris 特别提醒：最新2022 版《义务教育阶段课程标准》已将劳动、信息科技及其所占课时从综合实践活动课程中独立出来。劳动课程一至九年级开设；信息科技三至八年级开设。</div><h4><span class="h4num">1</span>综合实践活动课程的特点<span class="anno">【2023 下简答】</span></h4><p>p.s.请忽略视频里这部分的讲解，视频里为2017 版旧的内容，自行替换成讲义里最新的即可。</p><p class="item"><span class="ilabel">①</span>整体性：综合实践活动应该包括学生本人、社会生活和自然界，体现个人、社会、自然的内在整合，体现科学、艺术和道德的内在整合。</p><p class="item"><span class="ilabel">②</span>实践性：以活动为主要开展形式，强调学生的亲身经历，要求学生积极参与到各项活动中去。</p><p class="item"><span class="ilabel">③</span>开放性：综合实践活动面向每一位学生的个性发展，尊重每一位学生的发展需要，课程目标具有开放性、课程内容具有开放性、评价标准具有多元性。</p><p class="item"><span class="ilabel">④</span>生成性：随着活动的不断展开，新的目标不断生成，新的主题不断生成，学生在这个过程中认识和体验不断加深，创造性产生，这是综合实践活动生成性的集中体现。</p><p class="item"><span class="ilabel">⑤</span>自主性：综合实践活动充分尊重学生的兴趣爱好，学生自己选择学习的目标、内容、方式等，有利于学生自主性的充分发挥。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span> 2001 年以来，我国基础教育改革要求对九年制义务教育课程设置实行九年一贯。如果是简答题，综合实践活动课程的内容中第③点补充的综合实践活动课程的内容可以不用写，但是这个知识点需要知道，单选备考。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec12"><span class="h3t">四、课程评价的改革</span><span class="badge-star">☆☆☆☆☆</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><p>新课程改革强调改变课程评价过分强调甄别和选拔的功能，发挥评价促进学生发展、教师提高和改进教学实践的功能。评价的根本目的在于促进发展。</p><h4><span class="h4num">1</span>建立促进学生全面发展的体系：</h4><p class="item"><span class="ilabel">①</span>评价内容综合化，不单单看学业成绩，还要关注多方面的潜能</p><p class="item"><span class="ilabel">②</span>评价方式多样化，不仅要进行定量性评价，还要进行定性评价。</p><h4><span class="h4num">2</span>建立促进教师不断提高评价体系：评价主体多元化，以教师自评为主，校长、教师、学生、家长共同参与的评价制度。</h4><h4><span class="h4num">3</span>建立促进课程不断发展的评价体系：关注发展过程，周期性评价。</h4></div></div></section>
+    <div class="nav"><a href="01_第一章_教育基础知识和基本原理.html">← 上一章</a><a href="03_第三章_中学教学.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText && content.childNodes.length > 0) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) {
+          var parts = splitItem(child);
+          var subfold = document.createElement('div');
+          subfold.className = 'subfold';
+          var subHead = document.createElement('div');
+          subHead.className = 'subfold-head fold-head';
+          subHead.setAttribute('aria-expanded', 'false');
+          subHead.appendChild(makeArrow());
+          subHead.appendChild(parts.label);
+          var subBody = document.createElement('div');
+          subBody.className = 'subfold-body fold-body';
+          if (parts.content) subBody.appendChild(parts.content);
+          subfold.appendChild(subHead);
+          subfold.appendChild(subBody);
+          parent.appendChild(subfold);
+          bindToggle(subHead, subBody);
+          stack.push({ level: level, head: subHead, body: subBody });
+        } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child);
+      }
+    });
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

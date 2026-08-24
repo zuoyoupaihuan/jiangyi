@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中学生心理辅导 - 中学科二讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv1" href="#sec2">第三节 压力与挫折</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>中学生心理辅导</h1>
+      <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
+      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv1" href="#sec2">第三节 压力与挫折</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 中学生的心理健康</h2><div class="sec-lead"><h4><span class="h4num">1</span>心理健康的概念</h4><p class="subitem"><span class="slabel">心理健康至少要包含两层含义：</span>① 无心理疾病</p><p class="item"><span class="ilabel">②</span>有积极发展的心理状态。【①无</p><p class="item"><span class="ilabel">②</span>有】</p><h4><span class="h4num">2</span>中学生常见的心理健康问题（☆☆☆☆☆）<span class="badge-type">单选/材料分析题</span></h4><p class="item"><span class="ilabel">①</span>抑郁症：持久的心境低落；</p><p class="subitem"><span class="slabel">表现：</span>消极、悲伤、颓废、失去满足感和生活的乐趣、低自尊、 无能感、失眠。</p><p class="subitem"><span class="slabel">治疗方法：</span>认知行为疗法—改变学生已习惯的自贬性思维方式和不恰当的成败归因模式。</p><p class="item"><span class="ilabel">②</span>恐惧症：非理性惧怕。</p><p class="subitem"><span class="slabel">表现：</span>单纯恐惧症、广场恐惧症、社交恐惧症</p><p class="subitem"><span class="slabel">治疗方法：</span>系统脱敏法</p><p class="item"><span class="ilabel">③</span>焦虑症：紧张不安</p><p class="subitem"><span class="slabel">表现：</span>考试焦虑</p><p class="subitem"><span class="slabel">治疗方法：</span>肌肉放松法、系统脱敏法、运用自助性认知矫正程序</p><p class="item"><span class="ilabel">④</span>强迫症</p><p class="subitem"><span class="slabel">主要表现：</span>强迫观念<span class="anno">【反复想】</span>；强迫行为<span class="anno">【反复做】</span></p><p class="subitem"><span class="slabel">治疗方法：</span>森田疗法<span class="anno">【顺其自然，为所当为】</span>；行为治疗法<span class="anno">【暴露与阻止反应】</span></p><p class="item"><span class="ilabel">⑤</span>网络成瘾：过度的不当的使用网络；</p><p class="subitem"><span class="slabel">表现：</span>头晕、胸闷、空虚、失落</p><p class="subitem"><span class="slabel">治疗方法：</span>强化干预法；厌恶干预法；转移注意法；替代、延迟满足法；团体辅导法。</p><p class="subitem"><span class="slabel">备注：</span>重点关注焦虑症、强迫症和网络成瘾，此部分也可以和第二节的心理辅导方法结合一起考察材料分析题。<span class="anno">【26 上焦虑症已考材料题】</span></p></div></section>
+<section class="sec"><h2 id="sec1">第二节 学校心理辅导</h2><div class="sec-lead"><h4><span class="h4num">1</span>心理辅导的目标<span class="badge-type">了解</span></h4><p class="subitem"><span class="slabel">基本目标：</span>学会调适；</p><p class="subitem"><span class="slabel">高级目标：</span>寻求发展。</p><h4><span class="h4num">2</span>学校心理健康教育的基本任务（☆☆☆☆☆）<span class="badge-type">25 上简答/材料</span></h4><p>中小学心理健康教育的主要任务，一是对全体学生开展心理健康教育，使学生不断正确认识自我，增强调控自我、承受挫折、适应环境的能力；培养学生健全的人格和良好的个性心理品质。<span class="anno">【预防性与发展性的心理健康教育】</span> 二是对少数有心理困扰或心理障碍的学生，给予科学有效的心理咨询和辅导，使他们尽快摆脱障碍，调节自我，提高心理健康水平，增强发展自我的能力。<span class="anno">【矫治性与补救性的心理健康教育】</span></p><h4><span class="h4num">3</span>学校心理健康教育的途径（☆☆☆☆☆）<span class="anno">【简答，口诀：课程渗透辅导活动】</span></h4><p class="item"><span class="ilabel">①</span>开设心理健康教育的有关课程；</p><p class="item"><span class="ilabel">②</span>开设心理辅导活动课；</p><p class="item"><span class="ilabel">③</span>在学科教学中渗透心理健康教育的内容；</p><p class="item"><span class="ilabel">④</span>结合班级 、团队活动开展心理健康教育；</p><p class="item"><span class="ilabel">⑤</span>个别心理辅导或咨询；</p><p class="item"><span class="ilabel">⑥</span>小组辅导。</p><h4><span class="h4num">4</span>心理健康教育的主要内容（☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="subitem"><span class="slabel">心理健康教育的主要内容包括：</span>普及心理健康知识，树立心理健康意识，了解心理调节方法，认识心理异常现象，掌握心理保健常识和技能。其重点是认识自我、学会学习、人际交往、情绪调适、升学择业以及生活和社会适应等方面的内容。</p><h4><span class="h4num">5</span>心理辅导的原则（☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="item"><span class="ilabel">①</span>面向全体学生原则；</p><p class="item"><span class="ilabel">②</span>预防与发展相结合原则；</p><p class="item"><span class="ilabel">③</span>尊重与理解学生原则；</p><p class="item"><span class="ilabel">④</span>学生主体性原则；</p><p class="item"><span class="ilabel">⑤</span>个别化对待原则；</p><p class="item"><span class="ilabel">⑥</span>整体性发展原则。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>心理健康问题是近年来非常热的话题，也是目前教育中遇到的大挑战。心理健康相关的知识点作为重点复习。另，学有余力的小伙伴可以自行阅读资料中coco 补充的《关于加强中小学心理健康教育的若干意见》和《中小学心理健康教育指导纲要(2012 修订)》再次从整体上理解这部分内容。</div><h4><span class="h4num">6</span>心理辅导的方法（☆☆☆☆☆）<span class="badge-type">单选/材料分析题</span></h4><h5>（1）行为疗法</h5><p class="subitem"><span class="slabel">强化法：</span>给夸奖；</p><p class="subitem"><span class="slabel">惩罚法：</span>给厌恶、撤愉快；</p><p class="subitem"><span class="slabel">消退法：</span>得不到强化，不理睬。<span class="anno">【此三个和第四章学习的内容一致，综合理解即可】</span></p><p class="subitem"><span class="slabel">系统脱敏法：</span>一步一步减轻焦虑/降低恐惧。</p><p class="subitem"><span class="slabel">系统脱敏法的三步骤：</span>① 放松身体；</p><p class="item"><span class="ilabel">②</span>建立焦虑层次（从最轻微的焦虑到引起最强烈的恐惧依次排序）</p><p class="item"><span class="ilabel">③</span>让来访者在身体放松的情况下，从最低层次开始想象产生焦虑的情境，这样直到来访者能从想象情境转移到现实情境，并能在引起恐惧的原情境中保持放松状态，焦虑情绪不再出现为止。</p><h5>（2）认知疗法：改善学生认知的方法。</h5><p class="subitem"><span class="slabel">合理情绪疗法（ABC 理论）：</span>A-activating event 指诱发性事件； B-belief 指个体遇到诱发性事件后的信念、观点； C-consequence 指在特定情境下，个体的情绪及行为的结果。</p><p class="subitem"><span class="slabel">不合理信念的特征：</span></p><p class="item"><span class="ilabel">①</span>绝对化：关键词“必须”“应该”，比如我必须尽善尽美。</p><p class="item"><span class="ilabel">②</span>过分概括化：以偏概全、以一概十，比如经历一次失败就认为自己一无是处。</p><p class="item"><span class="ilabel">③</span>糟糕至极：比如高考失败就认为前途无望。 [25 上单选] 张东认如果高考失败，自己的人生就彻底完了，无法再有任何成就和幸福，针对 他的不合理信念，最佳心理辅导方法是（   ）。</p><p class="item"><span class="ilabel">A.</span>理性情绪法</p><p class="item"><span class="ilabel">B.</span>自我控制法</p><p class="item"><span class="ilabel">C.</span>放松训练法</p><p class="item"><span class="ilabel">D.</span>系统脱敏法</p><h5>（3）人本主义疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">提出者：</span>罗杰斯</p><p class="subitem"><span class="slabel">来访者中心疗法：</span>不追求特殊的策略和技术，而是把重点集中在创造一种良好的关系氛围，使来访者 产生能够自由地探索内心的感觉。咨询师在人格和态度上需要满足以下三种条件：真诚一致、无条件 积极关注和共情。</p><h5>（4）精神分析疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">移情：</span>来访者将情感、态度和属性转移到咨询师身上。</p><p class="subitem"><span class="slabel">反移情：</span>咨询师把情感、态度和属性转移到来访者身上。</p></div></section>
+<section class="sec"><h2 id="sec2">第三节 压力与挫折</h2><div class="sec-lead"><h5>应对挫折的方法（☆☆☆☆☆）<span class="anno">【单选/简答】</span></h5><p class="item"><span class="ilabel">①</span>升华：将心理欲望从社会不可接受转向社会可接受的方向的过程。</p><p class="item"><span class="ilabel">②</span>补偿：由于本身的某种缺陷而达不到既定目标时，用另一种目标代替。</p><p class="item"><span class="ilabel">③</span>退行：受挫时，行为表现会显得十分幼稚，和年龄不符。</p><p class="item"><span class="ilabel">④</span>幽默：用机智、双关、自嘲等方式化解尴尬。</p><p class="item"><span class="ilabel">⑤</span>宣泄：一吐为快，将不满发泄出来。</p><p class="item"><span class="ilabel">⑥</span>认同：建立于他人或团体的目标同一性，或将自己与崇拜的人视为一体。</p><p class="item"><span class="ilabel">⑦</span>文饰-合理化：酸葡萄心理+甜柠檬心理+推诿。</p><p class="item"><span class="ilabel">⑧</span>投射：以己度人。</p><p class="item"><span class="ilabel">⑨</span>认知重组：对挫折情境的重新认识与评价。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>以上方法重点关注补偿法、文饰-合理化和投射。</div></div></section>
+    <div class="nav"><a href="05_第五章_中学生发展心理.html">← 上一章</a><a href="07_第七章_中学德育.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText && content.childNodes.length > 0) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) {
+          var parts = splitItem(child);
+          var subfold = document.createElement('div');
+          subfold.className = 'subfold';
+          var subHead = document.createElement('div');
+          subHead.className = 'subfold-head fold-head';
+          subHead.setAttribute('aria-expanded', 'false');
+          subHead.appendChild(makeArrow());
+          subHead.appendChild(parts.label);
+          var subBody = document.createElement('div');
+          subBody.className = 'subfold-body fold-body';
+          if (parts.content) subBody.appendChild(parts.content);
+          subfold.appendChild(subHead);
+          subfold.appendChild(subBody);
+          parent.appendChild(subfold);
+          bindToggle(subHead, subBody);
+          stack.push({ level: level, head: subHead, body: subBody });
+        } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child);
+      }
+    });
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>
