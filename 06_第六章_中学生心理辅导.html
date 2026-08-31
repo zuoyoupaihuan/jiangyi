@@ -282,22 +282,76 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
 .subfold-content { display: block; }
 
 </style>
+<style>
+/* ===== 界面优化层 ===== */
+::selection { background: #bfe3df; }
+
+/* 侧边栏：当前节指示条 */
+.sidebar a { border-left: 3px solid transparent; padding-left: 6px; transition: background .15s, color .15s; }
+.sidebar a.active { border-left-color: var(--accent); }
+
+/* 卡片：悬停微反馈 */
+.kcard { margin: 22px 0; transition: border-color .2s, box-shadow .2s; }
+.kcard:hover { border-color: var(--accent-line); }
+
+/* 卡片头：星级与题型徽章靠右，形成两端对齐的扫描线 */
+.kcard-head h3 .badge-star { margin-left: auto; }
+
+/* 星级实心后的间距 */
+.badge-star { letter-spacing: 2px; }
+
+/* 折叠：箭头旋转过渡 + h4 左边框反馈 */
+.fold-arrow { transition: transform .18s ease; }
+h4.fold-head { transition: color .15s, border-left-color .15s; }
+h4.fold-head:hover { border-left-color: var(--accent); }
+
+/* 上一章/下一章：按钮化 */
+.nav a { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line-strong); padding: 10px 24px; border-radius: 10px; transition: border-color .15s, background .15s, color .15s, box-shadow .15s; }
+.nav a:hover { border-color: var(--accent); background: var(--accent-soft); text-decoration: none; box-shadow: var(--shadow); }
+
+/* 键盘可达性 */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.fold-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 打印：自动展开全部、隐藏辅助 UI */
+@media print {
+  .sidebar, .top-btn, .fold-toolbar, .progress, .nav { display: none !important; }
+  .fold-body, .subfold-body { display: block !important; }
+  .layout { display: block; max-width: none; }
+  .kcard { break-inside: avoid; box-shadow: none; }
+  .chapter-header { box-shadow: none; }
+}
+
+/* 动效弱化偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+<style>
+/* ===== 精修层 ===== */
+.badge-star { font-size: 15px; }
+@media (min-width: 901px) {
+  .sec > h2 { font-size: 26px; margin: 14px 0 22px; }
+}
+.chapter-header .legend { opacity: .88; }
+</style>
 </head>
 <body>
 <div class="progress" id="progress"></div>
 <div class="layout">
-  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv1" href="#sec2">第三节 压力与挫折</a></aside>
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv2" href="#sec3">一、心理健康的概念</a><a class="lv2" href="#sec4">二、中学生常见的心理健康问题</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv2" href="#sec5">一、心理辅导的目标</a><a class="lv2" href="#sec6">二、学校心理健康教育的基本任务</a><a class="lv2" href="#sec7">三、学校心理健康教育的途径</a><a class="lv2" href="#sec8">四、心理健康教育的主要内容</a><a class="lv2" href="#sec9">五、心理辅导的原则</a><a class="lv2" href="#sec10">六、心理辅导的方法</a><a class="lv1" href="#sec2">第三节 压力与挫折</a><a class="lv2" href="#sec11">一、应对挫折的方法</a></aside>
   <div class="main">
     <div class="chapter-header">
       <a class="back" href="index.html">← 返回目录</a>
       <h1>中学生心理辅导</h1>
       <div class="sub">中学教育知识与能力 · CocoPolaris 讲义</div>
-      <div class="legend">☆ 越多 = 考频越高 · 徽章 = 常考题型</div>
+      <div class="legend">★ 越多 = 考频越高 · 徽章 = 常考题型</div>
     </div>
-    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv1" href="#sec2">第三节 压力与挫折</a></details></div>
-    <section class="sec"><h2 id="sec0">第一节 中学生的心理健康</h2><div class="sec-lead"><h4><span class="h4num">1</span>心理健康的概念</h4><p>心理健康至少要包含两层含义：①无心理疾病；②有积极发展的心理状态。<span class="anno">【①无 ②有】</span></p><h4><span class="h4num">2</span>中学生常见的心理健康问题（☆☆☆☆☆）<span class="badge-type">单选/材料分析题</span></h4><p class="item"><span class="ilabel">①</span>抑郁症：持久的心境低落；</p><p class="subitem"><span class="slabel">表现：</span>消极、悲伤、颓废、失去满足感和生活的乐趣、低自尊、 无能感、失眠。</p><p class="subitem"><span class="slabel">治疗方法：</span>认知行为疗法—改变学生已习惯的自贬性思维方式和不恰当的成败归因模式。</p><p class="item"><span class="ilabel">②</span>恐惧症：非理性惧怕。</p><p class="subitem"><span class="slabel">表现：</span>单纯恐惧症、广场恐惧症、社交恐惧症</p><p class="subitem"><span class="slabel">治疗方法：</span>系统脱敏法</p><p class="item"><span class="ilabel">③</span>焦虑症：紧张不安</p><p class="subitem"><span class="slabel">表现：</span>考试焦虑</p><p class="subitem"><span class="slabel">治疗方法：</span>肌肉放松法、系统脱敏法、运用自助性认知矫正程序</p><p class="item"><span class="ilabel">④</span>强迫症</p><p class="subitem"><span class="slabel">主要表现：</span>强迫观念<span class="anno">【反复想】</span>；强迫行为<span class="anno">【反复做】</span></p><p class="subitem"><span class="slabel">治疗方法：</span>森田疗法<span class="anno">【顺其自然，为所当为】</span>；行为治疗法<span class="anno">【暴露与阻止反应】</span></p><p class="item"><span class="ilabel">⑤</span>网络成瘾：过度的不当的使用网络；</p><p class="subitem"><span class="slabel">表现：</span>头晕、胸闷、空虚、失落</p><p class="subitem"><span class="slabel">治疗方法：</span>强化干预法；厌恶干预法；转移注意法；替代、延迟满足法；团体辅导法。</p><p class="subitem"><span class="slabel">备注：</span>重点关注焦虑症、强迫症和网络成瘾，此部分也可以和第二节的心理辅导方法结合一起考察材料分析题。<span class="anno">【26 上焦虑症已考材料题】</span></p></div></section>
-<section class="sec"><h2 id="sec1">第二节 学校心理辅导</h2><div class="sec-lead"><h4><span class="h4num">1</span>心理辅导的目标<span class="badge-type">了解</span></h4><p class="subitem"><span class="slabel">基本目标：</span>学会调适；</p><p class="subitem"><span class="slabel">高级目标：</span>寻求发展。</p><h4><span class="h4num">2</span>学校心理健康教育的基本任务（☆☆☆☆☆）<span class="badge-type">25 上简答/材料</span></h4><p>中小学心理健康教育的主要任务，一是对全体学生开展心理健康教育，使学生不断正确认识自我，增强调控自我、承受挫折、适应环境的能力；培养学生健全的人格和良好的个性心理品质。<span class="anno">【预防性与发展性的心理健康教育】</span> 二是对少数有心理困扰或心理障碍的学生，给予科学有效的心理咨询和辅导，使他们尽快摆脱障碍，调节自我，提高心理健康水平，增强发展自我的能力。<span class="anno">【矫治性与补救性的心理健康教育】</span></p><h4><span class="h4num">3</span>学校心理健康教育的途径（☆☆☆☆☆）<span class="anno">【简答，口诀：课程渗透辅导活动】</span></h4><p class="item"><span class="ilabel">①</span>开设心理健康教育的有关课程；</p><p class="item"><span class="ilabel">②</span>开设心理辅导活动课；</p><p class="item"><span class="ilabel">③</span>在学科教学中渗透心理健康教育的内容；</p><p class="item"><span class="ilabel">④</span>结合班级 、团队活动开展心理健康教育；</p><p class="item"><span class="ilabel">⑤</span>个别心理辅导或咨询；</p><p class="item"><span class="ilabel">⑥</span>小组辅导。</p><h4><span class="h4num">4</span>心理健康教育的主要内容（☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="subitem"><span class="slabel">心理健康教育的主要内容包括：</span>普及心理健康知识，树立心理健康意识，了解心理调节方法，认识心理异常现象，掌握心理保健常识和技能。其重点是认识自我、学会学习、人际交往、情绪调适、升学择业以及生活和社会适应等方面的内容。</p><h4><span class="h4num">5</span>心理辅导的原则（☆☆☆☆☆）<span class="badge-type">简答</span></h4><p class="item"><span class="ilabel">①</span>面向全体学生原则；</p><p class="item"><span class="ilabel">②</span>预防与发展相结合原则；</p><p class="item"><span class="ilabel">③</span>尊重与理解学生原则；</p><p class="item"><span class="ilabel">④</span>学生主体性原则；</p><p class="item"><span class="ilabel">⑤</span>个别化对待原则；</p><p class="item"><span class="ilabel">⑥</span>整体性发展原则。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>心理健康问题是近年来非常热的话题，也是目前教育中遇到的大挑战。心理健康相关的知识点作为重点复习。另，学有余力的小伙伴可以自行阅读资料中coco 补充的《关于加强中小学心理健康教育的若干意见》和《中小学心理健康教育指导纲要(2012 修订)》再次从整体上理解这部分内容。</div><h4><span class="h4num">6</span>心理辅导的方法（☆☆☆☆☆）<span class="badge-type">单选/材料分析题</span></h4><h5>（1）行为疗法</h5><p class="subitem"><span class="slabel">强化法：</span>给夸奖；</p><p class="subitem"><span class="slabel">惩罚法：</span>给厌恶、撤愉快；</p><p class="subitem"><span class="slabel">消退法：</span>得不到强化，不理睬。<span class="anno">【此三个和第四章学习的内容一致，综合理解即可】</span></p><p class="subitem"><span class="slabel">系统脱敏法：</span>一步一步减轻焦虑/降低恐惧。</p><p class="subitem"><span class="slabel">系统脱敏法的三步骤：</span></p><p class="item"><span class="ilabel">①</span>放松身体；</p><p class="item"><span class="ilabel">②</span>建立焦虑层次（从最轻微的焦虑到引起最强烈的恐惧依次排序）</p><p class="item"><span class="ilabel">③</span>让来访者在身体放松的情况下，从最低层次开始想象产生焦虑的情境，这样直到来访者能从想象情境转移到现实情境，并能在引起恐惧的原情境中保持放松状态，焦虑情绪不再出现为止。</p><h5>（2）认知疗法：改善学生认知的方法。</h5><p class="subitem"><span class="slabel">合理情绪疗法（ABC 理论）：</span>A-activating event 指诱发性事件； B-belief 指个体遇到诱发性事件后的信念、观点； C-consequence 指在特定情境下，个体的情绪及行为的结果。</p><p class="subitem"><span class="slabel">不合理信念的特征：</span></p><p class="item"><span class="ilabel">①</span>绝对化：关键词“必须”“应该”，比如我必须尽善尽美。</p><p class="item"><span class="ilabel">②</span>过分概括化：以偏概全、以一概十，比如经历一次失败就认为自己一无是处。</p><p class="item"><span class="ilabel">③</span>糟糕至极：比如高考失败就认为前途无望。 [25 上单选] 张东认如果高考失败，自己的人生就彻底完了，无法再有任何成就和幸福，针对 他的不合理信念，最佳心理辅导方法是（   ）。</p><p class="item"><span class="ilabel">A.</span>理性情绪法</p><p class="item"><span class="ilabel">B.</span>自我控制法</p><p class="item"><span class="ilabel">C.</span>放松训练法</p><p class="item"><span class="ilabel">D.</span>系统脱敏法</p><h5>（3）人本主义疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">提出者：</span>罗杰斯</p><p class="subitem"><span class="slabel">来访者中心疗法：</span>不追求特殊的策略和技术，而是把重点集中在创造一种良好的关系氛围，使来访者 产生能够自由地探索内心的感觉。咨询师在人格和态度上需要满足以下三种条件：真诚一致、无条件 积极关注和共情。</p><h5>（4）精神分析疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">移情：</span>来访者将情感、态度和属性转移到咨询师身上。</p><p class="subitem"><span class="slabel">反移情：</span>咨询师把情感、态度和属性转移到来访者身上。</p></div></section>
-<section class="sec"><h2 id="sec2">第三节 压力与挫折</h2><div class="sec-lead"><h5>应对挫折的方法（☆☆☆☆☆）<span class="anno">【单选/简答】</span></h5><p class="item"><span class="ilabel">①</span>升华：将心理欲望从社会不可接受转向社会可接受的方向的过程。</p><p class="item"><span class="ilabel">②</span>补偿：由于本身的某种缺陷而达不到既定目标时，用另一种目标代替。</p><p class="item"><span class="ilabel">③</span>退行：受挫时，行为表现会显得十分幼稚，和年龄不符。</p><p class="item"><span class="ilabel">④</span>幽默：用机智、双关、自嘲等方式化解尴尬。</p><p class="item"><span class="ilabel">⑤</span>宣泄：一吐为快，将不满发泄出来。</p><p class="item"><span class="ilabel">⑥</span>认同：建立于他人或团体的目标同一性，或将自己与崇拜的人视为一体。</p><p class="item"><span class="ilabel">⑦</span>文饰-合理化：酸葡萄心理+甜柠檬心理+推诿。</p><p class="item"><span class="ilabel">⑧</span>投射：以己度人。</p><p class="item"><span class="ilabel">⑨</span>认知重组：对挫折情境的重新认识与评价。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>以上方法重点关注补偿法、文饰-合理化和投射。</div></div></section>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#sec0">第一节 中学生的心理健康</a><a class="lv2" href="#sec3">一、心理健康的概念</a><a class="lv2" href="#sec4">二、中学生常见的心理健康问题</a><a class="lv1" href="#sec1">第二节 学校心理辅导</a><a class="lv2" href="#sec5">一、心理辅导的目标</a><a class="lv2" href="#sec6">二、学校心理健康教育的基本任务</a><a class="lv2" href="#sec7">三、学校心理健康教育的途径</a><a class="lv2" href="#sec8">四、心理健康教育的主要内容</a><a class="lv2" href="#sec9">五、心理辅导的原则</a><a class="lv2" href="#sec10">六、心理辅导的方法</a><a class="lv1" href="#sec2">第三节 压力与挫折</a><a class="lv2" href="#sec11">一、应对挫折的方法</a></details></div>
+    <section class="sec"><h2 id="sec0">第一节 中学生的心理健康</h2><div class="kcard"><div class="kcard-head"><h3 id="sec3"><span class="h3t">一、心理健康的概念</span></h3></div><div class="kcard-body"><p>心理健康至少要包含两层含义：①无心理疾病；②有积极发展的心理状态。<span class="anno">【①无 ②有】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec4"><span class="h3t">二、中学生常见的心理健康问题</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析题</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>抑郁症：持久的心境低落；</p><p class="subitem"><span class="slabel">表现：</span>消极、悲伤、颓废、失去满足感和生活的乐趣、低自尊、 无能感、失眠。</p><p class="subitem"><span class="slabel">治疗方法：</span>认知行为疗法—改变学生已习惯的自贬性思维方式和不恰当的成败归因模式。</p><p class="item"><span class="ilabel">②</span>恐惧症：非理性惧怕。</p><p class="subitem"><span class="slabel">表现：</span>单纯恐惧症、广场恐惧症、社交恐惧症</p><p class="subitem"><span class="slabel">治疗方法：</span>系统脱敏法</p><p class="item"><span class="ilabel">③</span>焦虑症：紧张不安</p><p class="subitem"><span class="slabel">表现：</span>考试焦虑</p><p class="subitem"><span class="slabel">治疗方法：</span>肌肉放松法、系统脱敏法、运用自助性认知矫正程序</p><p class="item"><span class="ilabel">④</span>强迫症</p><p class="subitem"><span class="slabel">主要表现：</span>强迫观念<span class="anno">【反复想】</span>；强迫行为<span class="anno">【反复做】</span></p><p class="subitem"><span class="slabel">治疗方法：</span>森田疗法<span class="anno">【顺其自然，为所当为】</span>；行为治疗法<span class="anno">【暴露与阻止反应】</span></p><p class="item"><span class="ilabel">⑤</span>网络成瘾：过度的不当的使用网络；</p><p class="subitem"><span class="slabel">表现：</span>头晕、胸闷、空虚、失落</p><p class="subitem"><span class="slabel">治疗方法：</span>强化干预法；厌恶干预法；转移注意法；替代、延迟满足法；团体辅导法。</p><p class="subitem"><span class="slabel">备注：</span>重点关注焦虑症、强迫症和网络成瘾，此部分也可以和第二节的心理辅导方法结合一起考察材料分析题。<span class="anno">【26 上焦虑症已考材料题】</span></p></div></div></section>
+<section class="sec"><h2 id="sec1">第二节 学校心理辅导</h2><div class="kcard"><div class="kcard-head"><h3 id="sec5"><span class="h3t">一、心理辅导的目标</span><span class="badge-type">了解</span></h3></div><div class="kcard-body"><p class="subitem"><span class="slabel">基本目标：</span>学会调适；</p><p class="subitem"><span class="slabel">高级目标：</span>寻求发展。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec6"><span class="h3t">二、学校心理健康教育的基本任务</span><span class="badge-star">★★★★★</span><span class="badge-type">25 上简答/材料</span></h3></div><div class="kcard-body"><p>中小学心理健康教育的主要任务，一是对全体学生开展心理健康教育，使学生不断正确认识自我，增强调控自我、承受挫折、适应环境的能力；培养学生健全的人格和良好的个性心理品质。<span class="anno">【预防性与发展性的心理健康教育】</span> 二是对少数有心理困扰或心理障碍的学生，给予科学有效的心理咨询和辅导，使他们尽快摆脱障碍，调节自我，提高心理健康水平，增强发展自我的能力。<span class="anno">【矫治性与补救性的心理健康教育】</span></p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec7"><span class="h3t">三、学校心理健康教育的途径</span><span class="badge-star">★★★★★</span><span class="badge-type">简答</span></h3></div><div class="kcard-body"><p class="anno-line"><span class="anno">【口诀：课程渗透辅导活动】</span></p><p class="item"><span class="ilabel">①</span>开设心理健康教育的有关课程；</p><p class="item"><span class="ilabel">②</span>开设心理辅导活动课；</p><p class="item"><span class="ilabel">③</span>在学科教学中渗透心理健康教育的内容；</p><p class="item"><span class="ilabel">④</span>结合班级 、团队活动开展心理健康教育；</p><p class="item"><span class="ilabel">⑤</span>个别心理辅导或咨询；</p><p class="item"><span class="ilabel">⑥</span>小组辅导。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec8"><span class="h3t">四、心理健康教育的主要内容</span><span class="badge-star">★★★★★</span><span class="badge-type">简答</span></h3></div><div class="kcard-body"><p class="subitem"><span class="slabel">心理健康教育的主要内容包括：</span>普及心理健康知识，树立心理健康意识，了解心理调节方法，认识心理异常现象，掌握心理保健常识和技能。其重点是认识自我、学会学习、人际交往、情绪调适、升学择业以及生活和社会适应等方面的内容。</p></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec9"><span class="h3t">五、心理辅导的原则</span><span class="badge-star">★★★★★</span><span class="badge-type">简答</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>面向全体学生原则；</p><p class="item"><span class="ilabel">②</span>预防与发展相结合原则；</p><p class="item"><span class="ilabel">③</span>尊重与理解学生原则；</p><p class="item"><span class="ilabel">④</span>学生主体性原则；</p><p class="item"><span class="ilabel">⑤</span>个别化对待原则；</p><p class="item"><span class="ilabel">⑥</span>整体性发展原则。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>心理健康问题是近年来非常热的话题，也是目前教育中遇到的大挑战。心理健康相关的知识点作为重点复习。另，学有余力的小伙伴可以自行阅读资料中coco 补充的《关于加强中小学心理健康教育的若干意见》和《中小学心理健康教育指导纲要(2012 修订)》再次从整体上理解这部分内容。</div></div></div><div class="kcard"><div class="kcard-head"><h3 id="sec10"><span class="h3t">六、心理辅导的方法</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析题</span></h3></div><div class="kcard-body"><h5>（1）行为疗法</h5><p class="subitem"><span class="slabel">强化法：</span>给夸奖；</p><p class="subitem"><span class="slabel">惩罚法：</span>给厌恶、撤愉快；</p><p class="subitem"><span class="slabel">消退法：</span>得不到强化，不理睬。<span class="anno">【此三个和第四章学习的内容一致，综合理解即可】</span></p><p class="subitem"><span class="slabel">系统脱敏法：</span>一步一步减轻焦虑/降低恐惧。</p><p class="subitem"><span class="slabel">系统脱敏法的三步骤：</span></p><p class="item"><span class="ilabel">①</span>放松身体；</p><p class="item"><span class="ilabel">②</span>建立焦虑层次（从最轻微的焦虑到引起最强烈的恐惧依次排序）</p><p class="item"><span class="ilabel">③</span>让来访者在身体放松的情况下，从最低层次开始想象产生焦虑的情境，这样直到来访者能从想象情境转移到现实情境，并能在引起恐惧的原情境中保持放松状态，焦虑情绪不再出现为止。</p><h5>（2）认知疗法：改善学生认知的方法。</h5><p class="subitem"><span class="slabel">合理情绪疗法（ABC 理论）：</span>A-activating event 指诱发性事件； B-belief 指个体遇到诱发性事件后的信念、观点； C-consequence 指在特定情境下，个体的情绪及行为的结果。</p><p class="subitem"><span class="slabel">不合理信念的特征：</span></p><p class="item"><span class="ilabel">①</span>绝对化：关键词“必须”“应该”，比如我必须尽善尽美。</p><p class="item"><span class="ilabel">②</span>过分概括化：以偏概全、以一概十，比如经历一次失败就认为自己一无是处。</p><p class="item"><span class="ilabel">③</span>糟糕至极：比如高考失败就认为前途无望。 [25 上单选] 张东认如果高考失败，自己的人生就彻底完了，无法再有任何成就和幸福，针对 他的不合理信念，最佳心理辅导方法是（   ）。</p><p class="item"><span class="ilabel">A.</span>理性情绪法</p><p class="item"><span class="ilabel">B.</span>自我控制法</p><p class="item"><span class="ilabel">C.</span>放松训练法</p><p class="item"><span class="ilabel">D.</span>系统脱敏法</p><h5>（3）人本主义疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">提出者：</span>罗杰斯</p><p class="subitem"><span class="slabel">来访者中心疗法：</span>不追求特殊的策略和技术，而是把重点集中在创造一种良好的关系氛围，使来访者 产生能够自由地探索内心的感觉。咨询师在人格和态度上需要满足以下三种条件：真诚一致、无条件 积极关注和共情。</p><h5>（4）精神分析疗法<span class="badge-type">了解</span></h5><p class="subitem"><span class="slabel">移情：</span>来访者将情感、态度和属性转移到咨询师身上。</p><p class="subitem"><span class="slabel">反移情：</span>咨询师把情感、态度和属性转移到来访者身上。</p></div></div></section>
+<section class="sec"><h2 id="sec2">第三节 压力与挫折</h2><div class="kcard"><div class="kcard-head"><h3 id="sec11"><span class="h3t">一、应对挫折的方法</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body"><p class="item"><span class="ilabel">①</span>升华：将心理欲望从社会不可接受转向社会可接受的方向的过程。</p><p class="item"><span class="ilabel">②</span>补偿：由于本身的某种缺陷而达不到既定目标时，用另一种目标代替。</p><p class="item"><span class="ilabel">③</span>退行：受挫时，行为表现会显得十分幼稚，和年龄不符。</p><p class="item"><span class="ilabel">④</span>幽默：用机智、双关、自嘲等方式化解尴尬。</p><p class="item"><span class="ilabel">⑤</span>宣泄：一吐为快，将不满发泄出来。</p><p class="item"><span class="ilabel">⑥</span>认同：建立于他人或团体的目标同一性，或将自己与崇拜的人视为一体。</p><p class="item"><span class="ilabel">⑦</span>文饰-合理化：酸葡萄心理+甜柠檬心理+推诿。</p><p class="item"><span class="ilabel">⑧</span>投射：以己度人。</p><p class="item"><span class="ilabel">⑨</span>认知重组：对挫折情境的重新认识与评价。</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>以上方法重点关注补偿法、文饰-合理化和投射。</div></div></div></section>
     <div class="nav"><a href="05_第五章_中学生发展心理.html">← 上一章</a><a href="07_第七章_中学德育.html">下一章 →</a></div>
   </div>
 </div>
@@ -412,7 +466,7 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
       }
     });
 
-    if (!contentHasRealText && content.childNodes.length > 0) {
+    if (!contentHasRealText) {
       while (content.firstChild) label.appendChild(content.firstChild);
       content = null;
     }
@@ -429,8 +483,7 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
 
   function bindToggle(head, body) {
     head.addEventListener('click', function (e) {
-      e.preventDefault();
-      var isOpen = body.classList.toggle('open');
+      e.preventDefault(); if (!body.parentNode) return; var isOpen = body.classList.toggle('open');
       head.classList.toggle('open', isOpen);
       head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
@@ -453,24 +506,7 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
       if (level > 0) {
         closeTo(level);
         var parent = currentBody();
-        if (level >= 3) {
-          var parts = splitItem(child);
-          var subfold = document.createElement('div');
-          subfold.className = 'subfold';
-          var subHead = document.createElement('div');
-          subHead.className = 'subfold-head fold-head';
-          subHead.setAttribute('aria-expanded', 'false');
-          subHead.appendChild(makeArrow());
-          subHead.appendChild(parts.label);
-          var subBody = document.createElement('div');
-          subBody.className = 'subfold-body fold-body';
-          if (parts.content) subBody.appendChild(parts.content);
-          subfold.appendChild(subHead);
-          subfold.appendChild(subBody);
-          parent.appendChild(subfold);
-          bindToggle(subHead, subBody);
-          stack.push({ level: level, head: subHead, body: subBody });
-        } else {
+        if (level >= 3) { var parts = splitItem(child); if (parts.content) { var subfold = document.createElement('div'); subfold.className = 'subfold'; var subHead = document.createElement('div'); subHead.className = 'subfold-head fold-head'; subHead.setAttribute('aria-expanded', 'false'); subHead.appendChild(makeArrow()); subHead.appendChild(parts.label); var subBody = document.createElement('div'); subBody.className = 'subfold-body fold-body'; subBody.appendChild(parts.content); subfold.appendChild(subHead); subfold.appendChild(subBody); parent.appendChild(subfold); bindToggle(subHead, subBody); stack.push({ level: level, head: subHead, body: subBody }); } else { while (parts.label.firstChild) child.appendChild(parts.label.firstChild); parent.appendChild(child); } } else {
           parent.appendChild(child);
           var body = document.createElement('div');
           body.className = 'fold-body';
@@ -486,12 +522,7 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
           (child.classList.contains('tip') || child.classList.contains('note') ||
            child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
         if (isBlock) closeTo(3);
-        currentBody().appendChild(child);
-      }
-    });
-  }
-
-  function setAll(open) {
+        currentBody().appendChild(child); } }); Array.prototype.forEach.call(container.querySelectorAll('h4.fold-head, h5.fold-head, h6.fold-head'), function (head) { var body = head.nextElementSibling; if (!body || !body.classList.contains('fold-body')) return; if (!hasRealText(body) && !body.querySelector('table, .tip, .note, .tbl-wrap, img')) { var arrow = head.querySelector('.fold-arrow'); if (arrow) head.removeChild(arrow); head.classList.remove('fold-head'); head.classList.remove('open'); head.removeAttribute('aria-expanded'); if (body.parentNode) body.parentNode.removeChild(body); } }); } function setAll(open) {
     document.querySelectorAll('.fold-head').forEach(function (h) {
       h.classList.toggle('open', open);
       h.setAttribute('aria-expanded', open ? 'true' : 'false');

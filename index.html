@@ -232,9 +232,34 @@ h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
 .idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
 .idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
 </style>
+<style>
+/* ===== 目录页优化层 ===== */
+.idx-header { padding: 52px 20px 10px; }
+.idx-header h1 { font-size: 32px; letter-spacing: 2px; }
+.idx-header h1::after { content: ""; display: block; width: 56px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), #14b8a6); margin: 16px auto 0; }
+.idx-header p { margin-top: 14px; font-size: 14px; letter-spacing: 1px; }
+
+.idx-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: ch; margin-top: 36px; }
+.idx-card { position: relative; overflow: hidden; counter-increment: ch; padding: 26px 24px 32px; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.idx-card::before { content: counter(ch, decimal-leading-zero); position: absolute; top: 4px; right: 16px; font-size: 46px; font-weight: 800; line-height: 1.1; color: var(--accent); opacity: .09; font-variant-numeric: tabular-nums; pointer-events: none; }
+.idx-card::after { content: "\2192"; position: absolute; right: 20px; bottom: 16px; color: var(--accent); font-size: 16px; font-weight: 700; opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .2s; }
+.idx-card:hover { border-color: var(--accent-line); }
+.idx-card:hover::after { opacity: 1; transform: none; }
+.idx-card .num { display: inline-block; font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 3px; background: var(--accent-soft); padding: 2px 10px; border-radius: 999px; }
+.idx-card .name { font-size: 17.5px; margin-top: 12px; text-wrap: balance; }
+.idx-card .desc { font-size: 12.5px; margin-top: 8px; line-height: 1.65; }
+
+@media (max-width: 960px) { .idx-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .idx-grid { grid-template-columns: 1fr; } }
+</style>
+<style>
+/* ===== 目录页精修层 ===== */
+.idx-grid { grid-auto-rows: 1fr; }
+.idx-card::before { opacity: .11; }
+</style>
 </head>
 <body>
-<div class="layout" style="display:block;max-width:1000px;">
+<div class="layout" style="display:block;max-width:1100px;">
   <div class="idx-header"><h1>中学教育知识与能力 · 讲义</h1><p>CocoPolaris 讲义 · 共8章 · 点击进入对应章节</p></div>
   <div class="idx-grid"><a class="idx-card" href="01_第一章_教育基础知识和基本原理.html"><div class="num">第1章</div><div class="name">教育基础知识和基本原理</div><div class="desc">教育的产生与发展、教育与社会/人的发展、教育目的、教育制度</div></a><a class="idx-card" href="02_第二章_中学课程.html"><div class="num">第2章</div><div class="name">中学课程</div><div class="desc">课程概述、课程目标、课程内容、课程实施与评价</div></a><a class="idx-card" href="03_第三章_中学教学.html"><div class="num">第3章</div><div class="name">中学教学</div><div class="desc">教学概述、教学过程、教学原则、教学方法、组织形式、评价</div></a><a class="idx-card" href="04_第四章_中学生学习心理.html"><div class="num">第4章</div><div class="name">中学生学习心理</div><div class="desc">认知过程、学习动机、学习迁移、学习策略、学习理论</div></a><a class="idx-card" href="05_第五章_中学生发展心理.html"><div class="num">第5章</div><div class="name">中学生发展心理</div><div class="desc">中学生心理发展、认知/情绪/人格发展、个别差异</div></a><a class="idx-card" href="06_第六章_中学生心理辅导.html"><div class="num">第6章</div><div class="name">中学生心理辅导</div><div class="desc">心理健康概述、心理辅导方法、常见心理问题</div></a><a class="idx-card" href="07_第七章_中学德育.html"><div class="num">第7章</div><div class="name">中学德育</div><div class="desc">德育概述、德育过程、德育原则、德育方法、德育途径</div></a><a class="idx-card" href="08_第八章_中学班级管理和教师心理.html"><div class="num">第8章</div><div class="name">中学班级管理和教师心理</div><div class="desc">班级管理、班主任工作、教师心理与专业发展</div></a></div>
 </div>
