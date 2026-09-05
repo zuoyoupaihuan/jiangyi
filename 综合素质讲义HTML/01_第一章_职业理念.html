@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章 职业理念 - 综合素质讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+<style>
+/* ===== 界面优化层 ===== */
+::selection { background: #bfe3df; }
+
+/* 侧边栏：当前节指示条 */
+.sidebar a { border-left: 3px solid transparent; padding-left: 6px; transition: background .15s, color .15s; }
+.sidebar a.active { border-left-color: var(--accent); }
+
+/* 卡片：悬停微反馈 */
+.kcard { margin: 22px 0; transition: border-color .2s, box-shadow .2s; }
+.kcard:hover { border-color: var(--accent-line); }
+
+/* 卡片头：星级与题型徽章靠右，形成两端对齐的扫描线 */
+.kcard-head h3 .badge-star { margin-left: auto; }
+
+/* 星级实心后的间距 */
+.badge-star { letter-spacing: 2px; }
+
+/* 折叠：箭头旋转过渡 + h4 左边框反馈 */
+.fold-arrow { transition: transform .18s ease; }
+h4.fold-head { transition: color .15s, border-left-color .15s; }
+h4.fold-head:hover { border-left-color: var(--accent); }
+
+/* 上一章/下一章：按钮化 */
+.nav a { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line-strong); padding: 10px 24px; border-radius: 10px; transition: border-color .15s, background .15s, color .15s, box-shadow .15s; }
+.nav a:hover { border-color: var(--accent); background: var(--accent-soft); text-decoration: none; box-shadow: var(--shadow); }
+
+/* 键盘可达性 */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.fold-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 打印：自动展开全部、隐藏辅助 UI */
+@media print {
+  .sidebar, .top-btn, .fold-toolbar, .progress, .nav { display: none !important; }
+  .fold-body, .subfold-body { display: block !important; }
+  .layout { display: block; max-width: none; }
+  .kcard { break-inside: avoid; box-shadow: none; }
+  .chapter-header { box-shadow: none; }
+}
+
+/* 动效弱化偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+<style>
+/* ===== 精修层 ===== */
+.badge-star { font-size: 15px; }
+@media (min-width: 901px) {
+  .sec > h2 { font-size: 26px; margin: 14px 0 22px; }
+}
+.chapter-header .legend { opacity: .88; }
+</style>
+</head><body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#s0">第一节 教育观</a><a class="lv2" href="#s1">一、素质教育的基本内涵</a><a class="lv2" href="#s2">二、新课改下的教学观</a><a class="lv2" href="#s3">三、教育公正与学生的共同发展</a><a class="lv1" href="#s4">第二节 学生观</a><a class="lv2" href="#s5">一、学生是发展的人</a><a class="lv2" href="#s6">二、学生是独特的人</a><a class="lv2" href="#s7">三、学生是独立意义的人</a><a class="lv2" href="#s8">四、学生是责权的主体＋全面发展观</a><a class="lv1" href="#s9">第三节 教师观</a><a class="lv2" href="#s10">一、教师角色的转变</a><a class="lv2" href="#s11">二、教师行为的转变</a><a class="lv1" href="#s12">第四节 教师职业劳动的特征</a><a class="lv2" href="#s13">一、复杂性和创造性</a><a class="lv2" href="#s14">二、主体性和示范性</a><a class="lv2" href="#s15">三、延续性和广延性</a><a class="lv2" href="#s16">四、长期性和间接性</a><a class="lv2" href="#s17">五、个人价值性和社会价值性</a><a class="lv1" href="#s18">第五节 教师专业发展</a><a class="lv2" href="#s19">一、三阶段理论（福勒和布朗）</a><a class="lv2" href="#s20">二、五阶段理论（叶澜和白益民）</a><a class="lv2" href="#s21">三、专业发展的内容</a><a class="lv2" href="#s22">四、专业发展的途径</a><a class="lv2" href="#s23">五、反思与终身学习</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>第一章 职业理念</h1>
+      <div class="sub">中小学综合素质（科一） · CocoPolaris 讲义</div>
+      <div class="legend">★ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#s0">第一节 教育观</a><a class="lv2" href="#s1">一、素质教育的基本内涵</a><a class="lv2" href="#s2">二、新课改下的教学观</a><a class="lv2" href="#s3">三、教育公正与学生的共同发展</a><a class="lv1" href="#s4">第二节 学生观</a><a class="lv2" href="#s5">一、学生是发展的人</a><a class="lv2" href="#s6">二、学生是独特的人</a><a class="lv2" href="#s7">三、学生是独立意义的人</a><a class="lv2" href="#s8">四、学生是责权的主体＋全面发展观</a><a class="lv1" href="#s9">第三节 教师观</a><a class="lv2" href="#s10">一、教师角色的转变</a><a class="lv2" href="#s11">二、教师行为的转变</a><a class="lv1" href="#s12">第四节 教师职业劳动的特征</a><a class="lv2" href="#s13">一、复杂性和创造性</a><a class="lv2" href="#s14">二、主体性和示范性</a><a class="lv2" href="#s15">三、延续性和广延性</a><a class="lv2" href="#s16">四、长期性和间接性</a><a class="lv2" href="#s17">五、个人价值性和社会价值性</a><a class="lv1" href="#s18">第五节 教师专业发展</a><a class="lv2" href="#s19">一、三阶段理论（福勒和布朗）</a><a class="lv2" href="#s20">二、五阶段理论（叶澜和白益民）</a><a class="lv2" href="#s21">三、专业发展的内容</a><a class="lv2" href="#s22">四、专业发展的途径</a><a class="lv2" href="#s23">五、反思与终身学习</a></details></div>
+<section class="sec"><h2 id="s0">第一节 教育观</h2>
+<div class="sec-lead">教育观（素质教育观）是科一职业理念之首，其核心是「教育以人为本、一切为了每一位学生的发展」。四大核心板块为：素质教育的基本内涵、新课改下的教学观、教育公正与学生的共同发展。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s1"><span class="h3t">一、素质教育的基本内涵</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<div class="tip"><span class="callout-label">CocoPolaris 说</span>记忆口诀：提素个性创两全——以提高国民素质为根本宗旨、面向全体学生、促进学生全面发展、促进学生个性发展、以培养创新精神和实践能力为重点。</div><h4><span class="h4num">1</span>素质教育是以提高国民素质为根本宗旨的教育</h4><p class="item"><span class="ilabel">①</span>强调提高国民素质，这是素质教育的根本宗旨、最高定位；</p><h4><span class="h4num">2</span>素质教育是面向全体学生的教育</h4><p class="item"><span class="ilabel">①</span>平等对待每个学生，不能区别对待，覆盖所有学生、强调教育公平；</p><h4><span class="h4num">3</span>素质教育是促进学生全面发展的教育</h4><p class="item"><span class="ilabel">①</span>德智体美劳，五育并举，注重学生各方面素质的协调发展；</p><h4><span class="h4num">4</span>素质教育是促进学生个性发展的教育</h4><p class="item"><span class="ilabel">①</span>尊重学生个体差异，培养独特才能（特长）；</p><h4><span class="h4num">5</span>素质教育是以培养学生的创新精神和实践能力为重点的教育</h4><p class="item"><span class="ilabel">①</span>强调创造力培养和实际动手能力（新想法、独特性、学生参与）。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s2"><span class="h3t">二、新课改下的教学观</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<div class="tip"><span class="callout-label">CocoPolaris 说</span>记忆口诀：学习过人——学习者为中心、教会学生学习、重结论更重过程、关注人（四个转变）。</div><h4><span class="h4num">1</span>教学从「以教育者为中心」向「学习者为中心」转变</h4><p class="item"><span class="ilabel">①</span>强调学生的主体地位和主动参与（学生参与）；</p><h4><span class="h4num">2</span>教学从「教会学生知识」向「教会学生学习」转变</h4><p class="item"><span class="ilabel">①</span>注重学习方法传授，培养自主学习能力（方法）；</p><h4><span class="h4num">3</span>教学从「重结论轻过程」向「重结论更重过程」转变</h4><p class="item"><span class="ilabel">①</span>强调知识形成的过程体验；</p><h4><span class="h4num">4</span>教学从「关注学科」向「关注人」转变</h4><p class="item"><span class="ilabel">①</span>重视学生的情感体验与心理健康（关注学生的情绪和情感）。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s3"><span class="h3t">三、教育公正与学生的共同发展</span><span class="badge-star">★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>教育公正（教育机会对所有学生来说都是均等的）</h4><p class="item"><span class="ilabel">①</span>入学机会均等；</p><p class="item"><span class="ilabel">②</span>教育过程中的机会均等；</p><p class="item"><span class="ilabel">③</span>取得学业成功的机会均等。</p><h4><span class="h4num">2</span>学生的共同发展（有差异的学生共同发展）</h4><p class="item"><span class="ilabel">①</span>学生性别差异与共同发展：男女学生共同发展，不因性别而遭歧视；</p><p class="item"><span class="ilabel">②</span>学生的民族差异与共同发展：不同民族学生共同发展，特别需要注意少数民族的差异性及发展，实行少数民族聚居地区双语教育；</p><p class="item"><span class="ilabel">③</span>学生的地域差异与共同发展：不因学生所处的地域差异而歧视学生；</p><p class="item"><span class="ilabel">④</span>学生家庭背景的差异与发展：不能因学生家庭的种种差异而歧视学生；</p><p class="item"><span class="ilabel">⑤</span>学生身心发展水平的差异与共同发展：不能因学生身体残疾或学习水平的差异而歧视学生。</p><div class="note"><span class="callout-label">注意</span>最有可能影响教师在教育过程中对教育机会进行分配的因素，就是学生身心发展水平的差异。材料分析常考：教师对优等生与后进生区别对待、偏爱尖子生，均违背教育公正。</div></div></div></section>
+<section class="sec"><h2 id="s4">第二节 学生观</h2>
+<div class="sec-lead">以人为本的学生观，核心口诀：两独一发＋两全（独特、独立意义、发展；全面发展、面向全体）。常以选择题形式考察。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s5"><span class="h3t">一、学生是发展的人</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>学生的身心发展是有规律的</h4><p class="item"><span class="ilabel">①</span>顺序性：由浅入深、由简到繁、由易到难、由少到多、由具体到抽象，循序渐进；揠苗助长、陵节而施都是违背身心发展顺序性的；</p><p class="item"><span class="ilabel">②</span>阶段性：某一时期某一阶段——童年期学生思维具有较强具体性和形象性；少年期抽象思维有很大发展但仍需具体感性经验支持；</p><p class="item"><span class="ilabel">③</span>不平衡性：个体身心发展不是匀速前进的过程（同一方面不同速，不同方面不同步）；</p><p class="item"><span class="ilabel">④</span>互补性：身体某方面机能受损甚至缺失后，可通过其他方面超常发挥得到补偿（身身互补、身心互补），心理机能中也存在互补性；</p><p class="item"><span class="ilabel">⑤</span>个别差异性：人人不同——有的人聪明早慧、有的人大器晚成 → 因材施教。</p><h4><span class="h4num">2</span>学生具有巨大的发展潜能（可塑性）</h4><p class="item"><span class="ilabel">①</span>相信学生发展潜力，要用发展的眼光看待学生；</p><h4><span class="h4num">3</span>学生是处于发展过程中的人（容错性、包容性）</h4><p class="item"><span class="ilabel">①</span>允许学生犯错误，重视过程性发展。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s6"><span class="h3t">二、学生是独特的人</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>每个学生都具有自身的独特性</h4><p class="item"><span class="ilabel">①</span>学生与学生不同，学生与成人不同；独特性是个性发展的前提；</p><h4><span class="h4num">2</span>学生与成人之间存在着巨大的差异（老师要换位思考）</h4><p class="item"><span class="ilabel">①</span>不能用成人的标准去要求、衡量学生。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s7"><span class="h3t">三、学生是独立意义的人</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>学生是独立意义的主体，不以教师的意志为转移（学生具有个体独立性）；</p><p class="item"><span class="ilabel">②</span>学生是学习的主人，老师起主导地位，教师不能把自己的意志强加给学生。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s8"><span class="h3t">四、学生是责权的主体＋全面发展观</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>学生是责权的主体</h4><p class="item"><span class="ilabel">①</span>责任与权利相统一。</p><h4><span class="h4num">2</span>两全（全面发展观与面向全体）</h4><p class="item"><span class="ilabel">①</span>学生是完整的人 → 全面发展（德智体美劳全面发展）；</p><p class="item"><span class="ilabel">②</span>面向全体学生 → 公平公正对待每个学生，不能偏爱某个学生。</p><div class="note"><span class="callout-label">注意</span>口诀：两独一发＋两全。「两独」＝独特、独立意义；「一发」＝发展；「两全」＝全面发展、面向全体。</div></div></div></section>
+<section class="sec"><h2 id="s9">第三节 教师观</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s10"><span class="h3t">一、教师角色的转变</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<div class="tip"><span class="callout-label">CocoPolaris 说</span>记忆口诀：建促放研——建设者与开发者、促进者、开放的（社区型）教师、研究者。</div><h4><span class="h4num">1</span>教师是学生学习的引导者和发展的促进者</h4><p class="item"><span class="ilabel">①</span>发现、探索、动手、做人；</p><h4><span class="h4num">2</span>教师是课程的建设者和开发者</h4><p class="item"><span class="ilabel">①</span>校本课程、开发课程；</p><h4><span class="h4num">3</span>教师是教育教学的研究者</h4><p class="item"><span class="ilabel">①</span>研究问题、论文、课题等；</p><h4><span class="h4num">4</span>教师是社区型的开放教师</h4><p class="item"><span class="ilabel">①</span>从学校到社区（没考过）。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s11"><span class="h3t">二、教师行为的转变</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/材料分析</span></h3></div><div class="kcard-body">
+<div class="tip"><span class="callout-label">CocoPolaris 说</span>记忆口诀：你它我他——师生关系、教学、自我、与其他教育者关系四个维度。</div><p class="item"><span class="ilabel">①</span>在对待师生关系上，新课程强调尊重、赞赏；</p><p class="item"><span class="ilabel">②</span>在对待教学上，新课程强调帮助、引导（学习方法、价值观）；</p><p class="item"><span class="ilabel">③</span>在对待自我上，新课程强调反思（教学前、中、后都要反思）；</p><p class="item"><span class="ilabel">④</span>在对待与其他教育者关系上，新课程强调合作。</p></div></div></section>
+<section class="sec"><h2 id="s12">第四节 教师职业劳动的特征</h2>
+<div class="sec-lead">教师职业劳动的特征（2023 上已考，依然重点）：主要体现在复杂性与创造性、主体性与示范性、延续性与广延性、长期性与间接性、个人价值性与社会价值性五个方面。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s13"><span class="h3t">一、复杂性和创造性</span><span class="badge-star">★★★★</span><span class="badge-type">单选/辨析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>复杂性</h4><p class="item"><span class="ilabel">①</span>教育目的的全面性：德智体美劳全面发展，而非单一发展；</p><p class="item"><span class="ilabel">②</span>教育任务的多样性：不仅教书，还要育人；不仅教知识、发展智力，还要培养思想道德，保证身心健康；</p><p class="item"><span class="ilabel">③</span>劳动对象的差异性：同一条件，既要面对全体学生、实施统一的课程计划和内容，又要因材施教。</p><h4><span class="h4num">2</span>创造性</h4><p class="item"><span class="ilabel">①</span>因材施教：一把钥匙开一把锁，扬长避短，长善救失；</p><p class="item"><span class="ilabel">②</span>教学方法上不断更新：随着时代和科技的发展而变化；</p><p class="item"><span class="ilabel">③</span>教师需要教育机智：随机应变、应对突发状况。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s14"><span class="h3t">二、主体性和示范性</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>主体性：言传身教；</p><p class="item"><span class="ilabel">②</span>示范性：学高为师，身正为范；桃李不言，下自成蹊。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s15"><span class="h3t">三、劳动时间的延续性和劳动空间的广延性</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>劳动时间的延续性：从早到晚忙忙忙；</p><p class="item"><span class="ilabel">②</span>劳动空间的广延性：从校内到校外。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s16"><span class="h3t">四、长期性和间接性</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>长期性：十年树木，百年树人；</p><p class="item"><span class="ilabel">②</span>间接性：教师的劳动通过学生的成就实现。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s17"><span class="h3t">五、个人价值性和社会价值性</span><span class="badge-star">★★★</span><span class="badge-type">单选/辨析</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>个人价值性：自我生存与发展；教师劳动是其主要生活来源；</p><p class="item"><span class="ilabel">②</span>社会价值性：对他人、集体、国家、社会的作用与意义，培养合格的建设者和接班人。</p></div></div></section>
+<section class="sec"><h2 id="s18">第五节 教师专业发展</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s19"><span class="h3t">一、教师专业发展的三阶段理论（福勒和布朗）</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>关注生存阶段（新老师）：关注人际关系，看重自己在同事、领导和学生心目中的位置；</p><p class="item"><span class="ilabel">②</span>关注情境阶段（老教师）：关注成绩、提高教学质量、班级管理；</p><p class="item"><span class="ilabel">③</span>关注学生阶段（教师成熟的标志）：关注差异、因材施教。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s20"><span class="h3t">二、教师专业发展五阶段理论（叶澜和白益民）</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>非关注阶段：进入师范院校学习之前的阶段（成为师范生之前的中小学阶段），形成「前科学」的教育教学知识和观念，一直迁延到教师正式执教阶段；</p><p class="item"><span class="ilabel">②</span>虚拟关注阶段（师范生期间）：职前接受教师教育阶段，主体身份是学生，开始对合格教师的要求进行思考，有了对自我专业发展反思的萌芽，由教育专业的学生→教师角色转变；</p><p class="item"><span class="ilabel">③</span>生存关注阶段（新教师）：所学理论知识和具体教学实践的「磨合期」，关注自己的生存适应，关注他人对自我的评价、与同事和学生的关系，由关注自我→关注教学任务转变；</p><p class="item"><span class="ilabel">④</span>任务关注阶段（留任教师）：焦点集中在教学任务上，关注学生成绩，关注自己教得好不好、怎样才能教好；</p><p class="item"><span class="ilabel">⑤</span>自我更新关注阶段（老教师）：以专业发展为指向，自我发展，关注学生整体发展。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s21"><span class="h3t">三、教师专业发展的内容</span><span class="badge-star">★★★★</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>道德素养</h4><p class="item"><span class="ilabel">①</span>忠于人民教育事业，热爱学生，以身作则，为人师表。</p><h4><span class="h4num">2</span>专业知识素养（重点）</h4><p class="item"><span class="ilabel">①</span>通识性知识：广博的科学文化知识（上知天文下知地理）；</p><p class="item"><span class="ilabel">②</span>本体性知识：任教的学科知识（如英语）；</p><p class="item"><span class="ilabel">③</span>条件性知识：教育科学知识（教育学、心理学知识）；</p><p class="item"><span class="ilabel">④</span>实践性知识：教学法，实际课堂情境中具体怎么教的知识。</p><h4><span class="h4num">3</span>能力素养</h4><p class="item"><span class="ilabel">①</span>设计教学的能力；② 语言表达能力；③ 教育教学组织管理能力；④ 教育教学交往能力；⑤ 教育教学研究能力；⑥ （创新）能力。</p><h4><span class="h4num">4</span>心理素养</h4><p class="item"><span class="ilabel">①</span>健康的心理、完善的人格以及良好的抗压能力。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s22"><span class="h3t">四、教师专业发展的途径</span><span class="badge-star">★★★★</span><span class="badge-type">单选/简答</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>观摩和分析优秀教师的教学活动：取他人之长，补己之短；</p><p class="item"><span class="ilabel">②</span>开展微格教学：5—20 分钟小型课堂教学，课后分析使用；</p><p class="item"><span class="ilabel">③</span>进行专门训练；</p><p class="item"><span class="ilabel">④</span>教师的个人反思：波斯纳（美国教育心理学家）提出教师成长公式——经验＋反思＝成长；</p><p class="item"><span class="ilabel">⑤</span>教师集体的同伴互助：在职培训主要以校本研修为主要形式；</p><p class="item"><span class="ilabel">⑥</span>专业研究人员的专业引领。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s23"><span class="h3t">五、反思内容与工具、终身学习</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>反思的内容与常用工具</h4><p class="item"><span class="ilabel">①</span>反思内容：教育教学观念、课程内容、具体教学内容的选择、教学过程和教学方法；</p><p class="item"><span class="ilabel">②</span>常用反思工具：教学日志、教学后记、教学案例等。</p><h4><span class="h4num">2</span>终身学习（终身教育）</h4><p class="item"><span class="ilabel">①</span>法国的保罗·朗格朗，1965 年正式提出终身教育；</p><p class="item"><span class="ilabel">②</span>终身教育的 4 个支柱：学会认知、学会做事、学会共同生活、学会生存。</p></div></div></section>
+    <div class="nav"><a href="index.html">← 上一章</a><a href="02_第二章_教育法律法规.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault(); if (!body.parentNode) return; var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) { var parts = splitItem(child); if (parts.content) { var subfold = document.createElement('div'); subfold.className = 'subfold'; var subHead = document.createElement('div'); subHead.className = 'subfold-head fold-head'; subHead.setAttribute('aria-expanded', 'false'); subHead.appendChild(makeArrow()); subHead.appendChild(parts.label); var subBody = document.createElement('div'); subBody.className = 'subfold-body fold-body'; subBody.appendChild(parts.content); subfold.appendChild(subHead); subfold.appendChild(subBody); parent.appendChild(subfold); bindToggle(subHead, subBody); stack.push({ level: level, head: subHead, body: subBody }); } else { while (parts.label.firstChild) child.appendChild(parts.label.firstChild); parent.appendChild(child); } } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child); } }); Array.prototype.forEach.call(container.querySelectorAll('h4.fold-head, h5.fold-head, h6.fold-head'), function (head) { var body = head.nextElementSibling; if (!body || !body.classList.contains('fold-body')) return; if (!hasRealText(body) && !body.querySelector('table, .tip, .note, .tbl-wrap, img')) { var arrow = head.querySelector('.fold-arrow'); if (arrow) head.removeChild(arrow); head.classList.remove('fold-head'); head.classList.remove('open'); head.removeAttribute('aria-expanded'); if (body.parentNode) body.parentNode.removeChild(body); } }); } function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

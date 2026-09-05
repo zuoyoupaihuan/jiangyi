@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章 教育法律法规 - 综合素质讲义</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* 纸感底色 + 墨色文字 */
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  /* 主色：青绿（黑板/课堂感） */
+  --accent: #0f766e;
+  --accent-deep: #134e4a;
+  --accent-soft: #e6f4f2;
+  --accent-line: #b7dcd8;
+  --line: #e7e5e0;
+  --line-strong: #d6d3cd;
+  /* 语义色 */
+  --tip-bg: #fef3c7;
+  --tip-line: #d97706;
+  --tip-ink: #92400e;
+  --note-bg: #eff6ff;
+  --note-line: #3b82f6;
+  --note-ink: #1e40af;
+  --anno-bg: #f3f2ef;
+  --anno-ink: #8a857e;
+  --star: #d97706;
+  --shadow: 0 1px 3px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg: 0 8px 24px rgba(15,23,42,.08);
+}
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: 16px;
+}
+h1, h2 { font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 26px; padding: 22px 18px 90px; }
+
+/* 阅读进度条 */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #14b8a6);
+  z-index: 100; border-radius: 0 2px 2px 0;
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 260px; flex-shrink: 0; position: sticky; top: 18px; align-self: flex-start;
+  max-height: calc(100vh - 36px); overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9d8d3; border-radius: 3px; }
+.sidebar .toc-title { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 10px; padding: 0 8px; letter-spacing: 2px; }
+.sidebar a { display: block; color: var(--ink); text-decoration: none; font-size: 13.5px; padding: 5px 9px; border-radius: 7px; line-height: 1.5; }
+.sidebar a:hover { background: var(--accent-soft); color: var(--accent); }
+.sidebar a.lv1 { font-weight: 600; margin-top: 3px; }
+.sidebar a.lv2 { padding-left: 20px; color: var(--muted); font-size: 13px; }
+.sidebar a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; }
+.chapter-header {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  color: #fff; border-radius: 16px; padding: 30px 34px; margin-bottom: 22px;
+  box-shadow: 0 10px 26px rgba(15,118,110,.22);
+}
+.chapter-header h1 { font-size: 27px; font-weight: 700; line-height: 1.4; letter-spacing: 1px; }
+.chapter-header .sub { font-size: 13.5px; opacity: .85; margin-top: 8px; }
+.chapter-header .legend { font-size: 12.5px; opacity: .8; margin-top: 10px; }
+.chapter-header .back { display: inline-block; color: #fff; opacity: .92; text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+.chapter-header .back:hover { opacity: 1; text-decoration: underline; }
+
+/* ---------- 节 ---------- */
+.sec { margin-bottom: 32px; }
+.sec > h2 {
+  font-size: 24px; color: var(--accent-deep);
+  margin: 8px 0 20px; padding: 4px 0 10px 16px;
+  border-left: 6px solid var(--accent); border-bottom: 2px solid var(--line);
+  line-height: 1.4;
+}
+.sec-lead {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+
+/* ---------- 知识点卡片 ---------- */
+.kcard {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  margin: 20px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.kcard-head {
+  background: linear-gradient(135deg, #e6f4f2 0%, #eef6f4 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 13px 22px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.kcard-head h3 {
+  margin: 0; font-size: 18.5px; color: #111827;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; line-height: 1.5;
+}
+.kcard-head h3 .h3t { font-weight: 700; }
+.kcard-body { padding: 20px 26px 26px; }
+
+/* 标题层级（卡片内） */
+.kcard-body h4 {
+  font-size: 16.5px; color: #343a40; margin: 28px 0 10px; padding: 10px 0 8px 12px;
+  border-left: 3px solid var(--accent-line); border-top: 1px dashed var(--line);
+  display: flex; align-items: center; gap: 8px; line-height: 1.5;
+}
+.kcard-body h4:first-child { margin-top: 0; border-top: none; }
+.kcard-body h4 .h4num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+}
+.kcard-body h5 {
+  font-size: 15.5px; color: var(--accent-deep); margin: 20px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+}
+.kcard-body h5::before {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--accent); flex-shrink: 0;
+}
+.kcard-body h6 {
+  font-size: 15px; color: #374151; margin: 18px 0 8px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.kcard-body h6::before {
+  content: ""; width: 4px; height: 15px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep)); flex-shrink: 0;
+}
+
+/* 考情徽章 */
+.badge-star { color: var(--star); font-size: 14px; letter-spacing: 1px; font-weight: 700; }
+.badge-type {
+  display: inline-block; background: #fff; color: var(--accent); border: 1px solid var(--accent-line);
+  font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* 段落与列表 */
+.kcard-body p { margin: 9px 0; }
+.kcard-body p.item { margin: 8px 0; }
+.kcard-body p.bullet { margin-left: 8px; }
+.kcard-body p.subitem { margin: 7px 0 7px 26px; padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.kcard-body .ilabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 13.5px; margin-right: 8px;
+}
+.kcard-body .slabel { font-weight: 700; color: #495057; margin-right: 4px; }
+.kcard-body .anno {
+  display: inline-block; background: var(--anno-bg); color: var(--anno-ink);
+  font-size: 12px; padding: 1px 8px; border-radius: 6px; margin: 0 3px;
+}
+.kcard-body .anno-line { margin: 6px 0 6px 26px; }
+
+/* 提示 / 注意 */
+.tip, .note {
+  border-radius: 10px; padding: 13px 16px; margin: 16px 0; font-size: 15px;
+  border: 1px solid transparent;
+}
+.tip { background: var(--tip-bg); border-left: 4px solid var(--tip-line); color: var(--tip-ink); }
+.note { background: var(--note-bg); border-left: 4px solid var(--note-line); color: var(--note-ink); }
+.callout-label {
+  display: inline-block; font-weight: 700; font-size: 12.5px; margin-right: 8px;
+  padding: 1px 10px; border-radius: 999px; vertical-align: 1px;
+}
+.tip .callout-label { background: #f3e2b8; color: #7a4e00; }
+.note .callout-label { background: #dbe7ff; color: #1d4ed8; }
+
+/* 表格 */
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--line); }
+.kcard-body table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+.kcard-body thead th {
+  background: var(--accent); color: #fff; padding: 10px 13px; text-align: left; font-weight: 600;
+}
+.kcard-body td { border-top: 1px solid var(--line); padding: 10px 13px; vertical-align: top; }
+.kcard-body tbody tr:nth-child(even) td { background: #faf9f6; }
+.kcard-body tbody tr:hover td { background: var(--accent-soft); }
+.kcard-body tbody tr.first td { background: var(--accent-soft); font-weight: 600; color: var(--accent-deep); }
+
+.nav { display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav a { color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { text-decoration: underline; }
+
+/* 回到顶部 */
+.top-btn {
+  position: fixed; right: 22px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--accent); color: #fff; font-size: 20px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,118,110,.35); opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 50;
+}
+.top-btn.show { opacity: 1; pointer-events: auto; }
+.top-btn:hover { transform: translateY(-2px); }
+
+.mobile-toc { display: none; }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-toc { display: block; background: var(--card); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .mobile-toc details summary { font-weight: 700; color: var(--accent); cursor: pointer; font-size: 15px; }
+  .mobile-toc a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .mobile-toc a.lv2 { padding-left: 16px; color: var(--muted); }
+  .kcard-body { padding: 16px 14px 20px; }
+  .kcard-head { padding: 12px 16px; }
+  .kcard-body p.subitem { margin-left: 12px; }
+  .sec > h2 { font-size: 20px; }
+}
+
+/* ---------- index ---------- */
+.idx-header { text-align: center; padding: 46px 20px 8px; }
+.idx-header h1 { font-size: 30px; color: var(--accent-deep); font-family: "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif; }
+.idx-header p { color: var(--muted); margin-top: 8px; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin-top: 30px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px;
+  box-shadow: var(--shadow); text-decoration: none; color: var(--ink);
+  transition: transform .15s, box-shadow .15s;
+}
+.idx-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.idx-card .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+.idx-card .name { font-size: 17px; font-weight: 700; margin-top: 6px; }
+.idx-card .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+</style>
+
+
+<style>
+
+/* ===== 折叠复习功能（注入） ===== */
+.fold-toolbar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 0 0 18px; padding: 10px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.fold-toolbar .hint { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+.fold-toolbar button {
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 600; padding: 5px 16px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fold-toolbar button:hover { background: var(--accent); color: #fff; }
+
+.fold-head { cursor: pointer; user-select: none; }
+.fold-head:hover { color: var(--accent); }
+.fold-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex-shrink: 0;
+  color: var(--accent); font-size: 10px; line-height: 1;
+  transition: transform .18s ease;
+}
+.fold-head.open .fold-arrow { transform: rotate(90deg); }
+
+.fold-body { display: none; }
+.fold-body.open { display: block; }
+
+.subfold { margin: 6px 0; }
+.subfold-head {
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+  padding: 7px 10px; margin: 4px 0; border-radius: 9px;
+  font-weight: 600; color: #374151; font-size: 15px;
+  transition: background .15s;
+}
+.subfold-head:hover { background: var(--accent-soft); color: var(--accent); }
+.subfold-head .ilabel { margin-right: 0; }
+.subfold-body {
+  display: none; margin: 2px 0 8px 10px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.subfold-body.open { display: block; }
+.subfold-content { display: block; }
+
+</style>
+<style>
+/* ===== 界面优化层 ===== */
+::selection { background: #bfe3df; }
+
+/* 侧边栏：当前节指示条 */
+.sidebar a { border-left: 3px solid transparent; padding-left: 6px; transition: background .15s, color .15s; }
+.sidebar a.active { border-left-color: var(--accent); }
+
+/* 卡片：悬停微反馈 */
+.kcard { margin: 22px 0; transition: border-color .2s, box-shadow .2s; }
+.kcard:hover { border-color: var(--accent-line); }
+
+/* 卡片头：星级与题型徽章靠右，形成两端对齐的扫描线 */
+.kcard-head h3 .badge-star { margin-left: auto; }
+
+/* 星级实心后的间距 */
+.badge-star { letter-spacing: 2px; }
+
+/* 折叠：箭头旋转过渡 + h4 左边框反馈 */
+.fold-arrow { transition: transform .18s ease; }
+h4.fold-head { transition: color .15s, border-left-color .15s; }
+h4.fold-head:hover { border-left-color: var(--accent); }
+
+/* 上一章/下一章：按钮化 */
+.nav a { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line-strong); padding: 10px 24px; border-radius: 10px; transition: border-color .15s, background .15s, color .15s, box-shadow .15s; }
+.nav a:hover { border-color: var(--accent); background: var(--accent-soft); text-decoration: none; box-shadow: var(--shadow); }
+
+/* 键盘可达性 */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.fold-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 打印：自动展开全部、隐藏辅助 UI */
+@media print {
+  .sidebar, .top-btn, .fold-toolbar, .progress, .nav { display: none !important; }
+  .fold-body, .subfold-body { display: block !important; }
+  .layout { display: block; max-width: none; }
+  .kcard { break-inside: avoid; box-shadow: none; }
+  .chapter-header { box-shadow: none; }
+}
+
+/* 动效弱化偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+<style>
+/* ===== 精修层 ===== */
+.badge-star { font-size: 15px; }
+@media (min-width: 901px) {
+  .sec > h2 { font-size: 26px; margin: 14px 0 22px; }
+}
+.chapter-header .legend { opacity: .88; }
+</style>
+</head><body>
+<div class="progress" id="progress"></div>
+<div class="layout">
+  <aside class="sidebar"><div class="toc-title">本章目录</div><a class="lv1" href="#s0">第一节 宪法</a><a class="lv2" href="#s1">一、总则：国体政体·制度</a><a class="lv2" href="#s2">二、权利与义务</a><a class="lv2" href="#s3">三、国家机构</a><a class="lv2" href="#s4">四、国家标志</a><a class="lv1" href="#s5">第二节 教育法</a><a class="lv2" href="#s6">一、总则</a><a class="lv2" href="#s7">二、教育基本制度</a><a class="lv2" href="#s8">三、学校及其他教育机构·教师·受教育者</a><a class="lv2" href="#s9">四、教育与社会·投入保障</a><a class="lv2" href="#s10">五、法律责任（含修订补丁）</a><a class="lv1" href="#s11">第三节 义务教育法</a><a class="lv2" href="#s12">一、总则与学生</a><a class="lv2" href="#s13">二、学校与教师</a><a class="lv2" href="#s14">三、教育教学·经费保障·法律责任</a><a class="lv1" href="#s15">第四节 教师法</a><a class="lv2" href="#s16">一、总则·保障机制</a><a class="lv2" href="#s17">二、资格和任用</a><a class="lv2" href="#s18">三、考核·待遇·法律责任</a><a class="lv2" href="#s19">四、教师申诉</a><a class="lv1" href="#s20">第五节 未成年人保护法</a><a class="lv2" href="#s21">一、总则与家庭保护</a><a class="lv2" href="#s22">二、学校保护与社会保护</a><a class="lv2" href="#s23">三、网络保护</a><a class="lv2" href="#s24">四、政府保护</a><a class="lv2" href="#s25">五、司法保护与法律责任</a><a class="lv1" href="#s26">第六节 预防未成年人犯罪法</a><a class="lv2" href="#s27">一、总则·预防教育</a><a class="lv2" href="#s28">二、不良行为预防</a><a class="lv2" href="#s29">三、严重不良行为与矫治</a><a class="lv1" href="#s30">第七节 学生伤害事故处理办法</a><a class="lv2" href="#s31">一、总则与责任认定</a><a class="lv2" href="#s32">二、处理程序与损害赔偿</a><a class="lv1" href="#s33">第八节 家庭教育促进法</a><a class="lv2" href="#s34">一、总则与家庭责任</a><a class="lv2" href="#s35">二、国家支持与社会协同</a><a class="lv2" href="#s36">三、法律责任</a><a class="lv1" href="#s37">第九节 学生的权利保护</a><a class="lv2" href="#s38">一、人身权·财产权·受教育权</a><a class="lv1" href="#s39">第十节 教师的权利与义务</a><a class="lv2" href="#s40">一、教师的权利</a><a class="lv2" href="#s41">二、教师的义务</a></aside>
+  <div class="main">
+    <div class="chapter-header">
+      <a class="back" href="index.html">← 返回目录</a>
+      <h1>第二章 教育法律法规</h1>
+      <div class="sub">中小学综合素质（科一） · CocoPolaris 讲义</div>
+      <div class="legend">★ 越多 = 考频越高 · 徽章 = 常考题型</div>
+    </div>
+    <div class="mobile-toc"><details><summary>📑 本章目录</summary><a class="lv1" href="#s0">第一节 宪法</a><a class="lv2" href="#s1">一、总则：国体政体·制度</a><a class="lv2" href="#s2">二、权利与义务</a><a class="lv2" href="#s3">三、国家机构</a><a class="lv2" href="#s4">四、国家标志</a><a class="lv1" href="#s5">第二节 教育法</a><a class="lv2" href="#s6">一、总则</a><a class="lv2" href="#s7">二、教育基本制度</a><a class="lv2" href="#s8">三、学校及其他教育机构·教师·受教育者</a><a class="lv2" href="#s9">四、教育与社会·投入保障</a><a class="lv2" href="#s10">五、法律责任（含修订补丁）</a><a class="lv1" href="#s11">第三节 义务教育法</a><a class="lv2" href="#s12">一、总则与学生</a><a class="lv2" href="#s13">二、学校与教师</a><a class="lv2" href="#s14">三、教育教学·经费保障·法律责任</a><a class="lv1" href="#s15">第四节 教师法</a><a class="lv2" href="#s16">一、总则·保障机制</a><a class="lv2" href="#s17">二、资格和任用</a><a class="lv2" href="#s18">三、考核·待遇·法律责任</a><a class="lv2" href="#s19">四、教师申诉</a><a class="lv1" href="#s20">第五节 未成年人保护法</a><a class="lv2" href="#s21">一、总则与家庭保护</a><a class="lv2" href="#s22">二、学校保护与社会保护</a><a class="lv2" href="#s23">三、网络保护</a><a class="lv2" href="#s24">四、政府保护</a><a class="lv2" href="#s25">五、司法保护与法律责任</a><a class="lv1" href="#s26">第六节 预防未成年人犯罪法</a><a class="lv2" href="#s27">一、总则·预防教育</a><a class="lv2" href="#s28">二、不良行为预防</a><a class="lv2" href="#s29">三、严重不良行为与矫治</a><a class="lv1" href="#s30">第七节 学生伤害事故处理办法</a><a class="lv2" href="#s31">一、总则与责任认定</a><a class="lv2" href="#s32">二、处理程序与损害赔偿</a><a class="lv1" href="#s33">第八节 家庭教育促进法</a><a class="lv2" href="#s34">一、总则与家庭责任</a><a class="lv2" href="#s35">二、国家支持与社会协同</a><a class="lv2" href="#s36">三、法律责任</a><a class="lv1" href="#s37">第九节 学生的权利保护</a><a class="lv2" href="#s38">一、人身权·财产权·受教育权</a><a class="lv1" href="#s39">第十节 教师的权利与义务</a><a class="lv2" href="#s40">一、教师的权利</a><a class="lv2" href="#s41">二、教师的义务</a></details></div>
+<section class="sec"><h2 id="s0">第一节 宪法</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s1"><span class="h3t">一、总则：国体·政体·制度</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>国家性质（国体）</h4><p class="item"><span class="ilabel">①</span>工人阶级领导的、以工农联盟为基础的人民民主专政。</p><h4><span class="h4num">2</span>根本政治制度和根本制度</h4><p class="item"><span class="ilabel">①</span>根本制度：社会主义制度；中国共产党领导是中国特色社会主义最本质的特征（根本制度）；</p><p class="item"><span class="ilabel">②</span>政体（根本政治制度）：人民代表大会制度。</p><h4><span class="h4num">3</span>基本政治制度</h4><p class="item"><span class="ilabel">①</span>中国共产党领导的多党合作和政治协商制度、民族区域自治制度以及基层群众自治制度。</p><h4><span class="h4num">4</span>民主集中制与经济制度</h4><p class="item"><span class="ilabel">①</span>国家机构实行民主集中制原则；</p><p class="item"><span class="ilabel">②</span>坚持公有制为主体、多种所有制经济共同发展的基本经济制度；</p><p class="item"><span class="ilabel">③</span>坚持按劳分配为主体、多种分配方式并存的分配制度。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s2"><span class="h3t">二、权利与义务</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>权利：平等权、政治权利、政治自由、宗教信仰自由、人身自由、人格尊严、住宅权、通信权、监督权、劳动权、受教育权；</p><div class="note"><span class="callout-label">注意</span>劳动权和受教育权既是权利又是义务。</div></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s3"><span class="h3t">三、国家机构</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>权力机关（全国人大及常委会，最高权力机关，常设机构为全国人大常委会）</h4><p class="item"><span class="ilabel">①</span>全国人大职权（第62条）：修改、监督、制定宪法；选举国家重要领导（国务院总理由国家主席提名产生，非选举）；审查和批准国民经济和社会发展计划及预算；</p><p class="item"><span class="ilabel">②</span>全国人大受原选举单位的监督，原选举单位有权依法罢免本单位选出的代表（第77条）；</p><p class="item"><span class="ilabel">③</span>全国人大常委会职权（第67条）：解释宪法、监督宪法的实施；人大每年举行一次。</p><h4><span class="h4num">2</span>行政机关（国务院，最高行政机关）</h4><p class="item"><span class="ilabel">①</span>总理领导国务院；国务院制定行政法规；</p><p class="item"><span class="ilabel">②</span>国务院职权（第89条）：领导经济、科学、教育、文化、卫生、民政、公安等工作，领导和管理国防建设事业。</p><h4><span class="h4num">3</span>司法机关（法院和检察院）</h4><p class="item"><span class="ilabel">①</span>法院：审判机关；</p><p class="item"><span class="ilabel">②</span>检察院：国家的法律监督机关（法律监督机关），最高人民检察院为最高检察机关。</p><h4><span class="h4num">4</span>监察机关（中华人民共和国监察委员会，最高监察机关）</h4><p class="item"><span class="ilabel">①</span>上级监察委员会领导下级监察委员会；</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>补充：2018 年写入宪法，监察对象：行使公权力的公职人员。</div></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s4"><span class="h3t">四、国家标志</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>国旗、国歌、国徽、首都；</p><p class="item"><span class="ilabel">②</span>国徽：中间是五星照耀下的天安门，周围是谷穗和齿轮。</p></div></div></section>
+<section class="sec"><h2 id="s5">第二节 教育法</h2>
+<div class="sec-lead">《中华人民共和国教育法》是我国教育的根本大法、教育法律体系中的母法。2021 年 4 月 30 日修正。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s6"><span class="h3t">一、总则</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>实施时间：1995 年 9 月 1 日；地位：教育的根本大法、教育法律体系中的母法；</p><p class="item"><span class="ilabel">②</span>教育内容：爱国主义、集体主义、社会主义；</p><p class="item"><span class="ilabel">③</span>教育地位：教育是社会主义现代化建设的基础，国家保障教育事业优先发展；</p><p class="item"><span class="ilabel">④</span>符合国家利益：教育必须与宗教相分离；</p><p class="item"><span class="ilabel">⑤</span>公民有受教育的权利和义务，依法享有平等的受教育机会；国家采取措施促进教育公平、推动教育均衡发展；</p><p class="item"><span class="ilabel">⑥</span>语言文字：国家通用语言文字——普通话、规范汉字（少数民族地区可使用通用文字和本民族语言进行双语教学）；</p><p class="item"><span class="ilabel">⑦</span>管理体制：分级管理、分工负责——中小学由地方人民政府管理，大学由国务院和省、自治区、直辖市人民政府管理；</p><p class="item"><span class="ilabel">⑧</span>国务院教育行政部门（教育部）主管全国教育工作，统筹规划、协调管理全国教育事业；县级以上地方各级人民政府教育行政部门主管本行政区域内的教育工作。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s7"><span class="h3t">二、教育基本制度</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>各级制度：学制——学前、初等、中等、高等；</p><p class="item"><span class="ilabel">②</span>义务教育——九年（小学＋初中），各级人民政府采取各种措施保障适龄儿童、少年入学；</p><p class="item"><span class="ilabel">③</span>各类制度：职业教育制度、继续教育制度（学业证书、学位）；</p><p class="item"><span class="ilabel">④</span>管理制度：教育考试制度、学业证书制度、学位制度、督导制度、教育评估制度。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s8"><span class="h3t">三、学校及其他教育机构·教师·受教育者</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>学校及其他教育机构</h4><p class="item"><span class="ilabel">①</span>办学原则：勤俭节约、不得以营利为目的；</p><p class="item"><span class="ilabel">②</span>办学条件：人、钱、地、制；校长任职条件、法人资格；可依法兴办校办产业；</p><p class="item"><span class="ilabel">③</span>国家鼓励企业事业组织、社会团体、其他社会组织及公民个人依法举办学校。</p><h4><span class="h4num">2</span>教师与其他教育工作者</h4><p class="item"><span class="ilabel">①</span>教师队伍建设；管理人员（教育职员制度）；教辅人员（专业技术职务聘任制度）。</p><h4><span class="h4num">3</span>受教育者</h4><p class="item"><span class="ilabel">①</span>权利：获得奖学金、获得公正评价、申诉诉讼；</p><p class="item"><span class="ilabel">②</span>义务：遵守法律、遵守学生行为规范、遵守管理制度、努力学习（归纳为「三守一学」）；</p><div class="tip"><span class="callout-label">CocoPolaris 说</span>考情：2023 上已考学校及受教育者相关部分。</div></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s9"><span class="h3t">四、教育与社会·投入保障</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>教育与社会</h4><p class="item"><span class="ilabel">①</span>家长配合学校；学校、老师提供家庭教育指导（家校合作）；文化机构教育应当对教师、学生优待。</p><h4><span class="h4num">2</span>教育投入和条件保障</h4><p class="item"><span class="ilabel">①</span>以财政拨款为主，其他多种渠道筹措教育经费为辅；</p><p class="item"><span class="ilabel">②</span>教育专项资金：扶持边远贫困地区、少数民族地区实施义务教育（只针对义务教育）；</p><p class="item"><span class="ilabel">③</span>校办产业（重点）：国家鼓励，前提是不影响正常的教育教学，独立承担民事责任、自负盈亏。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s10"><span class="h3t">五、法律责任（含 2021 修订补丁）</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>三类责任（按主体关系）</h4><p class="item"><span class="ilabel">①</span>行政责任（行政部门实施）：行政处分（体制内，如失职、越职、降职）；行政处罚（体制外，如破坏正常行政秩序）；</p><p class="item"><span class="ilabel">②</span>民事责任（公民与公民之间）：侵犯财产权、人身权，侵占学校场地、校舍等；</p><p class="item"><span class="ilabel">③</span>刑事责任：重大财产损失、人员伤亡、构成犯罪（管制、拘役、有期徒刑、无期徒刑、死刑）。</p><h4><span class="h4num">2</span>法律责任技巧（判断口诀）</h4><p class="item"><span class="ilabel">①</span>行政处分→职务行为，内部人员：记过、警告、降职、开除；</p><p class="item"><span class="ilabel">②</span>行政处罚→外部人员：警告、拘留、罚款、没收、责令停业、暂扣或吊销执照；</p><p class="item"><span class="ilabel">③</span>民事责任→侵犯人身权、财产权等：赔礼道歉（名誉）、赔偿损失（钱）；</p><p class="item"><span class="ilabel">④</span>刑事责任→犯罪、人员伤亡或重大财产损失、重伤致残；</p><p class="item"><span class="ilabel">⑤</span>治安管理处罚→治安问题、行为轻微、由公安机关处理。</p><h4><span class="h4num">3</span>教育法修订补丁（2021 年 4 月 30 日修正）</h4><p class="item"><span class="ilabel">①</span>冒名顶替入学（核心重点）：已取得学位、学历证书的处理，已成为公职人员的处分，违反治安管理行为的处罚，构成犯罪的追究刑事责任；与他人串通、允许他人冒用本人姓名和入学资格顶替入学行为的处理；</p><p class="item"><span class="ilabel">②</span>在招收学生工作中滥用职权、玩忽职守、徇私舞弊的，责令退回招收的不符合入学条件的人员，依法给予处分，构成犯罪的追究刑事责任；</p><p class="item"><span class="ilabel">③</span>相关国家教育考试中作弊的，视情节可处以停止参加相关国家教育考试二年以上五年以下等处理。</p></div></div></section>
+<section class="sec"><h2 id="s11">第三节 义务教育法</h2>
+<div class="sec-lead">首次颁布 1986 年；现行版本 2006 年修订施行。记忆：首次 1986，二次 2006，义务教育免费。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s12"><span class="h3t">一、总则与学生</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>总则</h4><p class="item"><span class="ilabel">①</span>首次颁布 1986 年 4 月 12 日；施行时间 2006 年 9 月 1 日；立法依据：宪法和教育法；</p><p class="item"><span class="ilabel">②</span>九年义务教育制度；不收学费、杂费；</p><p class="item"><span class="ilabel">③</span>义务教育实行国务院领导，县级以上人民政府教育行政部门具体负责实施。</p><h4><span class="h4num">2</span>学生（入学）</h4><p class="item"><span class="ilabel">①</span>6 周岁入学，不具备条件的地区可以推迟到 7 周岁入学；</p><p class="item"><span class="ilabel">②</span>因身体状况需延缓入学的，监护人申请由当地乡镇政府或县级人民政府教育行政部门批准；</p><p class="item"><span class="ilabel">③</span>免试入学、就近入学；非户籍所在地工作的，当地人民政府提供平等义务教育条件；</p><p class="item"><span class="ilabel">④</span>军人子女——县级教育局统筹；</p><p class="item"><span class="ilabel">⑤</span>督促入学——县级教育局＋乡镇人民政府组织和督促＋居民委员会/村民委员会；</p><p class="item"><span class="ilabel">⑥</span>文艺、体育等专业训练的适龄儿童、少年自行实施义务教育的，应当向县级教育局批准。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s13"><span class="h3t">二、学校与教师</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>学校</h4><p class="item"><span class="ilabel">①</span>寄宿制学校：保障居住分散的适龄儿童、少年入学接受义务教育；</p><p class="item"><span class="ilabel">②</span>特殊教育：县级以上地方人民政府根据需要设置特殊教育学校（班），对视力、听力、语言和智力残疾的适龄儿童、少年实施义务教育；普通学校应当接收具有接受普通教育能力的残疾适龄儿童、少年随班就读；</p><p class="item"><span class="ilabel">③</span>未成年犯的义务教育：严重不良行为的适龄少年送专门学校（工读学校）；未完成义务教育的未成年犯和被采取强制性教育措施的未成年人应当接受义务教育，经费由人民政府保障；</p><p class="item"><span class="ilabel">④</span>均衡发展（义务教育阶段）：学校之间办学条件差距、不得分重点学校非重点学校、不设重点班非重点班；不得以任何名义改变或变相改变公办学校的性质；</p><p class="item"><span class="ilabel">⑤</span>违法获利：不得违反国家规定收取费用，不得向学生推销或变相推销商品、服务等谋利（退回获利，处分）；</p><p class="item"><span class="ilabel">⑥</span>学校实行校长负责制，由县教育局依法聘任；</p><p class="item"><span class="ilabel">⑦</span>批评教育：义务教育不得开除学生。</p><h4><span class="h4num">2</span>教师</h4><p class="item"><span class="ilabel">①</span>教师行为：不得歧视学生，不得实施体罚、变相体罚或其他侮辱人格尊严的行为；</p><p class="item"><span class="ilabel">②</span>教师资格及职称：初级、中级、高级职务；</p><p class="item"><span class="ilabel">③</span>教师待遇：平均工资水平不低于当地公务员的平均工资水平；特殊教育教师享有特殊岗位补助津贴；民族地区、贫困地区享有艰苦贫困地区补助津贴；</p><p class="item"><span class="ilabel">④</span>支教工作：国家鼓励，支教时间计算工龄。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s14"><span class="h3t">三、教育教学·经费保障·法律责任</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>教育教学</h4><p class="item"><span class="ilabel">①</span>教育目标：全面发展、德智体美劳；</p><p class="item"><span class="ilabel">②</span>素质教育：培养独立思考能力、创新能力、实践能力；启发式教育、德育为先；</p><p class="item"><span class="ilabel">③</span>教材编写：国家机关工作人员和教科书审查人员，不得参与或变相参与教科书的编写工作；</p><p class="item"><span class="ilabel">④</span>教科书：实行审定制度，不审定不得出版、选用；价格由价格行政部门会同同级出版社主管部门按微利原则确定；鼓励教科书循环使用。</p><h4><span class="h4num">2</span>经费保障</h4><p class="item"><span class="ilabel">①</span>国家将义务教育全面纳入财政保障范围，经费由国务院和地方各级人民政府依照本法规定予以保障；</p><p class="item"><span class="ilabel">②</span>财政拨款增长比例应当高于财政经常性收入的增长比例；</p><p class="item"><span class="ilabel">③</span>任何人或组织不得侵占、挪用义务教育经费，不得向学校非法收取或摊派费用；</p><p class="item"><span class="ilabel">④</span>对家庭经济困难的适龄儿童、少年免费提供教科书并补助寄宿生生活费；</p><p class="item"><span class="ilabel">⑤</span>县级人民政府编制预算，除向农村地区学校和薄弱学校倾斜外，应当均衡安排义务教育经费。</p><h4><span class="h4num">3</span>法律责任</h4><p class="item"><span class="ilabel">①</span>行政处分：将学校分为重点和非重点学校、改变或变相改变公办学校性质的；</p><p class="item"><span class="ilabel">②</span>非法获利：退还所有费用并依法处分；学校向学生分销、摊销商品、服务；国家机关工作人员和教科书审查人员参与或变相参与教科书编写；</p><p class="item"><span class="ilabel">③</span>监护人责任：未按规定送未成年人接受义务教育的，由当地乡镇人民政府或县教育局给予批评教育，责令限期改正。</p></div></div></section>
+<section class="sec"><h2 id="s15">第四节 教师法</h2>
+<div class="sec-lead">实施时间：1994 年 1 月 1 日；地位：我国第一部关于教师的单行法律；第一个教师节：1985 年 9 月 10 日。（口诀：94 就是，1 月 1 日，假日休息。）</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s16"><span class="h3t">一、总则·保障机制</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>总则</h4><p class="item"><span class="ilabel">①</span>适用于各级各类学校和其他教育机构中专门从事教育教学工作的教师；</p><p class="item"><span class="ilabel">②</span>教师是履行教育教学职责的专业人员；</p><p class="item"><span class="ilabel">③</span>教育部主管全国教师工作（主管教育工作和教师工作的都是教育部；领导义务教育的是国务院）。</p><h4><span class="h4num">2</span>权利和义务的保障机制</h4><p class="item"><span class="ilabel">①</span>提供符合国家安全标准的教育教学设施和设备；</p><p class="item"><span class="ilabel">②</span>提供必需的图书、资料及其他教育教学用品；</p><p class="item"><span class="ilabel">③</span>对教师在教育教学、科学研究中的创造性工作给予鼓励和帮助；</p><p class="item"><span class="ilabel">④</span>支持教师制止有害于学生的行为或其他侵犯学生合法权益的行为。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s17"><span class="h3t">二、资格和任用</span><span class="badge-star">★★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>教师资格制度</h4><p class="item"><span class="ilabel">①</span>国家实行教师资格制度（《教师法》中规定）。</p><h4><span class="h4num">2</span>学历要求</h4><p class="item"><span class="ilabel">①</span>幼儿园：幼儿师范学校毕业（中专）；小学：中等师范学校（中专）；初中：大专；高中：本科；</p><p class="item"><span class="ilabel">②</span>师范和非师范都可以参加教师资格考试。</p><h4><span class="h4num">3</span>资格认定</h4><p class="item"><span class="ilabel">①</span>由县级以上教育局认定；首次任教时，应当有试用期。</p><h4><span class="h4num">4</span>资格限制（重点）</h4><p class="item"><span class="ilabel">①</span>受到剥夺政治权利或故意犯罪受到有期徒刑以上刑事处罚的，不能取得教师资格；已取得教师资格的丧失；</p><p class="item"><span class="ilabel">②</span>口诀：弊三撤五罪终身——考试作弊三年内不可参加；教师资格被撤回（如假证被撤销）五年内不可参加；被剥夺政治权利或故意犯罪受有期徒刑以上刑罚的终身丧失。</p><h4><span class="h4num">5</span>师范生与非师范</h4><p class="item"><span class="ilabel">①</span>鼓励非师范生到中小学或职业学校任教；非师范学校应当承担培养和培训中小学教师的任务；各级师范学校学生享受专业奖学金。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s18"><span class="h3t">三、考核·待遇·法律责任</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>考核</h4><p class="item"><span class="ilabel">①</span>考核内容：政治思想、业务水平、工作态度和工作成绩；</p><p class="item"><span class="ilabel">②</span>考核效用：受聘任教、晋升工资、实施奖惩的依据。</p><h4><span class="h4num">2</span>待遇</h4><p class="item"><span class="ilabel">①</span>教师工资：不低于或高于国家公务员的平均工资水平（义务教育——不低于当地公务员；教师法——不低于/高于国家公务员；十年纲要——不低于/高于国家公务员）；</p><p class="item"><span class="ilabel">②</span>少数民族地区和边远贫困地区从事教育教学工作的给予补贴；</p><p class="item"><span class="ilabel">③</span>社会力量所办学校的教师待遇，由举办者自行确定并予以保障。</p><h4><span class="h4num">3</span>法律责任</h4><p class="item"><span class="ilabel">①</span>侮辱殴打教师行为：给予行政处分或行政处罚，构成犯罪的依法追究刑事责任；</p><p class="item"><span class="ilabel">②</span>教师不当行为处理：故意不完成教育教学任务给教学工作造成损失、体罚学生屡教不改、品行不良侮辱学生影响恶劣的，给予行政处分或解聘；</p><p class="item"><span class="ilabel">③</span>津贴是额外劳动的补偿；补贴是为了补偿物价变动给的补偿。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s19"><span class="h3t">四、教师申诉</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>教师认为学校侵犯其权利的，向教育局申诉（教师认为学校侵犯→找教育局）；</p><p class="item"><span class="ilabel">②</span>教师认为当地人民政府有关部门侵犯其权利的，向同级人民政府或上一级人民政府有关部门提出申诉；</p><p class="item"><span class="ilabel">③</span>教师申诉应自接到申诉书后 30 日内处理；（对比：学生伤害事故处理办法为 60 日内完成调解）</p></div></div></section>
+<section class="sec"><h2 id="s20">第五节 未成年人保护法</h2>
+<div class="sec-lead">2020 年 10 月 17 日修订，2021 年 6 月 1 日起施行。本法所指未成年人为未满十八周岁的公民。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s21"><span class="h3t">一、总则与家庭保护</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>总则与遵循原则</h4><p class="item"><span class="ilabel">①</span>法定年龄：未满十八周岁；</p><p class="item"><span class="ilabel">②</span>遵循原则：尊重人格尊严、适应未成年人身心发展规律和特点、教育与保护相结合、给予未成年人特殊优先保护、保护隐私权和个人信息、听取未成年人意见；</p><p class="item"><span class="ilabel">③</span>任何组织或个人发现不利于未成年人身心健康或侵犯其合法权益的情形，都有权劝阻、制止或向公安、民政、教育等有关部门提出检举、控告；</p><p class="item"><span class="ilabel">④</span>国家机关、村（居）委会、密切接触未成年人的单位及其工作人员，发现未成年人身心健康受到侵害、疑似受到侵害或面临其他危险情形的，应当立即向公安、民政、教育等有关部门报告。</p><h4><span class="h4num">2</span>家庭保护</h4><p class="item"><span class="ilabel">①</span>父母或其他监护人应当学习家庭教育知识，接受家庭教育指导，创造良好、和睦的家庭环境，依法履行对未成年人的监护职责和抚养义务；共同生活的其他成年家庭成员应当协助抚养、教育和保护未成年人；</p><p class="item"><span class="ilabel">②</span>应当履行的职责：提供生活、健康、安全方面保障；关注生理、心理状况和情感需求；教育引导遵纪守法、勤俭节约、养成良好思想品德和行为习惯（潜移默化，身体力行）；进行安全教育；保障休息、娱乐和体育锻炼时间；妥善管理和保护财产；预防和制止不良行为与违法犯罪行为；</p><p class="item"><span class="ilabel">③</span>不得实施的行为：禁止虐待、遗弃、非法送养或实施家庭暴力；不得放任或教唆其违法犯罪、参与邪教迷信或接受恐怖主义等侵害；不得放任吸烟（含电子烟）、饮酒、赌博、流浪乞讨或欺凌他人；不得放任沉迷网络或进入营业性娱乐场所、酒吧等不适宜场所；不得违法处分或侵吞财产、利用其牟取不正当利益；不得使未满 16 周岁脱离监护单独生活（第 22 条）；不得放任辍学；不得订立婚约。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s22"><span class="h3t">二、学校保护与社会保护</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>学校保护（同样适用于校外机构）</h4><p class="item"><span class="ilabel">①</span>不得歧视或开除未成年学生；不体罚、不变相体罚、不侮辱人格尊严；</p><p class="item"><span class="ilabel">②</span>不得在危及未成年人人身安全、健康的校舍和其他设施、场所中进行教育教学活动；</p><p class="item"><span class="ilabel">③</span>严重不良行为、无力管教的，送专门学校接受教育；</p><p class="item"><span class="ilabel">④</span>学校不得占用法定节假日、休息日及寒暑假组织集体补课；幼儿园、校外培训机构不得对学龄前未成年人进行小学课程教育；</p><p class="item"><span class="ilabel">⑤</span>学校、幼儿园应当建立安全管理制度、完善安保设施、配备安保人员；幼儿园不得与校外培训机构合作为未成年人提供有偿课程辅导；</p><p class="item"><span class="ilabel">⑥</span>建立欺凌防控工作制度，开展防治学生欺凌教育和培训；对严重欺凌行为不得隐瞒，应及时向公安机关、教育行政部门报告；</p><p class="item"><span class="ilabel">⑦</span>建立预防性侵害、性骚扰未成年人工作制度。</p><h4><span class="h4num">2</span>社会保护</h4><p class="item"><span class="ilabel">①</span>社会教育场所：爱国主义教育基地、图书馆、青少年宫、儿童活动中心对未成年人免费开放；博物馆、纪念馆、科技馆、展览馆、美术馆、文化馆及影剧院、体育场馆、动物园、公园等免费或优惠开放；</p><p class="item"><span class="ilabel">②</span>交通优惠：公共交通及公路、铁路、水路、航空客运等对未成年人实施免费或优惠票价；</p><p class="item"><span class="ilabel">③</span>中小学校周边 200 米内不得设置营业性歌舞厅、网吧等不适宜未成年人活动的场所；不得允许未成年人进入并设置显著标志；</p><p class="item"><span class="ilabel">④</span>禁止向未成年人出售烟酒；任何人在中小学校、幼儿园、托儿所的教室、寝室、活动室等未成年人集中活动场所不得吸烟、喝酒；</p><p class="item"><span class="ilabel">⑤</span>不得招用未满十六周岁的未成年人；</p><p class="item"><span class="ilabel">⑥</span>任何组织或个人不得披露未成年人个人隐私（信件、日记、电子邮件等）；因追查犯罪需要由公安、检察院依法检查等除外；</p><p class="item"><span class="ilabel">⑦</span>公共场合发生突发事件应当优先救护未成年人；</p><p class="item"><span class="ilabel">⑧</span>密切接触未成年人行业从业人员准入资格制度：招聘时向公安、检察院查询是否有性侵害、虐待、拐卖、暴力伤害等违法犯罪记录，有记录的不得录用。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s23"><span class="h3t">三、网络保护（新增板块）</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>方向原则：国家、社会、学校和家庭加强未成年人网络素养宣传教育，增强其科学、文明、安全、合理使用网络的意识和能力；</p><p class="item"><span class="ilabel">②</span>社会公共服务场所义务：学校、社区、图书馆等提供的互联网上网服务设施应当安装未成年人网络保护软件等技术措施；未经学校允许，未成年学生不得将手机等智能终端产品带入课堂，带入学校的应当统一管理；</p><p class="item"><span class="ilabel">③</span>网络服务提供者：处理不满 14 周岁未成年人个人信息应征得其父母或其他监护人同意；对互动内容中发现的有害信息应及时采取措施并报告；对未成年人发布私密信息应及时提示并采取保护措施；不得向未成年人提供诱导沉迷的产品和服务；网络游戏、直播、音视频、社交等服务应设置时间管理、权限管理、消费管理等功能（如微信青少年模式））</p><p class="item"><span class="ilabel">④</span>网络游戏：经依法审批后方可运营；不得在每日 22:00—次日 8:00 向未成年人提供网络游戏服务；建立统一的未成年人网络游戏电子身份认证系统，以真实身份信息注册登录；</p><p class="item"><span class="ilabel">⑤</span>网络直播不得为未满 16 周岁的未成年人提供账号注册服务；年满 16 周岁的应认证并征得父母或其他监护人同意；</p><p class="item"><span class="ilabel">⑥</span>在线教育：不得插入网络游戏链接，不得推送广告等与教学无关的信息；</p><p class="item"><span class="ilabel">⑦</span>网络欺凌：任何组织或个人不得通过网络以文字、图片、音视频等形式对未成年人实施侮辱、诽谤、威胁或恶意损害形象等网络欺凌行为。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s24"><span class="h3t">四、政府保护</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>未成年人专门保护：县级以上政府明确专门人员负责未成年人保护；乡镇政府或街道办设立未成年人保护工作站、指定专人；各级政府将家庭教育指导服务纳入城乡公共服务体系；</p><p class="item"><span class="ilabel">②</span>受教育权利：各级政府保障未成年人受教育的权利，保障留守、困境、残疾未成年人接受义务教育；对辍学未成年学生，教育行政部门应当责令父母或其他监护人将其送入学校；</p><p class="item"><span class="ilabel">③</span>残疾未成年人：保障具有接受普通教育能力的在普通学校、幼儿园接受教育；不具有的由特殊教育学校、幼儿园保障；鼓励社会力量举办特殊教育学校、幼儿园；</p><p class="item"><span class="ilabel">④</span>托育、学前教育：支持社会力量依法兴办母婴室、婴幼儿照护服务机构、幼儿园；培养培训保教人员；</p><p class="item"><span class="ilabel">⑤</span>职业教育：保障接受职业教育或职业技能培训，鼓励人民团体、企事业单位、社会组织提供培训服务；</p><p class="item"><span class="ilabel">⑥</span>校园安全监督：监督指导学校、幼儿园落实校园安全责任；公安机关维护校园周边治安和交通秩序；</p><p class="item"><span class="ilabel">⑦</span>卫生保健：规范疫苗预防接种；教育行政部门加强心理健康教育、建立早期发现和及时干预机制；卫生健康部门做好心理治疗、干预等工作；</p><p class="item"><span class="ilabel">⑧</span>民政部门临时监护：未成年人流浪乞讨或身份不明、监护人下落不明、突发事件致监护缺失、监护人拒绝或怠于履行等情形，民政部门可采取委托亲属抚养、家庭寄养等安置，或交由救助保护机构、儿童福利机构收留抚养；</p><p class="item"><span class="ilabel">⑨</span>民政部门长期监护：查找不到父母、监护人死亡或丧失监护能力且无其他人可担任、法院撤销监护资格并指定民政部门担任等情形；可交由符合条件的申请人收养；</p><p class="item"><span class="ilabel">⑩</span>救助保护：县级以上政府及民政部门设立未成年人救助保护机构、儿童福利机构；开通全国统一的未成年人保护热线；引导社会工作者参与，提供心理辅导、康复救助、监护评估等专业服务；</p><p class="item"><span class="ilabel">⑪</span>建立性侵害、虐待、拐卖、暴力伤害等违法犯罪人员信息查询系统，向密切接触未成年人的单位提供免费查询服务。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s25"><span class="h3t">五、司法保护与法律责任</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>司法保护（教惩结合：教育为主、惩罚为辅）</h4><p class="item"><span class="ilabel">①</span>父母或监护人不履行监护职责的，可以撤销监护人、另行指定监护人，仍要继续负担抚养费用；</p><p class="item"><span class="ilabel">②</span>对违法犯罪的未成年人，应当依法从轻、减轻或免除处罚；</p><p class="item"><span class="ilabel">③</span>拓展（刑法责任年龄）：已满 16 周岁——完全责任年龄，负刑事责任；已满 14 不满 16 周岁——只对八大行为负责（犯故意杀人、故意伤害致人重伤或死亡、强奸、抢劫、贩卖毒品、放火、爆炸、投放危险物质罪）（口诀：烧杀淫掠，伤投爆毒）；已满 12 不满 14 周岁——对故意杀人、故意伤害致人死亡或以特别残忍手段致人重伤造成严重残疾，且情节恶劣经最高检核准追诉的负责（口诀：杀人伤害残忍）；</p><p class="item"><span class="ilabel">④</span>不予刑事处罚的处理：不满十六周岁不予刑事处罚的，责令父母或其他监护人加以管教，必要时依法进行专门矫治教育；</p><p class="item"><span class="ilabel">⑤</span>羁押、服刑的未成年人应与成年人分别关押；未完成义务教育的应进行义务教育；解除羁押、服刑期满的复学、升学、就业不受歧视；</p><p class="item"><span class="ilabel">⑥</span>未成年人犯罪案件个人信息不得被披露，不公开审理。</p><h4><span class="h4num">2</span>法律责任</h4><p class="item"><span class="ilabel">①</span>国家机关、村（居）委会、密切接触单位未履行报告义务造成严重后果的，对直接负责人员依法给予处分；</p><p class="item"><span class="ilabel">②</span>监护人不履行职责的，所在单位或居委会、村委会予以劝诫、制止；违反治安管理的由公安机关予以行政处罚；</p><p class="item"><span class="ilabel">③</span>未给予未成年人免费或优惠待遇的，责令限期改正、警告，拒不改正的处 1 万—10 万元罚款；</p><p class="item"><span class="ilabel">④</span>密切接触单位招工未履行查询义务或招用有违法犯罪记录人员的，责令限期改正、警告、罚款；拒不改正或后果严重的责令停业整顿或吊销执照；</p><p class="item"><span class="ilabel">⑤</span>国家机关工作人员玩忽职守、滥用职权、徇私舞弊损害未成年人合法权益的依法给予处分；</p><p class="item"><span class="ilabel">⑥</span>侵犯未成年人合法权益造成损害的依法承担民事责任；构成违反治安管理行为的给予治安管理处罚，构成犯罪的追究刑事责任。</p></div></div></section>
+<section class="sec"><h2 id="s26">第六节 预防未成年人犯罪法</h2>
+<div class="sec-lead">2020 年 12 月 26 日修订，2021 年 6 月 1 日起施行。基本立足教育和保护，坚持预防为主、提前干预。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s27"><span class="h3t">一、总则·预防教育</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>总则</h4><p class="item"><span class="ilabel">①</span>开展预防犯罪工作应当尊重未成年人人格尊严，保护其名誉权、隐私权和个人信息；</p><p class="item"><span class="ilabel">②</span>专门教育是国民教育体系的组成部分；加强专门学校建设，对有严重不良行为的未成年人进行专门教育；省级政府将专门教育纳入经济社会发展规划；县级以上政府根据需要合理设置专门学校。</p><h4><span class="h4num">2</span>预防未成年人犯罪的教育</h4><p class="item"><span class="ilabel">①</span>监护人负有直接责任；</p><p class="item"><span class="ilabel">②</span>学校聘请专职/兼职法制教育教师，可聘请法治副校长、校外法治辅导员；配备心理健康教育教师；教育部会同有关部门建立学生欺凌防控制度；</p><p class="item"><span class="ilabel">③</span>用人单位：对已满 16 未满 18 周岁就业的未成年人，将法律知识和预防犯罪教育纳入职业培训内容。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s28"><span class="h3t">二、不良行为预防</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>不良行为（熊孩子）</h4><p class="item"><span class="ilabel">①</span>吸烟、饮酒；</p><p class="item"><span class="ilabel">②</span>多次旷课、逃学；</p><p class="item"><span class="ilabel">③</span>无故夜不归宿、离家出走；</p><p class="item"><span class="ilabel">④</span>沉迷网络；</p><p class="item"><span class="ilabel">⑤</span>与不良习性的人交往，组织或参加实施不良行为的团伙；</p><p class="item"><span class="ilabel">⑥</span>进入法律法规规定未成年人不适宜进入的营业性歌舞厅等场所；</p><p class="item"><span class="ilabel">⑦</span>参与赌博或变相赌博，或参加封建迷信、邪教等活动；</p><p class="item"><span class="ilabel">⑧</span>观看、收听色情、淫秽的音像制品、读物等；</p><p class="item"><span class="ilabel">⑨</span>其他严重违背社会公德的不良行为。</p><h4><span class="h4num">2</span>旷课及夜不归宿的处理</h4><p class="item"><span class="ilabel">①</span>旷课：学校及时联系监护人；</p><p class="item"><span class="ilabel">②</span>夜不归宿、离家出走的：应及时查找，必要时向公安机关报告；收留的应及时联系其父母、监护人、所在学校，无法取得联系的报告公安机关；</p><p class="item"><span class="ilabel">③</span>公安机关、公共场所管理机构发现夜不归宿、离家出走或流落街头的，应当及时采取保护措施。</p><h4><span class="h4num">3</span>学校管教措施</h4><p class="item"><span class="ilabel">①</span>训导；② 要求遵守特定行为规范；③ 要求参加特定专题教育；④ 要求参加校内服务活动；⑤ 接受社会工作者或其他专业人员心理辅导和行为干预；⑥ 其他适当的管理教育措施。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s29"><span class="h3t">三、严重不良行为与专门矫治</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>严重不良行为（熊孩子 Plus）</h4><p class="item"><span class="ilabel">①</span>结伙斗殴、追逐拦截他人、强拿硬要或任意损毁占用公私财物等寻衅滋事行为；</p><p class="item"><span class="ilabel">②</span>非法携带枪支、弹药或管制器具；</p><p class="item"><span class="ilabel">③</span>殴打、辱骂、恐吓或故意伤害他人身体；</p><p class="item"><span class="ilabel">④</span>盗窃、哄抢、抢夺或故意损毁公私财物；</p><p class="item"><span class="ilabel">⑤</span>传播淫秽读物、音像制品或信息；</p><p class="item"><span class="ilabel">⑥</span>卖淫、嫖娼或进行淫秽表演；</p><p class="item"><span class="ilabel">⑦</span>吸食、注射毒品或向他人提供毒品；</p><p class="item"><span class="ilabel">⑧</span>参与赌博赌资较大；</p><p class="item"><span class="ilabel">⑨</span>其他严重危害社会的行为。</p><h4><span class="h4num">2</span>专门学校的申请与转学</h4><p class="item"><span class="ilabel">①</span>父母或其他监护人、学校无力管教或管教无效的，向教育行政部门提出申请，经专门教育指导委员会评估同意后，由教育行政部门决定送入专门学校接受专门教育；</p><p class="item"><span class="ilabel">②</span>专门场所实行闭环管理，公安机关、司法行政部门负责矫治，教育行政部门承担教育；</p><p class="item"><span class="ilabel">③</span>转回普通学校的，原所在学校不得拒绝接收；未完成义务教育的应当保证继续接受义务教育；学籍保留在原学校。</p><h4><span class="h4num">3</span>矫治教育措施（执行主体：公安机关）</h4><p class="item"><span class="ilabel">①</span>训诫；② 责令赔礼道歉、赔偿损失；③ 责令具结悔过；④ 责令定期报告活动情况；⑤ 责令遵守特定行为规范、不得实施特定行为/接触特定人员/进入特定场所；⑥ 责令接受心理辅导、行为矫治；⑦ 责令参加社会服务活动；⑧ 责令接受社会观护；⑨ 其他适当的矫治教育措施。</p><h4><span class="h4num">4</span>法律责任</h4><p class="item"><span class="ilabel">①</span>监护人不履行监护职责的，公安、检察院、法院进行训诫，并可责令接受家庭教育指导；</p><p class="item"><span class="ilabel">②</span>学校及教职工不履行本法工作职责或虐待、歧视相关未成年人的，责令改正、通报批评；教职工教唆、胁迫、引诱的应当解聘或辞退；</p><p class="item"><span class="ilabel">③</span>复学、升学、就业等方面歧视有关未成年人的，责令改正；</p><p class="item"><span class="ilabel">④</span>国家机关及其工作人员滥用职权、玩忽职守、徇私舞弊的依法给予处分。</p></div></div></section>
+<section class="sec"><h2 id="s30">第七节 学生伤害事故处理办法</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s31"><span class="h3t">一、总则与责任认定</span><span class="badge-star">★★★★</span><span class="badge-type">单选/案例分析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>总则·监护人责任</h4><p class="item"><span class="ilabel">①</span>未成年学生的父母或其他监护人履行监护职责，学校对未成年学生不承担监护责任，但法律有规定的或学校依法接受委托承担相应监护职责的情形除外。</p><h4><span class="h4num">2</span>归责原则：过错方担责</h4><p class="item"><span class="ilabel">①</span>过错方是学校→赔偿责任（钱）：学校；过错方是家长→家长；过错方是成年学生→学生本人；</p><p class="item"><span class="ilabel">②</span>过错方是未成年学生→赔偿责任（钱）：家长（钱）/学生（事故责任）；</p><p class="item"><span class="ilabel">③</span>过错方是教师（职务行为）→赔偿由学校承担；教师（非职务行为）→由教师个人承担。</p><h4><span class="h4num">3</span>学校有错、学校承担相应责任的情形（侵权责任 12—13 条）</h4><p class="item"><span class="ilabel">①</span>校舍、场地等不符合国家规定标准；存在重大安全隐患；药品、食品等不符合国家标准；</p><p class="item"><span class="ilabel">②</span>学校组织活动未进行安全教育；让未成年学生从事不宜参加的劳动或体育活动；</p><p class="item"><span class="ilabel">③</span>学校知道教师有不适宜担任老师的疾病仍安排教学；知道学生有特殊体质或疾病；</p><p class="item"><span class="ilabel">④</span>学生突发疾病或受伤未及时采取措施；老师体罚或变相体罚；发现学生危险行为没有制止；对擅自离校学生未及时告知家长。</p><h4><span class="h4num">4</span>学校不担责的情形</h4><p class="item"><span class="ilabel">①</span>学校履行了相应职责、行为无不当；不可抗力（地震、雷击、台风等）；突发性偶发性侵害；</p><p class="item"><span class="ilabel">②</span>学生有特殊体质学校不知道；学生自杀、自伤（但若系学校老师导致则有责）；对抗性或具有风险性的体育竞赛中意外伤害；</p><p class="item"><span class="ilabel">③</span>学生上学、放学、返校或离校途中；自行外出或擅自离校；学校工作时间外自行滞留或到校；学校老师或工作人员非职务行为。</p><h4><span class="h4num">5</span>学生或监护人承担责任</h4><p class="item"><span class="ilabel">①</span>学校、教师已告诫纠正但学生不听劝阻拒不改正；</p><p class="item"><span class="ilabel">②</span>学生或监护人知道学生特殊体质但未告知学校；</p><p class="item"><span class="ilabel">③</span>监护人知道或已被告知学生异常情况但未履行监护职责。</p><h4><span class="h4num">6</span>第三方有错</h4><p class="item"><span class="ilabel">①</span>第三方提供场地、设备、交通工具、食品等造成伤害事故的，第三方承担主要责任。</p><h4><span class="h4num">7</span>事故责任者的处理</h4><p class="item"><span class="ilabel">①</span>违反学校纪律对事故负有责任的学生，学校可给予相应处分（2021 已考）；触犯刑律的由司法机关追究刑事责任。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s32"><span class="h3t">二、处理程序与损害赔偿</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>事故处理程序</h4><p class="item"><span class="ilabel">①</span>以协商、调解或诉讼方式处理；教育行政部门收到调解申请，应当自申请之日起 60 日内完成调解（对比：教师法申诉为 30 日内）；</p><p class="item"><span class="ilabel">②</span>学校可以对老师或工作人员追偿；未成年人造成的赔偿由监护人承担赔偿责任。</p><h4><span class="h4num">2</span>事故损害的赔偿</h4><p class="item"><span class="ilabel">①</span>对发生学生伤害事故负有责任的组织或个人，依法承担赔偿责任；</p><p class="item"><span class="ilabel">②</span>学校对学生伤害事故负有责任的，根据责任大小给予经济赔偿，但不解决户口、住房、就业等与救助受伤害学生、赔偿相应经济损失无直接关系的其他事项；</p><p class="item"><span class="ilabel">③</span>学校无责的，如有条件，可本着自愿和可能的原则对受害学生给予适当帮助；</p><p class="item"><span class="ilabel">④</span>因学校教师或其他工作人员在履行职务中故意或重大过失造成事故的，学校赔偿后可向有关责任人追偿；</p><p class="item"><span class="ilabel">⑤</span>未成年学生对事故负有责任的，由监护人依法承担相应的赔偿责任。</p></div></div></section>
+<section class="sec"><h2 id="s33">第八节 家庭教育促进法</h2>
+<div class="sec-lead">2022 年 1 月 1 日起施行。立法主线：由传统家教→科学育儿；国家不过度干预，但要有一定支持举措。</div>
+<div class="kcard"><div class="kcard-head"><h3 id="s34"><span class="h3t">一、总则与家庭责任</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>家庭教育的概念与任务</h4><p class="item"><span class="ilabel">①</span>概念（狭义）：父母或其他监护人对未成年人实施的培育、影响和引导（道德品质、身体素质、生活技能、文化修养、行为习惯）；</p><p class="item"><span class="ilabel">②</span>任务：立德树人为根本任务；培育和践行社会主义核心价值观；弘扬中华民族优秀传统文化、革命文化、社会主义先进文化（口诀：一立二培三弘扬四促进）。</p><h4><span class="h4num">2</span>家庭教育的主体与主体责任</h4><p class="item"><span class="ilabel">①</span>主体：未成年人的父母或其他监护人（国家和社会提供指导、支持服务，国家工作人员带头）；</p><p class="item"><span class="ilabel">②</span>责任：尊重身心发展规律和个体差异，尊重人格尊严、保护隐私权和个人信息，贯彻科学理念和方法，家、校、社会协调一致。</p><h4><span class="h4num">3</span>家庭责任（父母或其他监护人）</h4><p class="item"><span class="ilabel">①</span>共同生活的具有完全民事行为能力的其他家庭成员协助实施家庭教育；营造良好家庭环境；</p><p class="item"><span class="ilabel">②</span>父母应树立正确的家庭教育理念，自觉学习家庭教育专业知识，积极参加公益性家庭教育指导和实践活动；分居或离异的应相互配合；</p><p class="item"><span class="ilabel">③</span>合理安排未成年人学习、休息、娱乐和体育锻炼时间，避免加重学习负担、预防沉迷网络；不因性别、身体状况或智力等歧视未成年人；不得实施家暴或利用未成年人犯法、违背社会公德。</p><h4><span class="h4num">4</span>家庭教育的主要内容与主要方法</h4><p class="item"><span class="ilabel">①</span>内容：培养中华民族共同体意识和家国情怀；培养良好社会公德、家庭美德和个人品德；培养科学探索精神和创新意识；培养良好学习、生活和行为习惯；培养自我保护意识和能力；培养热爱劳动的观念；</p><p class="item"><span class="ilabel">②</span>方法：加强亲子陪伴、发挥父母双方作用、言传身教、尊重差异、平等交流。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s35"><span class="h3t">二、国家支持与社会协同</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>国家支持</h4><p class="item"><span class="ilabel">①</span>县级以上政府制定专项计划，纳入城乡公共服务体系和政府购买服务目录，将相关经费列入财政预算；</p><p class="item"><span class="ilabel">②</span>国务院组织有关部门制定全国家庭教育指导大纲；</p><p class="item"><span class="ilabel">③</span>省级政府或有条件的市政府编写家庭教育指导读本；省级以上政府统筹建设家庭教育信息化共享服务平台；</p><p class="item"><span class="ilabel">④</span>县级以上政府妇女儿童工作机构组织协调；教育局、妇联按职责分工承担日常事务；</p><p class="item"><span class="ilabel">⑤</span>鼓励企事业单位、社会组织和个人依法开展公益性家庭教育服务活动；鼓励高校开设家庭教育专业课程；</p><p class="item"><span class="ilabel">⑥</span>每年 5 月 15 日国际家庭日所在周为家庭教育宣传周。</p><h4><span class="h4num">2</span>社会协同</h4><p class="item"><span class="ilabel">①</span>中小学校、幼儿园：将家庭教育指导服务纳入工作计划，作为教师业务培训内容；建立家长学校，组织公益性家庭教育指导服务；为违反校纪校规学生的父母提供针对性家庭教育指导；</p><p class="item"><span class="ilabel">②</span>婴幼儿照护机构、早教机构、医疗保健机构宣传家庭教育知识；</p><p class="item"><span class="ilabel">③</span>图书馆、文化馆等公共文化服务机构和广播、电视等新闻媒体传播科学的家庭教育理念。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s36"><span class="h3t">三、法律责任</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>父母或其他监护人怠于履行责任的：居委会、村委会、妇联或监护人单位、学校等单位予以批评教育、劝诫制止，必要时督促接受家庭教育指导；公安机关、检察院、法院予以训诫、责令接受家庭教育指导；</p><p class="item"><span class="ilabel">②</span>负有家庭教育职责的政府部门不履职或滥用职权、玩忽职守、徇私舞弊的：由上一级机关或主管单位责令限期改正，情节严重对直接负责的主管人员和责任人依法处分；</p><p class="item"><span class="ilabel">③</span>家庭教育服务机构未依法办理设立手续、超范围经营、虚假误导宣传或侵犯未成年人及其监护人合法权益的：主管部门责令限期改正，严重的停业整顿、吊销营业执照或撤销登记。</p></div></div></section>
+<section class="sec"><h2 id="s37">第九节 学生的权利保护</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s38"><span class="h3t">一、人身权·财产权·受教育权</span><span class="badge-star">★★★★★</span><span class="badge-type">单选/案例分析</span></h3></div><div class="kcard-body">
+<h4><span class="h4num">1</span>人身权（重点：隐私权、人格尊严权、人身自由权）</h4><p class="item"><span class="ilabel">①</span>隐私权：拆看日记、信件，公布个人信息，公布学生成绩，不当使用监控设备等；</p><p class="item"><span class="ilabel">②</span>人格尊严权：不得体罚、变相体罚或其他侮辱人格尊严的行为；</p><p class="item"><span class="ilabel">③</span>人身自由权：不得随意对学生搜查、关禁闭；</p><p class="item"><span class="ilabel">④</span>其他：生命权、健康权（身心）、姓名权（禁止冒名顶替）、名誉权（禁止侮辱诽谤）、肖像权（非法盈利、恶意丑化）、荣誉权（不得随意剥夺）。</p><h4><span class="h4num">2</span>财产权（重点：财产所有权）</h4><p class="item"><span class="ilabel">①</span>财产所有权：不没收、不破坏（常见表现：罚款、没收物品、损毁物品等）；</p><p class="item"><span class="ilabel">②</span>知识产权中的财产权、继承权、受赠权。</p><h4><span class="h4num">3</span>受教育权（重点：参加教育教学权、受完法定年限教育权）</h4><p class="item"><span class="ilabel">①</span>参加教育教学权：上课的权利；</p><p class="item"><span class="ilabel">②</span>受完法定年限教育权：不能开除、不能劝退学生；</p><p class="item"><span class="ilabel">③</span>获得经济资助权、获得学业证书权、申诉起诉权。</p><div class="note"><span class="callout-label">注意</span>案例分析高频：体罚、辱骂、公开隐私、乱收费、逼退学均侵犯学生权利。</div></div></div></section>
+<section class="sec"><h2 id="s39">第十节 教师的权利与义务</h2>
+<div class="kcard"><div class="kcard-head"><h3 id="s40"><span class="h3t">一、教师的权利（考得比较多）</span><span class="badge-star">★★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>教育教学权：最基本的职业权利，包括上课和实验改革；</p><p class="item"><span class="ilabel">②</span>科学研究权：从事科学研究、学术交流，参加专业学术团体，在学术活动中充分发表意见；</p><p class="item"><span class="ilabel">③</span>指导评价权：指导学生的学习和发展，评定学生的品行和学生成绩（考得比较多）；</p><p class="item"><span class="ilabel">④</span>获取报酬待遇权：按时获取工资报酬，享受国家规定的福利待遇，寒暑假带薪休假；</p><p class="item"><span class="ilabel">⑤</span>民主管理权：对学校教育教学、管理工作和教育行政部门的工作提出意见和建议，通过教职工代表大会或其他形式参与学校民主管理；</p><p class="item"><span class="ilabel">⑥</span>进修培训权：参加进修或其他方式的培训。</p></div></div>
+<div class="kcard"><div class="kcard-head"><h3 id="s41"><span class="h3t">二、教师的义务（很少考）</span><span class="badge-star">★★★</span><span class="badge-type">单选</span></h3></div><div class="kcard-body">
+<p class="item"><span class="ilabel">①</span>遵纪守法；</p><p class="item"><span class="ilabel">②</span>履行教育教学职责（既是权利也是义务）；</p><p class="item"><span class="ilabel">③</span>对学生进行思想政治教育；</p><p class="item"><span class="ilabel">④</span>爱护尊重学生；</p><p class="item"><span class="ilabel">⑤</span>保护学生合法权益；</p><p class="item"><span class="ilabel">⑥</span>提高业务水平。</p></div></div></section>
+    <div class="nav"><a href="01_第一章_职业理念.html">← 上一章</a><a href="03_第三章_教师职业道德.html">下一章 →</a></div>
+  </div>
+</div>
+<button class="top-btn" aria-label="回到顶部">↑</button>
+<script>
+(function(){
+  var topBtn = document.querySelector('.top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 600);
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    document.getElementById('progress').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, {passive:true});
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var link = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, {rootMargin: '-15% 0px -75% 0px'});
+    secs.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+
+
+<script>
+
+(function () {
+  'use strict';
+  if (window.__foldInited) return;
+  window.__foldInited = true;
+
+  function isTitleLevel(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var tag = el.tagName;
+    if (tag === 'H4') return 1;
+    if (tag === 'H5' || tag === 'H6') return 2;
+    if (tag === 'P' && el.classList.contains('item')) {
+      var lab = el.querySelector('.ilabel');
+      if (lab) {
+        var t = lab.textContent.trim();
+        if (/^[①②③④⑤⑥⑦⑧⑨⑩]+$/.test(t)) return 3;
+      }
+    }
+    return 0;
+  }
+
+  function isAnno(node) {
+    return node.nodeType === 1 && node.classList && node.classList.contains('anno');
+  }
+
+  function hasRealText(node) {
+    if (node.nodeType === 3) return node.nodeValue.trim().length > 0;
+    if (node.nodeType === 1) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        if (hasRealText(node.childNodes[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function splitItem(el) {
+    var ilabel = el.querySelector('.ilabel');
+    var label = document.createElement('span');
+    label.className = 'subfold-label';
+    var content = document.createElement('span');
+    content.className = 'subfold-content';
+
+    if (ilabel) label.appendChild(ilabel);
+
+    var nodes = Array.prototype.slice.call(el.childNodes);
+    var foundColon = false;
+    var contentHasRealText = false;
+
+    nodes.forEach(function (node) {
+      if (node === ilabel) return;
+      if (node.nodeType === 3) {
+        var text = node.nodeValue;
+        if (!foundColon) {
+          var idx = text.search(/[\uFF1A:]/);
+          if (idx >= 0) {
+            if (idx > 0) label.appendChild(document.createTextNode(text.slice(0, idx)));
+            var rest = text.slice(idx + 1);
+            if (rest) {
+              content.appendChild(document.createTextNode(rest));
+              if (rest.trim()) contentHasRealText = true;
+            }
+            foundColon = true;
+          } else {
+            label.appendChild(node);
+          }
+        } else {
+          content.appendChild(node);
+          if (text.trim()) contentHasRealText = true;
+        }
+      } else if (node.nodeType === 1) {
+        if (!foundColon) {
+          label.appendChild(node);
+        } else {
+          content.appendChild(node);
+          if (!isAnno(node) && hasRealText(node)) contentHasRealText = true;
+        }
+      }
+    });
+
+    if (!contentHasRealText) {
+      while (content.firstChild) label.appendChild(content.firstChild);
+      content = null;
+    }
+    return { label: label, content: content };
+  }
+
+  function makeArrow() {
+    var s = document.createElement('span');
+    s.className = 'fold-arrow';
+    s.setAttribute('aria-hidden', 'true');
+    s.textContent = '\u25B6';
+    return s;
+  }
+
+  function bindToggle(head, body) {
+    head.addEventListener('click', function (e) {
+      e.preventDefault(); if (!body.parentNode) return; var isOpen = body.classList.toggle('open');
+      head.classList.toggle('open', isOpen);
+      head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  function transformContainer(container) {
+    var children = Array.prototype.slice.call(container.children);
+    children.forEach(function (c) { container.removeChild(c); });
+
+    var stack = [];
+    function currentBody() {
+      return stack.length ? stack[stack.length - 1].body : container;
+    }
+    function closeTo(level) {
+      while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+    }
+
+    children.forEach(function (child) {
+      var level = isTitleLevel(child);
+      if (level > 0) {
+        closeTo(level);
+        var parent = currentBody();
+        if (level >= 3) { var parts = splitItem(child); if (parts.content) { var subfold = document.createElement('div'); subfold.className = 'subfold'; var subHead = document.createElement('div'); subHead.className = 'subfold-head fold-head'; subHead.setAttribute('aria-expanded', 'false'); subHead.appendChild(makeArrow()); subHead.appendChild(parts.label); var subBody = document.createElement('div'); subBody.className = 'subfold-body fold-body'; subBody.appendChild(parts.content); subfold.appendChild(subHead); subfold.appendChild(subBody); parent.appendChild(subfold); bindToggle(subHead, subBody); stack.push({ level: level, head: subHead, body: subBody }); } else { while (parts.label.firstChild) child.appendChild(parts.label.firstChild); parent.appendChild(child); } } else {
+          parent.appendChild(child);
+          var body = document.createElement('div');
+          body.className = 'fold-body';
+          parent.appendChild(body);
+          child.classList.add('fold-head');
+          child.insertBefore(makeArrow(), child.firstChild);
+          child.setAttribute('aria-expanded', 'false');
+          bindToggle(child, body);
+          stack.push({ level: level, head: child, body: body });
+        }
+      } else {
+        var isBlock = child.nodeType === 1 &&
+          (child.classList.contains('tip') || child.classList.contains('note') ||
+           child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
+        if (isBlock) closeTo(3);
+        currentBody().appendChild(child); } }); Array.prototype.forEach.call(container.querySelectorAll('h4.fold-head, h5.fold-head, h6.fold-head'), function (head) { var body = head.nextElementSibling; if (!body || !body.classList.contains('fold-body')) return; if (!hasRealText(body) && !body.querySelector('table, .tip, .note, .tbl-wrap, img')) { var arrow = head.querySelector('.fold-arrow'); if (arrow) head.removeChild(arrow); head.classList.remove('fold-head'); head.classList.remove('open'); head.removeAttribute('aria-expanded'); if (body.parentNode) body.parentNode.removeChild(body); } }); } function setAll(open) {
+    document.querySelectorAll('.fold-head').forEach(function (h) {
+      h.classList.toggle('open', open);
+      h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.fold-body').forEach(function (b) {
+      b.classList.toggle('open', open);
+    });
+  }
+
+  function addToolbar() {
+    var main = document.querySelector('.main');
+    if (!main) return;
+    var header = main.querySelector('.chapter-header');
+    var bar = document.createElement('div');
+    bar.className = 'fold-toolbar';
+    var hint = document.createElement('span');
+    hint.className = 'hint';
+    hint.textContent = '\u70B9\u51FB\u6807\u9898\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9';
+    var expand = document.createElement('button');
+    expand.type = 'button';
+    expand.textContent = '\u5168\u90E8\u5C55\u5F00';
+    var collapse = document.createElement('button');
+    collapse.type = 'button';
+    collapse.textContent = '\u5168\u90E8\u6298\u53E0';
+    bar.appendChild(hint);
+    bar.appendChild(expand);
+    bar.appendChild(collapse);
+    if (header && header.nextSibling) {
+      main.insertBefore(bar, header.nextSibling);
+    } else {
+      main.insertBefore(bar, main.firstChild);
+    }
+    expand.addEventListener('click', function () { setAll(true); });
+    collapse.addEventListener('click', function () { setAll(false); });
+  }
+
+  function init() {
+    document.querySelectorAll('.kcard-body, .sec-lead').forEach(function (c) {
+      transformContainer(c);
+    });
+    addToolbar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+</script>
+</body>
+</html>

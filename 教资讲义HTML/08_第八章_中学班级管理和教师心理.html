@@ -522,7 +522,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
         var isBlock = child.nodeType === 1 &&
           (child.classList.contains('tip') || child.classList.contains('note') ||
            child.classList.contains('tbl-wrap') || child.tagName === 'TABLE');
-        if (isBlock) closeTo(3);
+        var isSubLabel = child.nodeType === 1 && child.classList.contains('subitem');
+        if (isBlock || isSubLabel) closeTo(3);
         currentBody().appendChild(child); } }); Array.prototype.forEach.call(container.querySelectorAll('h4.fold-head, h5.fold-head, h6.fold-head'), function (head) { var body = head.nextElementSibling; if (!body || !body.classList.contains('fold-body')) return; if (!hasRealText(body) && !body.querySelector('table, .tip, .note, .tbl-wrap, img')) { var arrow = head.querySelector('.fold-arrow'); if (arrow) head.removeChild(arrow); head.classList.remove('fold-head'); head.classList.remove('open'); head.removeAttribute('aria-expanded'); if (body.parentNode) body.parentNode.removeChild(body); } }); } function setAll(open) {
     document.querySelectorAll('.fold-head').forEach(function (h) {
       h.classList.toggle('open', open);
